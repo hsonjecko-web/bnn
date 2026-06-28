@@ -485,15 +485,6 @@
                     }
                 ]);
 
-                const modalSwipe = useSwipe((dir) => {
-                    if (!selectedProject.value) return;
-                    const len = selectedProject.value.images.length;
-                    const next = modalSlide.value + dir;
-                    if (next >= 0 && next < len) {
-                        modalSlide.value = next;
-                    }
-                });
-
                 function startSlideTimer() {
                     slideTimer = setInterval(() => {
                         currentSlide.value = (currentSlide.value + 1) % slides.value.length;
