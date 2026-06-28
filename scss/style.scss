@@ -2067,3 +2067,41 @@ html.light-mode .project-modal .modal-close {
     height: 40px;
   }
 }
+
+/* ===== Exit Toast ===== */
+.exit-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.exit-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+html.light-mode .exit-toast {
+  background: rgba(26, 42, 58, 0.9);
+  color: #fff;
+}
+
+/* ===== Modal Slide click hint ===== */
+.modal-slide-img {
+  cursor: pointer;
+}
+.modal-slide-img img {
+  pointer-events: auto;
+}
