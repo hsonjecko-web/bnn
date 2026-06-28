@@ -31,98 +31,141 @@
             <div id="header"></div>
 
             <div class="page-content">
-                <!-- البحث -->
-                <div style="padding:12px 16px;">
-                    <div class="search-bar" style="margin:0;">
-                        <input type="text" v-model="searchQuery" placeholder="ابحث عن مشاريع، مقاولين، منتجات...">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        </svg>
+                <!-- Hero Slider -->
+                <div class="hero-slider">
+                    <div class="slider-track" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+                        <div v-for="(slide, i) in slides" :key="i" class="slider-slide">
+                            <div class="slide-img-wrap">
+                                <img :src="slide.bg" class="slide-img" alt="">
+                                <div class="slide-overlay"></div>
+                                <div class="slide-content">
+                                    <h2>{{ slide.title }}</h2>
+                                    <p>{{ slide.desc }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slider-dots">
+                        <span v-for="(s, i) in slides" :key="i"
+                              class="dot" :class="{ active: i === currentSlide }"
+                              @click="currentSlide = i"></span>
                     </div>
                 </div>
 
-                <!-- التصنيفات -->
-                <div class="categories-scroll animate-in delay-1">
-                    <div v-for="(cat, index) in categories" :key="index"
-                         class="category-item"
-                         :class="{ active: activeCategory === index }"
-                         @click="activeCategory = index">
-                        <div class="cat-icon">{{ cat.icon }}</div>
-                        <span class="cat-label">{{ cat.name }}</span>
+                <!-- Home Sections -->
+                <div class="home-sections">
+                    <div v-for="(sec, i) in sections" :key="i"
+                         class="home-section-item">
+                        <div class="home-section-icon">
+                            <span class="material-symbols-outlined">{{ sec.icon }}</span>
+                        </div>
+                        <span class="home-section-name">{{ sec.name }}</span>
                     </div>
                 </div>
 
-                <!-- شريط إعلاني -->
-                <div class="banner animate-in delay-2">
-                    <div class="banner-title">{{ banner.title }}</div>
-                    <div class="banner-desc">{{ banner.desc }}</div>
-                    <button class="banner-btn">{{ banner.btn }}</button>
+                <!-- Ads -->
+                <div class="section-header">
+                    <span class="section-title">إعلانات ممولة</span>
+                    <span class="section-link">احجز اعلانك</span>
+                </div>
+                <div class="ads-scroll">
+                    <div v-for="(ad, i) in ads" :key="i" class="ad-card" @click="openProject(ad)">
+                        <div class="ad-image">
+                            <img :src="ad.bg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+                            <span class="ad-sponsor">ممول</span>
+                        </div>
+                        <div class="ad-info">
+                            <div class="ad-title">{{ ad.title }}</div>
+                            <div class="ad-company">{{ ad.company }}</div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- مشاريع مميزة -->
-                <div class="section-header animate-in delay-3">
-                    <span class="section-title">مشاريع مميزة</span>
-                    <a href="ideas.html" class="section-link">عرض الكل</a>
-                </div>
-                <div class="projects-grid animate-in delay-3">
-                    <a v-for="(project, index) in featuredProjects" :key="index"
-                       :href="project.link" class="project-card" style="text-decoration:none;">
-                        <div class="card-image" :style="{ background: project.bg }">
-                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                    <polyline points="9 22 9 12 15 12 15 22"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-title">{{ project.title }}</div>
-                            <div class="card-author">{{ project.author }}</div>
-                            <div class="card-footer">
-                                <span class="card-price">{{ project.price }}</span>
-                                <span class="card-likes">
-                                    <svg viewBox="0 0 24 24" fill="#e74c3c" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                                    {{ project.likes }}
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- مقاولون مميزون -->
-                <div class="section-header animate-in delay-4">
-                    <span class="section-title">مقاولون مميزون</span>
+                <!-- Latest Works -->
+                <div class="section-header">
+                    <span class="section-title">آخر الأعمال</span>
                     <span class="section-link">عرض الكل</span>
                 </div>
-                <div style="padding:0 16px 16px;" class="animate-in delay-4">
-                    <div v-for="(contractor, index) in contractors" :key="index" class="offer-card" style="margin-bottom:12px;">
-                        <div class="offer-header">
-                            <div class="offer-company">
-                                <div class="offer-logo">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="offer-name">{{ contractor.name }}</div>
-                                    <div class="offer-rating">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#c9a243" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                        {{ contractor.rating }}
+                <div class="works-grid">
+                    <div v-for="(work, i) in latestWorks" :key="i"
+                         class="work-card" @click="openProject(work)">
+                        <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
+                        <div class="work-overlay">
+                            <span class="work-title">{{ work.title }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- padding -->
+                <div style="height: 20px;"></div>
+            </div>
+
+            <!-- Project Detail Modal -->
+            <div v-if="selectedProject" class="project-modal" @click.self="closeModal">
+                <div class="modal-content">
+                    <div style="position:relative;">
+                        <button class="modal-close" @click="closeModal">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                        <div class="modal-slider" @click="openViewer(modalSlide)">
+                            <div class="modal-slider-track" :style="{ transform: `translateX(-${modalSlide * 100}%)` }">
+                                <div v-for="(img, i) in selectedProject.images" :key="i"
+                                     class="modal-slide">
+                                    <div class="modal-slide-img">
+                                        <img :src="img" alt="">
                                     </div>
                                 </div>
                             </div>
-                            <div style="text-align:left;">
-                                <div class="offer-price">{{ contractor.price }}</div>
-                                <div class="offer-duration">{{ contractor.duration }}</div>
+                            <div v-if="selectedProject.images.length > 1" class="modal-slider-dots">
+                                <span v-for="(img, i) in selectedProject.images" :key="i"
+                                      class="dot" :class="{ active: i === modalSlide }"
+                                      @click="modalSlide = i"></span>
                             </div>
                         </div>
-                        <div class="offer-actions">
-                            <a :href="contractor.link" class="btn-primary btn-small" style="text-decoration:none;">عرض الملف</a>
-                            <a href="quotes.html" class="btn-outline btn-small" style="text-decoration:none;">طلب عرض سعر</a>
+                        <div v-if="selectedProject.images.length > 1" class="modal-thumbs">
+                            <div v-for="(img, i) in selectedProject.images" :key="i"
+                                 class="modal-thumb" :class="{ active: i === modalSlide }"
+                                 @click="modalSlide = i">
+                                <img :src="img" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:6px;display:block;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-details">
+                        <h2>{{ selectedProject.title }}</h2>
+                        <div class="modal-company">
+                            <span class="material-symbols-outlined">business</span>
+                            <a v-if="selectedProject.companyLink" :href="selectedProject.companyLink" class="modal-company-link">
+                                <span>{{ selectedProject.company }}</span>
+                                <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+                            </a>
+                            <span v-else>{{ selectedProject.company }}</span>
+                        </div>
+                        <p class="modal-desc">{{ selectedProject.details }}</p>
+                        <div v-if="selectedProject.meta" class="modal-meta">
+                            <div v-for="(item, i) in selectedProject.meta" :key="i" class="modal-meta-item">
+                                <span class="material-symbols-outlined">{{ item.icon }}</span>
+                                <span>{{ item.label }}: {{ item.value }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Full-Screen Image Viewer -->
+            <div v-if="viewerOpen" class="image-viewer" @click.self="closeViewer">
+                <button class="viewer-close" @click="closeViewer">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <button v-if="viewerImages.length > 1" class="viewer-nav viewer-prev" @click="prevViewer">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+                <div class="viewer-image-wrap">
+                    <img :src="viewerImages[viewerIndex]" class="viewer-image" alt="صورة المشروع">
+                </div>
+                <button v-if="viewerImages.length > 1" class="viewer-nav viewer-next" @click="nextViewer">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <div v-if="viewerImages.length > 1" class="viewer-counter">{{ viewerIndex + 1 }} / {{ viewerImages.length }}</div>
             </div>
 
             <div id="bottomNav"></div>
@@ -131,77 +174,257 @@
 
     <script src="js/nav.js"></script>
     <script>
-        document.getElementById('header').innerHTML = renderHeader();
+        document.getElementById('header').innerHTML = renderHeader({ searchVModel: 'searchQuery', searchPlaceholder: 'ابحث عن مشاريع، مقاولين، منتجات...' });
         document.getElementById('bottomNav').innerHTML = renderNav('home');
 
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, onMounted, onUnmounted } = Vue;
 
         createApp({
             setup() {
                 initTheme();
-                const searchQuery = ref('');
-                const activeCategory = ref(0);
 
-                const categories = ref([
-                    { name: 'مقاولات', icon: '🏗️' },
-                    { name: 'ديكور', icon: '🎨' },
-                    { name: 'كهرباء', icon: '🔌' },
-                    { name: 'سباكة', icon: '🚿' },
-                    { name: 'تصميم', icon: '🏠' },
-                    { name: 'بناء', icon: '🧱' }
+                const searchQuery = ref('');
+                const currentSlide = ref(0);
+                const modalSlide = ref(0);
+                const selectedProject = ref(null);
+                const viewerOpen = ref(false);
+                const viewerImages = ref([]);
+                const viewerIndex = ref(0);
+                let slideTimer = null;
+
+                const slides = ref([
+                    {
+                        title: 'ابنِ مستقبلك مع بنيان',
+                        desc: 'منصة متكاملة للبناء والمقاولات ومواد البناء',
+                        bg: 'images/img1.jpg'
+                    },
+                    {
+                        title: 'تصميم داخلي احترافي',
+                        desc: 'حول مساحتك إلى تحفة مع أفضل المصممين',
+                        bg: 'images/img16.jpg'
+                    },
+                    {
+                        title: 'تشطيب بأعلى جودة',
+                        desc: 'نضمن لك تشطيب متقن حسب المواصفات',
+                        bg: 'images/img6.jpg'
+                    },
+                    {
+                        title: 'سوق مواد البناء',
+                        desc: 'أفضل الأسعار من أشهر الموردين',
+                        bg: 'images/img11.jpg'
+                    },
+                    {
+                        title: 'استشارات هندسية',
+                        desc: 'خبراء في التصميم والإشراف على المشاريع',
+                        bg: 'images/img24.jpg'
+                    }
                 ]);
 
-                const banner = ref({
-                    title: 'ابدأ مشروعك الآن',
-                    desc: 'احصل على أفضل عروض الأسعار من المقاولين المحترفين',
-                    btn: 'ابدأ الآن'
+                const sections = ref([
+                    { name: 'بناء منزل', icon: 'home' },
+                    { name: 'تصميم داخلي', icon: 'chair' },
+                    { name: 'تشطيب', icon: 'format_paint' },
+                    { name: 'شراء مواد', icon: 'storefront' },
+                    { name: 'استشارات', icon: 'engineering' }
+                ]);
+
+                const ads = ref([
+                    {
+                        title: 'مجمع النخيل السكني',
+                        company: 'شركة البناء الحديث',
+                        companyLink: 'company.html',
+                        bg: 'images/img1.jpg',
+                        images: [
+                            'images/img1.jpg',
+                            'images/img2.jpg',
+                            'images/img3.jpg',
+                            'images/img4.jpg',
+                            'images/img5.jpg'
+                        ],
+                        details: 'مشروع مجمع سكني متكامل يضم 50 وحدة سكنية بمواصفات عالية الجودة، مع حدائق خاصة ومواقف سيارات ومسابح. تم التنفيذ باستخدام أحدث تقنيات البناء.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'حي النرجس' },
+                            { icon: 'straighten', label: 'المساحة', value: '5000 م²' },
+                            { icon: 'calendar_month', label: 'تاريخ التسليم', value: '2025' }
+                        ]
+                    },
+                    {
+                        title: 'فيلا العندس السكنية',
+                        company: 'مقاولون العرب',
+                        companyLink: 'company.html',
+                        bg: 'images/img6.jpg',
+                        images: [
+                            'images/img6.jpg',
+                            'images/img7.jpg',
+                            'images/img8.jpg',
+                            'images/img9.jpg',
+                            'images/img10.jpg'
+                        ],
+                        details: 'تصميم عصري لفيلا سكنية بمساحة 400 م²، تحتوي على طابقين مع سطح ومسبح خاص. تم استخدام أجود مواد التشطيب.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'الكرادة' },
+                            { icon: 'straighten', label: 'المساحة', value: '400 م²' },
+                            { icon: 'calendar_month', label: 'تاريخ التسليم', value: '2024' }
+                        ]
+                    },
+                    {
+                        title: 'مول بغداد التجاري',
+                        company: 'شركة الإنشاءات الوطنية',
+                        companyLink: 'company.html',
+                        bg: 'images/img11.jpg',
+                        images: [
+                            'images/img11.jpg',
+                            'images/img12.jpg',
+                            'images/img13.jpg',
+                            'images/img14.jpg',
+                            'images/img15.jpg'
+                        ],
+                        details: 'مركز تجاري ضخم يضم أكثر من 100 متجر ومطعم، مع مواقف سيارات تتسع لـ 500 سيارة. تم تنفيذه على مساحة 15000 م².',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'المنصور' },
+                            { icon: 'straighten', label: 'المساحة', value: '15000 م²' },
+                            { icon: 'calendar_month', label: 'تاريخ التسليم', value: '2026' }
+                        ]
+                    }
+                ]);
+
+                const latestWorks = ref([
+                    {
+                        title: 'قصر المنصور السكني',
+                        company: 'شركة البناء الحديث',
+                        companyLink: 'company.html',
+                        bg: 'images/img16.jpg',
+                        images: [
+                            'images/img16.jpg',
+                            'images/img17.jpg',
+                            'images/img18.jpg',
+                            'images/img19.jpg'
+                        ],
+                        details: 'قصر فاخر بمساحة 1000 م² مع تصاميم داخلية مستوحاة من الطراز الأندلسي الحديث.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'المنصور' },
+                            { icon: 'straighten', label: 'المساحة', value: '1000 م²' }
+                        ]
+                    },
+                    {
+                        title: 'مستشفى السلام',
+                        company: 'مقاولون العرب',
+                        companyLink: 'company.html',
+                        bg: 'images/img20.jpg',
+                        images: [
+                            'images/img20.jpg',
+                            'images/img21.jpg',
+                            'images/img22.jpg',
+                            'images/img23.jpg'
+                        ],
+                        details: 'مستشفى بسعة 200 سرير مع أحدث التجهيزات الطبية والمعامل.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'الرصافة' },
+                            { icon: 'straighten', label: 'المساحة', value: '8000 م²' }
+                        ]
+                    },
+                    {
+                        title: 'برج الأعمال',
+                        company: 'شركة الإنشاءات الوطنية',
+                        companyLink: 'company.html',
+                        bg: 'images/img24.jpg',
+                        images: [
+                            'images/img24.jpg',
+                            'images/img25.jpg',
+                            'images/img26.jpg',
+                            'images/img27.jpg'
+                        ],
+                        details: 'برج إداري بارتفاع 20 طابقاً مع واجهة زجاجية عصرية.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'شارع فلسطين' },
+                            { icon: 'straighten', label: 'المساحة', value: '12000 م²' }
+                        ]
+                    },
+                    {
+                        title: 'فلل الربيع',
+                        company: 'شركة البناء الحديث',
+                        companyLink: 'company.html',
+                        bg: 'images/img28.jpg',
+                        images: [
+                            'images/img28.jpg',
+                            'images/img29.jpg',
+                            'images/img30.jpg',
+                            'images/img31.jpg'
+                        ],
+                        details: 'مشروع سكني يضم 30 فيلا مستقلة بتصاميم عصرية وحدائق خاصة.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'اليرموك' },
+                            { icon: 'straighten', label: 'المساحة', value: '3000 م²' }
+                        ]
+                    }
+                ]);
+
+                function startSlideTimer() {
+                    slideTimer = setInterval(() => {
+                        currentSlide.value = (currentSlide.value + 1) % slides.value.length;
+                    }, 2500);
+                }
+
+                function stopSlideTimer() {
+                    if (slideTimer) {
+                        clearInterval(slideTimer);
+                        slideTimer = null;
+                    }
+                }
+
+                function openProject(project) {
+                    stopSlideTimer();
+                    modalSlide.value = 0;
+                    selectedProject.value = project;
+                }
+
+                function closeModal() {
+                    selectedProject.value = null;
+                    startSlideTimer();
+                }
+
+                function openViewer(index) {
+                    if (!selectedProject.value) return;
+                    viewerImages.value = selectedProject.value.images;
+                    viewerIndex.value = index;
+                    viewerOpen.value = true;
+                }
+
+                function closeViewer() {
+                    viewerOpen.value = false;
+                }
+
+                function nextViewer() {
+                    if (viewerIndex.value < viewerImages.value.length - 1) {
+                        viewerIndex.value++;
+                    }
+                }
+
+                function prevViewer() {
+                    if (viewerIndex.value > 0) {
+                        viewerIndex.value--;
+                    }
+                }
+
+                onMounted(() => {
+                    startSlideTimer();
                 });
 
-                const featuredProjects = ref([
-                    {
-                        title: 'فيلا سكنية - حي النرجس',
-                        author: 'محمد أحمد المقاول',
-                        price: '85,000,000 د.ع',
-                        likes: 24,
-                        bg: 'linear-gradient(135deg, #2c5f8a, #1a3a5c)',
-                        link: 'quotes.html'
-                    },
-                    {
-                        title: 'مبنى تجاري - الكرادة',
-                        author: 'شركة البناء الحديث',
-                        price: '150,000,000 د.ع',
-                        likes: 18,
-                        bg: 'linear-gradient(135deg, #3d6b99, #1a3a5c)',
-                        link: 'quotes.html'
-                    }
-                ]);
-
-                const contractors = ref([
-                    {
-                        name: 'شركة البناء الحديث',
-                        rating: '4.8',
-                        price: 'تبدأ من 50,000,000',
-                        duration: 'مدة التنفيذ: 3 شهور',
-                        link: 'company.html'
-                    },
-                    {
-                        name: 'مقاولون العرب',
-                        rating: '4.5',
-                        price: 'تبدأ من 35,000,000',
-                        duration: 'مدة التنفيذ: شهرين',
-                        link: 'company.html'
-                    }
-                ]);
+                onUnmounted(() => {
+                    stopSlideTimer();
+                });
 
                 return {
-                    searchQuery, activeCategory,
-                    categories, banner, featuredProjects, contractors
+                    searchQuery, currentSlide, slides, sections, ads, latestWorks,
+                    selectedProject, modalSlide,
+                    openProject, closeModal,
+                    viewerOpen, viewerImages, viewerIndex,
+                    openViewer, closeViewer, nextViewer, prevViewer
                 };
             }
         }).mount('#app');
     </script>
     <script>
-        // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(() => console.log('SW registered'))
