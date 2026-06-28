@@ -356,7 +356,7 @@ input, textarea, select { font-family: 'Cairo', sans-serif; }
     justify-content: center;
     gap: 2px;
     padding: 8px 10px;
-    color: var(--text-muted);
+    color: var(--text-light);
     text-decoration: none;
     font-size: 11px;
     font-weight: 500;
@@ -373,7 +373,7 @@ input, textarea, select { font-family: 'Cairo', sans-serif; }
 
 .bottom-nav .nav-item.active {
     color: var(--accent-gold);
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(201, 162, 67, 0.1);
 }
 
 .bottom-nav .nav-item.active::after {
@@ -384,13 +384,22 @@ input, textarea, select { font-family: 'Cairo', sans-serif; }
     transform: translateX(-50%);
     width: 20px;
     height: 3px;
-    background: var(--accent-gold);
+    background: #f59e0b;
     border-radius: 2px;
 }
 
 .bottom-nav .nav-item span:last-child {
     font-size: 11px;
     font-weight: 500;
+}
+
+html.light-mode .bottom-nav .nav-item.active {
+    color: var(--accent-gold);
+    background: rgba(44, 95, 138, 0.1);
+}
+
+html.light-mode .bottom-nav .nav-item.active::after {
+    background: #f59e0b;
 }
 
 /* ===== البحث المتحرك (overlay) ===== */
