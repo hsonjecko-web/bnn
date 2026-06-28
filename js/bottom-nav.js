@@ -1,9 +1,9 @@
 function renderNav(activePage) {
     var items = [
         { page: 'home', label: 'الرئيسية', icon: 'home', href: 'home.html' },
-        { page: 'ideas', label: 'أفكار', icon: 'engineering', href: 'ideas.html' },
+        { page: 'ideas', label: 'تنفيذ', icon: 'engineering', href: 'ideas.html' },
         { page: 'market', label: 'سوق البناء', icon: 'shopping_cart', href: 'market.html' },
-        { page: 'execute', label: 'تنفيذ', icon: 'lightbulb', href: 'execute.html' },
+        { page: 'execute', label: 'أفكار', icon: 'lightbulb', href: 'execute.html' },
         { page: 'account', label: 'حسابي', icon: 'person', href: 'account.html' }
     ];
 
