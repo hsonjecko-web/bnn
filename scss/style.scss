@@ -1710,6 +1710,26 @@ html.light-mode .search-panel input {
   to { opacity: 1; }
 }
 
+/* ===== Modal Pull Bar ===== */
+.modal-pull-bar {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 4px 0;
+}
+.modal-pull-bar span {
+  display: block;
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+html.light-mode .modal-pull-bar span {
+  background: rgba(0, 0, 0, 0.15);
+}
+
 .project-modal .modal-content {
   background: var(--primary-blue);
   border-radius: 20px 20px 0 0;
@@ -1719,6 +1739,7 @@ html.light-mode .search-panel input {
   max-height: 85vh;
   overflow-y: auto;
   animation: slideUp 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @keyframes slideUp {
@@ -1742,10 +1763,67 @@ html.light-mode .search-panel input {
   cursor: pointer;
   z-index: 5;
   backdrop-filter: blur(4px);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+.project-modal .modal-close:hover {
+  background: rgba(201, 162, 67, 0.85);
+  transform: scale(1.1);
+  box-shadow: 0 4px 20px rgba(201, 162, 67, 0.4);
 }
 
 .project-modal .modal-close .material-symbols-outlined {
   font-size: 22px;
+  position: absolute;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-modal .modal-close .close-icon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.project-modal .modal-close .arrow-icon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+.project-modal .modal-close:hover .close-icon {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+.project-modal .modal-close:hover .arrow-icon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.project-modal .modal-close.is-closing {
+  background: rgba(201, 162, 67, 0.9);
+  transform: scale(1.15);
+  box-shadow: 0 4px 20px rgba(201, 162, 67, 0.5);
+  pointer-events: none;
+}
+
+.project-modal .modal-close.is-closing .close-icon {
+  opacity: 0;
+  transform: rotate(180deg) scale(0.3);
+}
+
+.project-modal .modal-close.is-closing .arrow-icon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+html.light-mode .project-modal .modal-close:hover {
+  background: rgba(44, 95, 138, 0.85);
+  box-shadow: 0 4px 20px rgba(44, 95, 138, 0.4);
+}
+
+html.light-mode .project-modal .modal-close.is-closing {
+  background: rgba(44, 95, 138, 0.9);
+  box-shadow: 0 4px 20px rgba(44, 95, 138, 0.5);
 }
 
 .project-modal .modal-slider {
