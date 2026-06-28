@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>CSS Test</title>
+    <style>
+        body { padding: 20px; }
+        .test-box {
+            background: var(--primary-dark);
+            color: var(--text-white);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .test-gold {
+            background: var(--accent-gold);
+            color: var(--text-on-accent);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .test-card {
+            background: var(--bg-card);
+            color: var(--text-white);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-light);
+        }
+        .btn-test {
+            display: inline-block;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-hover) 100%);
+            border: none;
+            border-radius: 12px;
+            color: var(--text-on-accent);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-box">--primary-dark (ليلي: أزرق غامق | نهاري: أبيض)</div>
+    <div class="test-gold">--accent-gold (ليلي: ذهبي | نهاري: أزرق)</div>
+    <div class="test-card">--bg-card (ليلي: شفاف غامق | نهاري: أزرق فاتح)</div>
+    <p style="color: var(--text-light);">--text-light (ليلي: رمادي | نهاري: أزرق غامق)</p>
+    <button class="btn-test">زر رئيسي (ليلي: ذهبي | نهاري: أزرق)</button>
+    <button onclick="document.documentElement.classList.toggle('light-mode')" style="display:block;margin-top:20px;padding:10px 20px;">Toggle Light Mode</button>
+    <script>
+        var saved = localStorage.getItem('bunean-theme');
+        var prefers = window.matchMedia('(prefers-color-scheme: light)').matches;
+        if (saved === 'light' || (!saved && prefers)) {
+            document.documentElement.classList.add('light-mode');
+        }
+    </script>
+</body>
+</html>

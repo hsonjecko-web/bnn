@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b1a2e">
+    <title>بنيان - الرئيسية</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        (function() {
+            var saved = localStorage.getItem('bunean-theme');
+            var prefers = window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (saved === 'light' || (!saved && prefers)) {
+                document.documentElement.classList.add('light-mode');
+            }
+        })();
+    </script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/bottom-nav.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="app-container">
+            <div id="header"></div>
+
+            <div class="page-content">
+                <!-- البحث -->
+                <div style="padding:12px 16px;">
+                    <div class="search-bar" style="margin:0;">
+                        <input type="text" v-model="searchQuery" placeholder="ابحث عن مشاريع، مقاولين، منتجات...">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- التصنيفات -->
+                <div class="categories-scroll animate-in delay-1">
+                    <div v-for="(cat, index) in categories" :key="index"
+                         class="category-item"
+                         :class="{ active: activeCategory === index }"
+                         @click="activeCategory = index">
+                        <div class="cat-icon">{{ cat.icon }}</div>
+                        <span class="cat-label">{{ cat.name }}</span>
+                    </div>
+                </div>
+
+                <!-- شريط إعلاني -->
+                <div class="banner animate-in delay-2">
+                    <div class="banner-title">{{ banner.title }}</div>
+                    <div class="banner-desc">{{ banner.desc }}</div>
+                    <button class="banner-btn">{{ banner.btn }}</button>
+                </div>
+
+                <!-- مشاريع مميزة -->
+                <div class="section-header animate-in delay-3">
+                    <span class="section-title">مشاريع مميزة</span>
+                    <a href="ideas.html" class="section-link">عرض الكل</a>
+                </div>
+                <div class="projects-grid animate-in delay-3">
+                    <a v-for="(project, index) in featuredProjects" :key="index"
+                       :href="project.link" class="project-card" style="text-decoration:none;">
+                        <div class="card-image" :style="{ background: project.bg }">
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">{{ project.title }}</div>
+                            <div class="card-author">{{ project.author }}</div>
+                            <div class="card-footer">
+                                <span class="card-price">{{ project.price }}</span>
+                                <span class="card-likes">
+                                    <svg viewBox="0 0 24 24" fill="#e74c3c" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                    {{ project.likes }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- مقاولون مميزون -->
+                <div class="section-header animate-in delay-4">
+                    <span class="section-title">مقاولون مميزون</span>
+                    <span class="section-link">عرض الكل</span>
+                </div>
+                <div style="padding:0 16px 16px;" class="animate-in delay-4">
+                    <div v-for="(contractor, index) in contractors" :key="index" class="offer-card" style="margin-bottom:12px;">
+                        <div class="offer-header">
+                            <div class="offer-company">
+                                <div class="offer-logo">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="offer-name">{{ contractor.name }}</div>
+                                    <div class="offer-rating">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#c9a243" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        {{ contractor.rating }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align:left;">
+                                <div class="offer-price">{{ contractor.price }}</div>
+                                <div class="offer-duration">{{ contractor.duration }}</div>
+                            </div>
+                        </div>
+                        <div class="offer-actions">
+                            <a :href="contractor.link" class="btn-primary btn-small" style="text-decoration:none;">عرض الملف</a>
+                            <a href="quotes.html" class="btn-outline btn-small" style="text-decoration:none;">طلب عرض سعر</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="bottomNav"></div>
+        </div>
+    </div>
+
+    <script src="js/nav.js"></script>
+    <script>
+        document.getElementById('header').innerHTML = renderHeader();
+        document.getElementById('bottomNav').innerHTML = renderNav('home');
+
+        const { createApp, ref, computed } = Vue;
+
+        createApp({
+            setup() {
+                initTheme();
+                const searchQuery = ref('');
+                const activeCategory = ref(0);
+
+                const categories = ref([
+                    { name: 'مقاولات', icon: '🏗️' },
+                    { name: 'ديكور', icon: '🎨' },
+                    { name: 'كهرباء', icon: '🔌' },
+                    { name: 'سباكة', icon: '🚿' },
+                    { name: 'تصميم', icon: '🏠' },
+                    { name: 'بناء', icon: '🧱' }
+                ]);
+
+                const banner = ref({
+                    title: 'ابدأ مشروعك الآن',
+                    desc: 'احصل على أفضل عروض الأسعار من المقاولين المحترفين',
+                    btn: 'ابدأ الآن'
+                });
+
+                const featuredProjects = ref([
+                    {
+                        title: 'فيلا سكنية - حي النرجس',
+                        author: 'محمد أحمد المقاول',
+                        price: '85,000,000 د.ع',
+                        likes: 24,
+                        bg: 'linear-gradient(135deg, #2c5f8a, #1a3a5c)',
+                        link: 'quotes.html'
+                    },
+                    {
+                        title: 'مبنى تجاري - الكرادة',
+                        author: 'شركة البناء الحديث',
+                        price: '150,000,000 د.ع',
+                        likes: 18,
+                        bg: 'linear-gradient(135deg, #3d6b99, #1a3a5c)',
+                        link: 'quotes.html'
+                    }
+                ]);
+
+                const contractors = ref([
+                    {
+                        name: 'شركة البناء الحديث',
+                        rating: '4.8',
+                        price: 'تبدأ من 50,000,000',
+                        duration: 'مدة التنفيذ: 3 شهور',
+                        link: 'company.html'
+                    },
+                    {
+                        name: 'مقاولون العرب',
+                        rating: '4.5',
+                        price: 'تبدأ من 35,000,000',
+                        duration: 'مدة التنفيذ: شهرين',
+                        link: 'company.html'
+                    }
+                ]);
+
+                return {
+                    searchQuery, activeCategory,
+                    categories, banner, featuredProjects, contractors
+                };
+            }
+        }).mount('#app');
+    </script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>

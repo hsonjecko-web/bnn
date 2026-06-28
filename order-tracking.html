@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b1a2e">
+    <title>بنيان - تتبع الطلب</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        (function() {
+            var saved = localStorage.getItem('bunean-theme');
+            var prefers = window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (saved === 'light' || (!saved && prefers)) {
+                document.documentElement.classList.add('light-mode');
+            }
+        })();
+    </script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/bottom-nav.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="app-container">
+            <div id="header"></div>
+
+            <div class="page-content">
+                <!-- رأس الطلب -->
+                <div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.08);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                        <h1 style="font-size:20px;font-weight:800;color:#fff;">طلب #{{ order.id }}</h1>
+                        <span class="status-badge" :class="order.statusClass">{{ order.status }}</span>
+                    </div>
+                    <p style="font-size:13px;color:#8a9bb0;">{{ order.title }}</p>
+                </div>
+
+                <!-- خطوات التتبع -->
+                <div class="order-timeline">
+                    <div v-for="(step, index) in steps" :key="index" class="timeline-step">
+                        <div class="step-icon" :class="step.status">
+                            <svg v-if="step.status === 'completed'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            <svg v-else-if="step.status === 'active'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                            </svg>
+                            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="16 12 12 8 8 12"/>
+                                <line x1="12" y1="16" x2="12" y2="8"/>
+                            </svg>
+                        </div>
+                        <span class="step-label" :class="{ active: step.status !== 'pending' }">{{ step.label }}</span>
+                    </div>
+                </div>
+
+                <!-- معلومات الطلب -->
+                <div class="order-info">
+                    <div class="order-info-card">
+                        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">تفاصيل الطلب</h3>
+                        <div v-for="(detail, index) in order.details" :key="index" class="order-info-row">
+                            <span class="order-info-label">{{ detail.label }}</span>
+                            <span class="order-info-value" :style="{ color: detail.color || '#fff' }">{{ detail.value }}</span>
+                        </div>
+                    </div>
+
+                    <!-- التحديثات -->
+                    <div class="order-info-card">
+                        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">آخر التحديثات</h3>
+                        <div v-for="(update, index) in order.updates" :key="index"
+                             style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                                <span style="font-size:13px;font-weight:600;color:#fff;">{{ update.title }}</span>
+                                <span style="font-size:11px;color:#5a7088;">{{ update.time }}</span>
+                            </div>
+                            <p style="font-size:12px;color:#8a9bb0;">{{ update.desc }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="bottomNav"></div>
+        </div>
+    </div>
+
+    <script src="js/nav.js"></script>
+    <script>
+        document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
+        document.getElementById('bottomNav').innerHTML = renderNav('account');
+
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                initTheme();
+                const steps = ref([
+                    { label: 'تأكيد الطلب', status: 'completed' },
+                    { label: 'بدء التنفيذ', status: 'completed' },
+                    { label: 'قيد التنفيذ', status: 'active' },
+                    { label: 'التسليم', status: 'pending' }
+                ]);
+
+                const order = ref({
+                    id: '12345',
+                    title: 'فيلا سكنية - حي النرجس',
+                    status: 'قيد التنفيذ',
+                    statusClass: 'active',
+                    details: [
+                        { label: 'المقاول', value: 'شركة البناء الحديث' },
+                        { label: 'نوع الخدمة', value: 'بناء فيلا سكنية' },
+                        { label: 'الميزانية', value: '82,000,000 د.ع', color: '#c9a243' },
+                        { label: 'مدة التنفيذ', value: '3 شهور' },
+                        { label: 'تاريخ البدء', value: '2026/06/15' },
+                        { label: 'تاريخ الانتهاء المتوقع', value: '2026/09/15' }
+                    ],
+                    updates: [
+                        { title: 'تم الانتهاء من الأساسات', time: 'اليوم', desc: 'تم الانتهاء من أعمال الأساسات بنجاح وبدء أعمال الهيكل الخرساني' },
+                        { title: 'بدء أعمال الحفر', time: 'قبل 3 أيام', desc: 'تم البدء في أعمال حفر الأساسات وتجهيز الموقع' },
+                        { title: 'تأكيد الطلب', time: 'قبل أسبوع', desc: 'تم تأكيد الطلب والاتفاق على الشروط والميزانية' }
+                    ]
+                });
+
+                return { steps, order };
+            }
+        }).mount('#app');
+    </script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>

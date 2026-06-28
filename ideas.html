@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b1a2e">
+    <title>بنيان - أفكار</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        (function() {
+            var saved = localStorage.getItem('bunean-theme');
+            var prefers = window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (saved === 'light' || (!saved && prefers)) {
+                document.documentElement.classList.add('light-mode');
+            }
+        })();
+    </script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/bottom-nav.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="app-container">
+            <div id="header"></div>
+
+            <div class="page-content">
+                <!-- أزرار التصفية -->
+                <div class="filters-row">
+                    <button v-for="(filter, index) in filters" :key="index"
+                            class="filter-btn"
+                            :class="{ active: activeFilter === index }"
+                            @click="activeFilter = index">
+                        {{ filter }}
+                    </button>
+                </div>
+
+                <!-- قائمة المشاريع -->
+                <div style="padding:0 16px;">
+                    <a v-for="(project, index) in filteredProjects" :key="index"
+                       :href="project.link" class="project-card" style="margin-bottom:12px;text-decoration:none;display:block;">
+                        <div class="card-image" :style="{ background: project.bg }">
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">{{ project.title }}</div>
+                            <div class="card-author">{{ project.author }}</div>
+                            <div class="card-footer">
+                                <span class="card-price">{{ project.price }}</span>
+                                <span class="card-likes">
+                                    <svg viewBox="0 0 24 24" fill="#e74c3c" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                    {{ project.likes }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div id="bottomNav"></div>
+        </div>
+    </div>
+
+    <script src="js/nav.js"></script>
+    <script>
+        document.getElementById('header').innerHTML = renderHeader({ showBack: false, searchVModel: 'searchQuery', searchPlaceholder: 'ابحث عن أفكار ومشاريع...' });
+        document.getElementById('bottomNav').innerHTML = renderNav('ideas');
+
+        const { createApp, ref, computed } = Vue;
+
+        createApp({
+            setup() {
+                initTheme();
+                const searchQuery = ref('');
+                const activeFilter = ref(0);
+
+                const filters = ref(['الكل', 'فيلا', 'مبنى تجاري', 'داخلي', 'خارجي']);
+
+                const projects = ref([
+                    {
+                        title: 'فيلا سكنية فاخرة - حي النرجس',
+                        author: 'محمد أحمد المقاول',
+                        price: '85,000,000 د.ع',
+                        likes: 24,
+                        type: 'فيلا',
+                        bg: 'linear-gradient(135deg, #2c5f8a, #1a3a5c)',
+                        link: 'quotes.html'
+                    },
+                    {
+                        title: 'مبنى تجاري - سوق الشورجة',
+                        author: 'شركة البناء الحديث',
+                        price: '150,000,000 د.ع',
+                        likes: 18,
+                        type: 'مبنى تجاري',
+                        bg: 'linear-gradient(135deg, #3d6b99, #1a3a5c)',
+                        link: 'quotes.html'
+                    },
+                    {
+                        title: 'تصميم داخلي - شقة سكنية',
+                        author: 'تصميمات الإبداع',
+                        price: '25,000,000 د.ع',
+                        likes: 32,
+                        type: 'داخلي',
+                        bg: 'linear-gradient(135deg, #4a7fad, #1a3a5c)',
+                        link: 'quotes.html'
+                    },
+                    {
+                        title: 'حديقة خارجية - فيلا الزهراء',
+                        author: 'لمسات الطبيعة',
+                        price: '15,000,000 د.ع',
+                        likes: 15,
+                        type: 'خارجي',
+                        bg: 'linear-gradient(135deg, #5a94bd, #1a3a5c)',
+                        link: 'quotes.html'
+                    }
+                ]);
+
+                const filteredProjects = computed(() => {
+                    const filterName = filters.value[activeFilter.value];
+                    if (filterName === 'الكل') return projects.value;
+                    return projects.value.filter(p => p.type === filterName);
+                });
+
+                return { searchQuery, activeFilter, filters, filteredProjects };
+            }
+        }).mount('#app');
+    </script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>

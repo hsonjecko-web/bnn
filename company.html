@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b1a2e">
+    <title>بنيان - شركة مقاولات</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        (function() {
+            var saved = localStorage.getItem('bunean-theme');
+            var prefers = window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (saved === 'light' || (!saved && prefers)) {
+                document.documentElement.classList.add('light-mode');
+            }
+        })();
+    </script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/bottom-nav.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="app-container">
+            <div id="header"></div>
+            <div class="page-content" style="padding-bottom:0;">
+                <!-- صورة الغلاف -->
+                <div style="position:relative;">
+                    <div class="company-cover"></div>
+                    <div class="company-logo">
+                        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e4068,#0b1a2e);display:flex;align-items:center;justify-content:center;">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- معلومات الشركة -->
+                <div class="company-info">
+                    <div class="company-name">
+                        {{ company.name }}
+                        <svg class="verified" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                    <div class="company-type">{{ company.type }} - {{ company.city }}</div>
+                </div>
+
+                <!-- الإحصائيات -->
+                <div class="stats-row" style="padding:0 16px 16px;">
+                    <div class="stat-box">
+                        <div class="stat-number">{{ company.projects }}</div>
+                        <div class="stat-label">مشروع منجز</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">{{ company.rating }}</div>
+                        <div class="stat-label">التقييم</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">{{ company.experience }}</div>
+                        <div class="stat-label">سنة خبرة</div>
+                    </div>
+                </div>
+
+                <!-- التبويبات -->
+                <div class="company-tabs">
+                    <button v-for="(tab, index) in tabs" :key="index"
+                            class="company-tab"
+                            :class="{ active: activeTab === index }"
+                            @click="activeTab = index">
+                        {{ tab }}
+                    </button>
+                </div>
+
+                <!-- محتوى التبويبات -->
+                <div style="padding:16px;">
+                    <!-- نبذة عنا -->
+                    <div v-if="activeTab === 0">
+                        <p style="font-size:14px;color:#8a9bb0;line-height:1.8;margin-bottom:16px;">
+                            {{ company.about }}
+                        </p>
+
+                        <!-- الخدمات -->
+                        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">خدماتنا</h3>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+                            <span v-for="(service, index) in company.services" :key="index"
+                                  style="padding:6px 14px;background:rgba(201,162,67,0.1);border:1px solid rgba(201,162,67,0.2);border-radius:50px;font-size:12px;color:#c9a243;">
+                                {{ service }}
+                            </span>
+                        </div>
+
+                        <!-- معلومات التواصل -->
+                        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">تواصل معنا</h3>
+                        <div class="order-info-card">
+                            <div class="order-info-row">
+                                <span class="order-info-label">الهاتف</span>
+                                <span class="order-info-value" style="direction:ltr;">{{ company.phone }}</span>
+                            </div>
+                            <div class="order-info-row">
+                                <span class="order-info-label">البريد الإلكتروني</span>
+                                <span class="order-info-value">{{ company.email }}</span>
+                            </div>
+                            <div class="order-info-row">
+                                <span class="order-info-label">العنوان</span>
+                                <span class="order-info-value">{{ company.address }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- المشاريع -->
+                    <div v-if="activeTab === 1">
+                        <div v-for="(project, index) in company.projectsList" :key="index" class="project-card" style="margin-bottom:12px;">
+                            <div class="card-image" :style="{ background: project.bg }">
+                                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                        <polyline points="9 22 9 12 15 12 15 22"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-title">{{ project.name }}</div>
+                                <div class="card-author">{{ project.year }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- التقييمات -->
+                    <div v-if="activeTab === 2">
+                        <div v-for="(review, index) in company.reviews" :key="index"
+                             style="background:rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:12px;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <div style="width:36px;height:36px;background:#1e4068;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#c9a243;font-size:14px;font-weight:700;">
+                                        {{ review.initial }}
+                                    </div>
+                                    <div>
+                                        <div style="font-size:14px;font-weight:600;color:#fff;">{{ review.name }}</div>
+                                        <div style="font-size:11px;color:#5a7088;">{{ review.time }}</div>
+                                    </div>
+                                </div>
+                                <div style="display:flex;gap:2px;">
+                                    <svg v-for="s in 5" :key="s" width="14" height="14" viewBox="0 0 24 24"
+                                         :fill="s <= review.rating ? '#c9a243' : 'rgba(255,255,255,0.15)'">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <p style="font-size:13px;color:#8a9bb0;line-height:1.6;">{{ review.text }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- أزرار الإجراءات -->
+                <div style="padding:16px;display:flex;gap:12px;padding-bottom:30px;">
+                    <a href="service-request.html" class="btn-primary" style="text-decoration:none;flex:1;">طلب خدمة</a>
+                    <a href="quotes.html" class="btn-outline" style="text-decoration:none;flex:1;color:#c9a243;">عرض الأسعار</a>
+                </div>
+            </div>
+
+            <div id="bottomNav"></div>
+        </div>
+    </div>
+
+    <script src="js/nav.js"></script>
+    <script>
+        document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
+        document.getElementById('bottomNav').innerHTML = renderNav('home');
+
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                initTheme();
+                const activeTab = ref(0);
+                const tabs = ref(['نبذة عنا', 'المشاريع', 'التقييمات']);
+
+                const company = ref({
+                    name: 'شركة البناء الحديث',
+                    type: 'مقاولات عامة',
+                    city: 'بغداد',
+                    projects: 150,
+                    rating: 4.8,
+                    experience: 12,
+                    about: 'شركة البناء الحديث هي إحدى الشركات الرائدة في مجال المقاولات العامة في العراق. تأسست الشركة عام 2014 وحققت منذ ذلك الحين سجلاً حافلاً من المشاريع الناجحة. نقدم خدمات متكاملة تشمل التصميم والبناء والتشطيبات الداخلية والخارجية مع الحفاظ على أعلى معايير الجودة والسلامة.',
+                    services: ['بناء فلل', 'مباني تجارية', 'تشطيبات', 'ديكور داخلي'],
+                    phone: '+964 770 123 4567',
+                    email: 'info@albinaa.com',
+                    address: 'بغداد - الكرادة',
+                    projectsList: [
+                        { name: 'فيلا النرجس - تم الإنجاز', year: '2024', bg: 'linear-gradient(135deg, #2c5f8a, #1a3a5c)' },
+                        { name: 'مبنى الكرادة التجاري - تم الإنجاز', year: '2023', bg: 'linear-gradient(135deg, #3d6b99, #1a3a5c)' }
+                    ],
+                    reviews: [
+                        { name: 'أحمد محمد', initial: 'أ', time: 'قبل أسبوع', rating: 5, text: 'شركة ممتازة ومحترفة. أنجزوا مشروعي في الوقت المحدد وبجودة عالية. أنصح بالتعامل معهم.' },
+                        { name: 'خالد العلي', initial: 'خ', time: 'قبل شهر', rating: 4, text: 'عمل جيد لكن التأخير قليلاً في موعد التسليم. بشكل عام راضي عن النتيجة النهائية.' }
+                    ]
+                });
+
+                return { activeTab, tabs, company };
+            }
+        }).mount('#app');
+    </script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>
