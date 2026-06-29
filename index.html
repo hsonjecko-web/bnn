@@ -65,39 +65,6 @@
             overflow: hidden;
         }
 
-        /* Language Selector */
-        .language-selector {
-            position: fixed;
-            top: calc(12px + env(safe-area-inset-top, 0px));
-            left: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: #c9a243;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 100;
-            padding: 8px 12px;
-            background: linear-gradient(180deg, #1a3a5c 0%, transparent 100%);
-            border-radius: 0 0 12px 12px;
-        }
-
-        .lang-chevron {
-            width: 8px;
-            height: 8px;
-            margin-top: 2px;
-        }
-
-        .lang-globe {
-            width: 18px;
-            height: 18px;
-        }
-
-        .lang-code {
-            font-size: 13px;
-            font-weight: 600;
-        }
 
         /* Main Content */
         .main-content {
@@ -571,19 +538,6 @@
     </div>
 
     <div id="app">
-            <!-- ===== محدد اللغة ===== -->
-        <div class="language-selector" @click="toggleLanguage">
-            <svg class="lang-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="6 9 12 15 18 9"/>
-            </svg>
-            <span class="lang-code">{{ currentLang }}</span>
-            <svg class="lang-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="2" y1="12" x2="22" y2="12"/>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-            </svg>
-        </div>
-
         <div class="main-content">
             <!-- Logo -->
             <div class="logo-section animate-in animate-delay-1">
@@ -723,22 +677,10 @@
                 const isLoading = ref(false);
                 const errorMsg = ref('');
                 const successMsg = ref('');
-                const lang = ref('ar');
-                const currentLang = ref('ar');
                 const showForgotModal = ref(false);
                 const resetEmail = ref('');
                 const usernameInput = ref(null);
                 const passwordInput = ref(null);
-
-                const toggleLanguage = () => {
-                    if (lang.value === 'ar') {
-                        lang.value = 'en';
-                        currentLang.value = 'en';
-                    } else {
-                        lang.value = 'ar';
-                        currentLang.value = 'ar';
-                    }
-                };
 
                 const focusPassword = () => {
                     passwordInput.value?.focus();
@@ -792,10 +734,10 @@
 
                 return {
                     username, password, showPassword, isLoading,
-                    errorMsg, successMsg, lang, currentLang,
+                    errorMsg, successMsg,
                     showForgotModal, resetEmail,
                     usernameInput, passwordInput,
-                    toggleLanguage, focusPassword,
+                    focusPassword,
                     handleLogin, handleGuest, handleRegister, handleResetPassword
                 };
             }
