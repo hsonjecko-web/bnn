@@ -2231,7 +2231,7 @@ html.light-mode .project-modal .modal-close {
 /* Light mode overrides */
 .light-mode .filter-select { background: var(--bg-input); }
 .light-mode .filter-options { background: #fff; border-color: rgba(0,0,0,0.12); }
-.light-mode .filter-option { color: var(--primary-dark); border-color: rgba(0,0,0,0.06); }
+.light-mode .filter-option { color: var(--text-white); border-color: rgba(0,0,0,0.06); }
 .light-mode .filter-option:active { background: rgba(0,0,0,0.04); }
 .exit-toast {
   position: fixed;
