@@ -41,12 +41,8 @@
                 <!-- Categories Grid -->
                 <div v-if="!activeCategory && !selectedCompany" class="exec-categories">
                     <div v-for="(cat, i) in categories" :key="i" class="exec-cat-card" @click="selectCategory(cat)">
-                        <div class="exec-cat-slider">
-                            <div class="exec-cat-track" :style="{ transform: 'translateX(-' + (cat.slide * 100) + '%)' }">
-                                <div v-for="(imgSrc, j) in cat.images" :key="j" class="exec-cat-slide">
-                                    <img :src="imgSrc" alt="">
-                                </div>
-                            </div>
+                        <div class="exec-cat-img">
+                            <img :src="cat.cover" alt="">
                             <div class="exec-cat-overlay"></div>
                         </div>
                         <div class="exec-cat-info">
@@ -313,15 +309,9 @@
             };
         }
 
-        function makeCatImages(base) {
-            var result = [];
-            for (var j = 0; j < 4; j++) result.push(img(((base + j * 7) % 31) + 1));
-            return result;
-        }
-
         var categoriesData = [
             {
-                name: 'بناء', icon: 'foundation', images: makeCatImages(16),
+                name: 'بناء', icon: 'foundation', cover: img(16),
                 companies: [
                     makeCompany('شركة البناء الحديث', 3, 16, { about: 'شركة رائدة في مجال البناء السكني والتجاري، تأسست عام 2005، متخصصة في بناء الفلل والمجمعات السكنية.', specs: ['بناء سكني وتجاري', 'خرسانة مسلحة', 'هياكل حديدية'], rating: 5, years: 18, workers: 200, engineers: 35, done: 120, completed: 100 }),
                     makeCompany('مقاولون العرب', 5, 11, { about: 'من كبرى شركات المقاولات في العراق، نقدم خدمات البناء والتشييد بأعلى المواصفات.', specs: ['بناء عام', 'هندسة مدنية', 'بنية تحتية'], rating: 4, years: 25, workers: 350, engineers: 50, done: 200, completed: 180 }),
@@ -331,7 +321,7 @@
                 ]
             },
             {
-                name: 'تشطيبات', icon: 'format_paint', images: makeCatImages(1),
+                name: 'تشطيبات', icon: 'format_paint', cover: img(1),
                 companies: [
                     makeCompany('شركة التشطيب الذهبي', 13, 1, { about: 'متخصصون في التشطيبات الداخلية والخارجية بأعلى جودة.', specs: ['تشطيبات داخلية', 'تشطيبات خارجية', 'ديكور'], rating: 5, years: 10, workers: 60, engineers: 10, done: 150, completed: 140 }),
                     makeCompany('لمسة الجمال', 15, 23, { about: 'شركة متخصصة في التشطيبات الفاخرة والتصميم الداخلي.', specs: ['جبس بورد', 'سيراميك', 'باركيه'], rating: 4, years: 8, workers: 40, engineers: 8, done: 90, completed: 85 }),
@@ -340,7 +330,7 @@
                 ]
             },
             {
-                name: 'كهرباء', icon: 'bolt', images: makeCatImages(24),
+                name: 'كهرباء', icon: 'bolt', cover: img(24),
                 companies: [
                     makeCompany('شركة الكهرباء الحديثة', 21, 24, { about: 'متخصصون في التأسيسات الكهربائية وأنظمة الطاقة.', specs: ['تأسيس كهرباء', 'أنظمة إنذار', 'كاميرات مراقبة'], rating: 4, years: 14, workers: 45, engineers: 12, done: 200, completed: 190 }),
                     makeCompany('النور للكهرباء', 23, 28, { about: 'حلول كهربائية متكاملة للمنازل والمنشآت التجارية.', rating: 5, years: 20, workers: 70, engineers: 20, done: 300, completed: 280 }),
@@ -348,7 +338,7 @@
                 ]
             },
             {
-                name: 'سباكة', icon: 'plumbing', images: makeCatImages(20),
+                name: 'سباكة', icon: 'plumbing', cover: img(20),
                 companies: [
                     makeCompany('شركة السباكة المحترفة', 27, 20, { about: 'خدمات سباكة متكاملة من التأسيس إلى الصيانة.', specs: ['تأسيس سباكة', 'تمديدات مياه', 'صرف صحي'], rating: 4, years: 9, workers: 35, engineers: 7, done: 180, completed: 170 }),
                     makeCompany('المياه الجوفية', 29, 6, { about: 'متخصصون في أنظمة المياه والسباكة السكنية والتجارية.' }),
@@ -356,7 +346,7 @@
                 ]
             },
             {
-                name: 'دهانات', icon: 'palette', images: makeCatImages(11),
+                name: 'دهانات', icon: 'palette', cover: img(11),
                 companies: [
                     makeCompany('شركة الألوان المتميزة', 2, 11, { about: 'دهانات داخلية وخارجية بأحدث التصاميم والألوان.', specs: ['دهانات داخلية', 'دهانات خارجية', 'دهانات ديكورية'], rating: 5, years: 7, workers: 30, engineers: 5, done: 100, completed: 95 }),
                     makeCompany('فن الدهان', 4, 5, { about: 'فنون الدهانات العصرية والكلاسيكية.', rating: 4 }),
@@ -381,10 +371,8 @@
                 var viewerIndex = ref(0);
                 var modalPullY = ref(0);
                 var modalClosing = ref(false);
-                var workSlide = ref(0);
                 var coverSlide = ref(0);
                 var showAllProjects = ref(false);
-                var catTimers = {};
                 var coverTimer = null;
 
                 var visibleProjects = computed(function() {
@@ -468,26 +456,6 @@
 
                 function closeViewer() { viewerOpen.value = false; }
 
-                function startCatTimers() {
-                    for (var i = 0; i < categories.value.length; i++) {
-                        (function(idx) {
-                            catTimers[idx] = setInterval(function() {
-                                var cat = categories.value[idx];
-                                if (cat && cat.images && cat.images.length > 1) {
-                                    cat.slide = ((cat.slide || 0) + 1) % cat.images.length;
-                                }
-                            }, 3000);
-                        })(i);
-                    }
-                }
-
-                function stopCatTimers() {
-                    for (var k in catTimers) {
-                        clearInterval(catTimers[k]);
-                        delete catTimers[k];
-                    }
-                }
-
                 function startCoverTimer() {
                     stopCoverTimer();
                     if (!selectedCompany.value) return;
@@ -510,12 +478,10 @@
                 }
 
                 onMounted(function() {
-                    startCatTimers();
                     window.addEventListener('popstate', handlePopState);
                 });
 
                 onUnmounted(function() {
-                    stopCatTimers();
                     stopCoverTimer();
                     window.removeEventListener('popstate', handlePopState);
                 });
@@ -525,7 +491,7 @@
                     selectCategory, selectCompany, openProject, closeModal,
                     viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
-                    workSlide, coverSlide, visibleProjects, openProjectGallery, showAllProjects,
+                    coverSlide, visibleProjects, openProjectGallery, showAllProjects,
                     startCoverTimer, stopCoverTimer
                 };
             }
