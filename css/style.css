@@ -287,8 +287,8 @@ input, textarea, select {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   color: var(--text-white);
@@ -315,8 +315,8 @@ input, textarea, select {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
   background: transparent;
   border: none;
@@ -452,7 +452,7 @@ html.light-mode .bottom-nav .nav-item.active::after {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 70px;
+  padding-top: calc(70px + env(safe-area-inset-top, 0px));
   background: rgba(0, 0, 0, 0.45);
   opacity: 0;
   visibility: hidden;
@@ -1198,8 +1198,8 @@ html.light-mode .search-panel input {
 }
 
 .product-card .product-cart-btn {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1324,8 +1324,8 @@ html.light-mode .search-panel input {
 }
 
 .qty-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1732,6 +1732,7 @@ html.light-mode .search-panel input {
   justify-content: space-around;
   padding: 16px;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .home-section-item {
@@ -1739,7 +1740,7 @@ html.light-mode .search-panel input {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  min-width: 68px;
+  min-width: 60px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -2367,6 +2368,12 @@ html.light-mode .project-modal .modal-close {
     font-size: 12px;
     padding: 8px 8px;
   }
+  .exec-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .exec-cat-info span:last-child {
+    font-size: 13px;
+  }
 }
 .filter-group {
   margin-bottom: 6px;
@@ -2833,6 +2840,16 @@ html.light-mode .ideas-hero h1 {
   color: var(--text-white);
 }
 
+html.light-mode .ideas-filter-btn {
+  background: #3a6a95;
+  color: #ffffff;
+}
+
+html.light-mode .ideas-show-all-btn {
+  border-color: #3a6a95;
+  color: #3a6a95;
+}
+
 .ideas-categories {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -3143,7 +3160,7 @@ html.light-mode .ideas-projects-header h2 {
 
 .exec-categories {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   padding: 0 16px;
 }
@@ -3208,8 +3225,8 @@ html.light-mode .ideas-projects-header h2 {
 }
 
 .exec-back {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--bg-card-light);
   border: 1px solid var(--border-input);
@@ -3704,6 +3721,1205 @@ html.light-mode .ideas-projects-header h2 {
   }
   .idea-project-info h3 {
     font-size: 12px;
+  }
+}
+
+/* ===== Exec Page Slider ===== */
+.exec-slider {
+  position: relative;
+  margin: 12px 16px 0;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 200px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.exec-slider-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.exec-slider-slide {
+  min-width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.exec-slider-img-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.exec-slider-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.exec-slider-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.exec-slider-content {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  color: #fff;
+}
+
+.exec-slider-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(201, 162, 67, 0.9);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 20px;
+  color: var(--primary-dark);
+}
+
+.exec-slider-content h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 4px;
+  line-height: 1.2;
+}
+
+.exec-slider-content p {
+  font-size: 13px;
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.exec-slider-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+}
+
+.exec-slider-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.exec-slider-dots .dot.active {
+  width: 24px;
+  border-radius: 4px;
+  background: var(--accent-gold);
+}
+
+/* ===== Exec Section Header Pad ===== */
+.exec-section-header-pad {
+  padding: 20px 16px 8px;
+}
+
+.exec-section-header-pad .exec-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-white);
+  margin: 0;
+}
+
+/* ===== Market Page New Styles ===== */
+
+/* --- أقسام دائرية --- */
+.mkt-cats-scroll {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.mkt-cats-scroll::-webkit-scrollbar { display: none; }
+
+.mkt-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 64px;
+  cursor: pointer;
+}
+.mkt-cat:active { transform: scale(0.95); }
+
+.mkt-cat-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(58,106,149,0.12);
+  border: 2px solid #3a6a95;
+  color: #3a6a95;
+  transition: all 0.3s ease;
+}
+.mkt-cat-circle .material-symbols-outlined { font-size: 24px; }
+
+.mkt-cat:active .mkt-cat-circle {
+  background: #3a6a95;
+  color: #fff;
+  border-color: #3a6a95;
+}
+
+.mkt-cat-name {
+  font-size: 11px;
+  color: var(--text-light);
+  text-align: center;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --- سلايدر السوق --- */
+.mkt-slider {
+  position: relative;
+  margin: 0 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 180px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+.mkt-slider-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.mkt-slider-slide {
+  min-width: 100%;
+  height: 100%;
+  position: relative;
+}
+.mkt-slider-slide img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mkt-slider-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.7) 100%);
+}
+.mkt-slider-info {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  left: 16px;
+  z-index: 2;
+  color: #fff;
+}
+.mkt-slider-info h3 { font-size: 18px; font-weight: 800; margin: 0 0 4px; }
+.mkt-slider-info p { font-size: 12px; opacity: 0.9; margin: 0; }
+.mkt-slider-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+}
+.mkt-slider-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.45);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.mkt-slider-dots .dot.active {
+  width: 24px;
+  border-radius: 4px;
+  background: var(--accent-gold);
+}
+
+/* --- حاسبة مواد البناء (compact) --- */
+.mkt-calc-compact {
+  margin: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.mkt-calc-compact-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.mkt-calc-compact-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #3a6a95, #2d5577);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mkt-calc-compact-icon .material-symbols-outlined { font-size: 24px; color: #fff; }
+.mkt-calc-compact-text { flex: 1; }
+.mkt-calc-compact-text h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-white);
+  margin: 0;
+}
+.mkt-calc-compact-text p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+.mkt-calc-compact-items {
+  display: flex;
+  gap: 8px;
+}
+.mkt-calc-item-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+  background: var(--bg-card);
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
+  flex: 1;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.mkt-calc-item-pill .material-symbols-outlined { font-size: 20px; color: var(--text-muted); transition: color 0.25s; }
+.mkt-calc-item-pill span:last-child { font-size: 12px; font-weight: 600; color: var(--text-muted); transition: color 0.25s; }
+.mkt-calc-item-pill.active {
+  border-color: #3a6a95;
+  background: rgba(58,106,149,0.12);
+}
+.mkt-calc-item-pill.active .material-symbols-outlined { color: #3a6a95; }
+.mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
+.mkt-calc-item-pill:active { transform: scale(0.96); }
+.mkt-calc-btn-sm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3a6a95, #2d5577);
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(58,106,149,0.3);
+}
+.mkt-calc-btn-sm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.mkt-calc-btn-sm:not(:disabled):active { transform: scale(0.96); }
+.mkt-calc-btn-sm .material-symbols-outlined { font-size: 18px; }
+
+html.light-mode .mkt-calc-compact { background: #fff; border-color: #e5e7eb; }
+html.light-mode .mkt-calc-compact-text h3 { color: #1e293b; }
+html.light-mode .mkt-calc-compact-text p { color: #94a3b8; }
+html.light-mode .mkt-calc-item-pill { background: #f8fafc; border-color: #e5e7eb; }
+html.light-mode .mkt-calc-item-pill span:last-child { color: #64748b; }
+html.light-mode .mkt-calc-item-pill .material-symbols-outlined { color: #94a3b8; }
+html.light-mode .mkt-calc-item-pill.active { border-color: #3a6a95; background: rgba(58,106,149,0.08); }
+html.light-mode .mkt-calc-item-pill.active .material-symbols-outlined { color: #3a6a95; }
+html.light-mode .mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
+
+.mkt-calc-card {
+  margin: 16px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.mkt-calc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #3a6a95 0%, #2d5577 100%);
+}
+.mkt-calc-icon {
+  font-size: 32px;
+  color: var(--accent-gold);
+}
+.mkt-calc-header h3 { font-size: 16px; font-weight: 700; color: #fff; margin: 0; }
+.mkt-calc-header p { font-size: 12px; color: rgba(255,255,255,0.7); margin: 2px 0 0; }
+.mkt-calc-body { padding: 16px; }
+.mkt-calc-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 12px;
+  color: var(--text-white);
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.mkt-calc-select .placeholder { color: var(--text-muted); }
+.mkt-calc-select .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+}
+.mkt-calc-select .rotated { transform: rotate(180deg); }
+
+.mkt-calc-dropdown {
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.mkt-calc-option {
+  padding: 12px 14px;
+  color: var(--text-white);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.mkt-calc-option:hover, .mkt-calc-option.active {
+  background: rgba(201,162,67,0.15);
+  color: var(--accent-gold);
+}
+
+.mkt-calc-btn {
+  width: 100%;
+  padding: 12px;
+  background: #3a6a95;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.mkt-calc-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(58,106,149,0.3); }
+
+/* --- حاسبة: صف العناصر --- */
+.mkt-calc-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 0;
+}
+.mkt-calc-item-chip {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: rgba(58,106,149,0.1);
+  border: 1px solid rgba(58,106,149,0.3);
+  border-radius: 12px;
+}
+.mkt-calc-item-chip .material-symbols-outlined { font-size: 24px; color: #3a6a95; }
+.mkt-calc-item-chip span:last-child { font-size: 11px; font-weight: 600; color: var(--text-white); }
+
+/* --- صفحة الحاسبة: إدخال الأبعاد --- */
+.mkt-calc-inputs-card {
+  margin: 16px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+}
+.mkt-calc-dim-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.mkt-calc-dim {
+  flex: 1;
+}
+.mkt-calc-dim label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+.mkt-calc-dim input {
+  width: 100%;
+  padding: 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 10px;
+  color: var(--text-white);
+  font-size: 16px;
+  font-family: 'Cairo', sans-serif;
+  text-align: center;
+}
+.mkt-calc-dim input::placeholder { color: var(--text-muted); }
+.mkt-calc-dim input:focus { outline: none; border-color: #3a6a95; }
+.mkt-calc-calc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: #3a6a95;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+}
+.mkt-calc-calc-btn .material-symbols-outlined { font-size: 20px; }
+
+/* --- صفحة الحاسبة: النتائج --- */
+.mkt-calc-result-card {
+  margin: 0 16px 10px;
+  background: var(--bg-card);
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+.mkt-calc-result-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: rgba(58,106,149,0.1);
+}
+.mkt-calc-result-header .material-symbols-outlined { font-size: 22px; color: #3a6a95; }
+.mkt-calc-result-header h4 { font-size: 14px; font-weight: 700; color: var(--text-white); margin: 0; }
+.mkt-calc-result-body { padding: 12px 14px; }
+.mkt-calc-result-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-light);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.mkt-calc-result-row:last-child { border-bottom: none; }
+.mkt-calc-result-row.total {
+  border-top: 1px solid var(--border-light);
+  margin-top: 4px;
+  padding-top: 8px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  font-size: 14px;
+}
+
+/* --- منتجات أفقي --- */
+.mkt-products-scroll {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.mkt-products-scroll::-webkit-scrollbar { display: none; }
+
+.mkt-prod-card {
+  min-width: 150px;
+  max-width: 150px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.mkt-prod-card:active { transform: scale(0.97); }
+
+.mkt-prod-img {
+  width: 100%;
+  height: 110px;
+  overflow: hidden;
+}
+.mkt-prod-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mkt-prod-info { padding: 10px; }
+.mkt-prod-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-white);
+  line-height: 1.4;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.mkt-prod-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin-bottom: 4px;
+}
+.mkt-prod-rating {
+  display: flex;
+  gap: 1px;
+}
+.mkt-prod-rating .star {
+  font-size: 14px;
+  color: #ccc;
+  font-family: 'Material Symbols Outlined';
+}
+.mkt-prod-rating .star.filled { color: #f59e0b; }
+
+.mkt-add-cart {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3a6a95;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.mkt-add-cart:hover { transform: scale(1.1); }
+.mkt-add-cart .material-symbols-outlined { font-size: 18px; }
+
+/* --- موردون --- */
+.mkt-suppliers-scroll {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.mkt-suppliers-scroll::-webkit-scrollbar { display: none; }
+
+.mkt-supplier-card {
+  min-width: 260px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+}
+.mkt-supplier-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(201,162,67,0.3);
+  margin-bottom: 10px;
+}
+.mkt-supplier-logo img { width: 100%; height: 100%; object-fit: cover; }
+.mkt-supplier-info h4 { font-size: 14px; font-weight: 700; color: var(--text-white); margin: 0 0 4px; }
+.mkt-supplier-rating { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--accent-gold); margin-bottom: 6px; }
+.mkt-supplier-info p { font-size: 12px; color: var(--text-light); margin: 0 0 10px; }
+.mkt-supplier-btn {
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid var(--accent-gold);
+  border-radius: 10px;
+  color: var(--accent-gold);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+}
+
+/* --- عروض خاصة --- */
+.mkt-offers-scroll {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.mkt-offers-scroll::-webkit-scrollbar { display: none; }
+
+.mkt-offer-card {
+  min-width: 200px;
+  max-width: 200px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  cursor: pointer;
+}
+.mkt-offer-img {
+  width: 100%;
+  height: 120px;
+  position: relative;
+  overflow: hidden;
+}
+.mkt-offer-img img { width: 100%; height: 100%; object-fit: cover; }
+.mkt-offer-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.mkt-offer-info { padding: 10px; position: relative; }
+.mkt-offer-prices { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.mkt-old-price { font-size: 12px; color: var(--text-muted); text-decoration: line-through; }
+.mkt-new-price { font-size: 14px; font-weight: 700; color: var(--accent-gold); }
+
+/* --- صفحة القسم --- */
+.mkt-price-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+.mkt-filter-inputs {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 6px;
+}
+.mkt-filter-inputs input {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 10px;
+  color: var(--text-white);
+  font-size: 13px;
+  font-family: 'Cairo', sans-serif;
+  text-align: center;
+}
+.mkt-filter-inputs input::placeholder { color: var(--text-muted); }
+.mkt-filter-sep { color: var(--text-muted); font-size: 14px; }
+.mkt-filter-btn {
+  padding: 10px 16px;
+  background: #3a6a95;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mkt-cat-products-scroll {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.mkt-cat-products-scroll::-webkit-scrollbar { display: none; }
+
+.mkt-cat-view { padding-bottom: 16px; }
+
+.mkt-cat-products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
+.mkt-grid-prod {
+  background: var(--card-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.mkt-grid-prod:active { transform: scale(0.97); }
+.mkt-grid-prod-img { width: 100%; height: 120px; overflow: hidden; }
+.mkt-grid-prod-img img { width: 100%; height: 100%; object-fit: cover; }
+.mkt-grid-prod-info { padding: 10px; }
+.mkt-grid-prod-name { font-size: 12px; font-weight: 600; color: var(--text-white); margin-bottom: 4px; line-height: 1.4; }
+.mkt-grid-prod-price { font-size: 14px; font-weight: 700; color: var(--accent-gold); margin-bottom: 6px; }
+.mkt-grid-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 8px;
+  background: #3a6a95;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+}
+.mkt-grid-add-btn .material-symbols-outlined { font-size: 16px; }
+
+/* --- صفحة الحاسبة --- */
+.mkt-calc-view .mkt-calc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin: 0 16px 8px;
+  background: var(--bg-card);
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+}
+.mkt-calc-item-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(58,106,149,0.15);
+  color: #3a6a95;
+}
+.mkt-calc-item-icon .material-symbols-outlined { font-size: 22px; }
+.mkt-calc-item-info { flex: 1; }
+.mkt-calc-item-info h4 { font-size: 14px; font-weight: 600; color: var(--text-white); margin: 0; }
+.mkt-calc-item-info p { font-size: 12px; color: var(--text-light); margin: 2px 0 0; }
+.mkt-calc-item-price { font-size: 14px; font-weight: 700; color: var(--accent-gold); white-space: nowrap; }
+
+.mkt-calc-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #3a6a95, #2d5577);
+  border-radius: 14px;
+}
+.mkt-calc-total span:first-child { font-size: 14px; color: rgba(255,255,255,0.8); }
+.mkt-calc-total-price { font-size: 20px; font-weight: 800; color: var(--accent-gold); }
+
+.mkt-calc-buy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 16px 20px;
+  padding: 14px;
+  background: #3a6a95;
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+}
+
+/* --- صفحة السلة --- */
+.mkt-cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+}
+.mkt-cart-empty p { font-size: 16px; color: var(--text-muted); margin-top: 12px; }
+
+.mkt-cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 0 16px 10px;
+  background: var(--bg-card);
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+}
+.mkt-cart-item-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.mkt-cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.mkt-cart-item-info { flex: 1; }
+.mkt-cart-item-info h4 { font-size: 13px; font-weight: 600; color: var(--text-white); margin: 0 0 4px; }
+.mkt-cart-item-price { font-size: 13px; font-weight: 700; color: var(--accent-gold); margin-bottom: 6px; }
+
+.mkt-qty-control { display: flex; align-items: center; gap: 12px; }
+.mkt-qty-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 10px;
+  color: var(--text-white);
+  font-size: 16px;
+  cursor: pointer;
+}
+.mkt-qty-val { font-size: 14px; font-weight: 700; color: var(--text-white); min-width: 20px; text-align: center; }
+
+.mkt-cart-remove {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+}
+.mkt-cart-remove .material-symbols-outlined { font-size: 20px; }
+
+.mkt-cart-summary {
+  margin: 16px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+}
+.mkt-cart-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--text-light);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.mkt-cart-row:last-child { border-bottom: none; }
+.mkt-cart-row.total {
+  border-top: 1px solid var(--border-light);
+  margin-top: 8px;
+  padding-top: 12px;
+  font-weight: 700;
+  color: var(--text-white);
+}
+.mkt-cart-row.total span:last-child { font-size: 18px; color: var(--accent-gold); }
+
+.mkt-checkout-btn {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 0 16px 20px;
+  padding: 14px;
+  background: #3a6a95;
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+}
+
+/* --- صفحة التأكيد --- */
+.mkt-checkout-form {
+  padding: 0 16px 16px;
+}
+.mkt-form-group {
+  margin-bottom: 14px;
+}
+.mkt-form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-white);
+  margin-bottom: 6px;
+}
+.mkt-confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 32px);
+  margin: 0 16px 20px;
+  padding: 14px;
+  background: linear-gradient(135deg, #27ae60, #219a52);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+}
+.mkt-confirm-btn .material-symbols-outlined { font-size: 22px; }
+
+/* --- زر السلة العائم (يسار فوق حسابي) --- */
+.mkt-floating-cart {
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  left: 16px;
+  width: 56px;
+  height: 56px;
+  background: #3a6a95;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(58,106,149,0.4);
+  cursor: pointer;
+  z-index: 90;
+  transition: all 0.3s ease;
+}
+.mkt-floating-cart:hover { transform: scale(1.1); }
+.mkt-floating-cart .material-symbols-outlined { font-size: 26px; }
+.mkt-cart-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  background: #e74c3c;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* --- مودال منتجات السوق --- */
+.mkt-modal-price {
+  font-size: 24px;
+  font-weight: 800;
+  color: #3a6a95;
+  margin: 12px 0;
+}
+html.light-mode .mkt-modal-price { color: #3a6a95; }
+.mkt-modal-section { margin-bottom: 16px; }
+.mkt-modal-section h4 {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.mkt-modal-colors {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.mkt-color-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.mkt-color-dot.active { border-color: #3a6a95; transform: scale(1.15); }
+.mkt-color-dot::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+.mkt-color-dot.active::after { border-color: rgba(58,106,149,0.3); }
+.mkt-modal-sel-name {
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 4px;
+}
+html.light-mode .mkt-modal-sel-name { color: #666; }
+.mkt-modal-sizes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mkt-size-btn {
+  padding: 8px 18px;
+  border-radius: 12px;
+  border: 2px solid #333;
+  background: transparent;
+  color: #ccc;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mkt-size-btn.active { background: #3a6a95; color: #fff; border-color: #3a6a95; }
+html.light-mode .mkt-size-btn { border-color: #bbb; color: #555; }
+html.light-mode .mkt-size-btn.active { background: #3a6a95; color: #fff; border-color: #3a6a95; }
+.mkt-qty-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #3a6a95;
+  background: transparent;
+  color: #3a6a95;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.mkt-qty-btn:hover { background: #3a6a95; color: #fff; }
+.mkt-qty-val {
+  font-size: 20px;
+  font-weight: 700;
+  min-width: 40px;
+  text-align: center;
+}
+.mkt-modal-box-info {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+.mkt-modal-desc {
+  color: #999;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 16px 0;
+}
+html.light-mode .mkt-modal-desc { color: #666; }
+.mkt-modal-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: #3a6a95;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.mkt-modal-add-btn:hover { background: #2d5273; }
+.mkt-modal-add-btn .material-symbols-outlined { font-size: 22px; }
+
+/* --- صور المنتج thumbs --- */
+.modal-thumbs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  overflow-x: auto;
+}
+.modal-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.modal-thumb.active { border-color: #3a6a95; }
+.modal-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+@media (max-width: 380px) {
+  .mkt-cat-products-grid { gap: 8px; padding: 0 12px 12px; }
+}
+
+/* ===== شاشات صغيرة جداً 360px فأقل ===== */
+@media (max-width: 360px) {
+  .hero-slider { height: 160px; margin: 8px 12px 0; }
+  .slide-content h2 { font-size: 16px; }
+  .slide-content { padding: 14px; }
+  .home-section-item { min-width: 56px; }
+  .home-section-icon { width: 42px; height: 42px; }
+  .home-section-icon .material-symbols-outlined { font-size: 20px; }
+  .project-card .card-image { height: 110px; }
+  .project-card .card-title { font-size: 12px; }
+  .ad-card { min-width: 180px; }
+  .ad-slider-img { height: 110px; }
+  .banner::before { width: 100px; height: 100px; }
+  .register-section { gap: 16px; padding: 10px 14px; }
+  .exec-slider { height: 160px; }
+  .exec-cover { height: 220px; }
+  .company-cover { height: 160px; }
+  .mkt-slider { height: 150px; }
+  .mkt-supplier-card { min-width: 200px; }
+  .mkt-offer-card { min-width: 160px; max-width: 160px; }
+  .mkt-cat { min-width: 56px; }
+  .mkt-cat-circle { width: 44px; height: 44px; }
+  .mkt-cat-circle .material-symbols-outlined { font-size: 20px; }
+  .bottom-nav .nav-item { min-width: 48px; padding: 6px 6px; }
+  .bottom-nav .nav-item .material-symbols-outlined { font-size: 22px; }
+}
+
+/* ===== الوضع الأفقي (Landscape) للهواتف ===== */
+@media (orientation: landscape) and (max-height: 500px) {
+  .app-container { height: auto; min-height: 100dvh; }
+  .hero-slider { height: 140px; }
+  .exec-slider { height: 140px; }
+  .mkt-slider { height: 130px; }
+  .exec-cover { height: 180px; }
+  .company-cover { height: 140px; }
+  .project-card .card-image { height: 100px; }
+  .banner::before { width: 80px; height: 80px; }
+  .banner { padding: 14px; }
+  .banner-title { font-size: 15px; }
+  .page-content { padding-bottom: 65px; }
+}
+
+/* ===== منع hover على أجهزة اللمس ===== */
+@media (hover: none) and (pointer: coarse) {
+  .banner-btn:hover,
+  .mkt-add-cart:hover,
+  .product-cart-btn:hover,
+  .qty-btn:hover,
+  .project-card:hover,
+  .product-card:hover,
+  .mkt-qty-btn:hover,
+  .mkt-size-btn:hover,
+  .mkt-modal-add-btn:hover,
+  .mkt-checkout-btn:hover {
+    transform: none !important;
+    box-shadow: none !important;
   }
 }
 
