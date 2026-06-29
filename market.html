@@ -31,6 +31,7 @@
             <div id="header"></div>
 
             <div class="page-content">
+                <div v-if="!productDetailView">
 
                 <!-- ===== أقسام دائرية ===== -->
                 <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers" class="mkt-cats-scroll">
@@ -515,80 +516,177 @@
                         تأكيد الطلب
                     </button>
                 </div>
+                </div>
 
             </div>
 
-            <!-- ===== مودال المنتج ===== -->
-            <div v-if="selectedProduct" class="project-modal" @click.self="selectedProduct = null">
-                <div class="modal-content">
-                    <div class="modal-pull-bar"><span></span></div>
-                    <div style="position:relative;">
-                        <button class="modal-close" @click="selectedProduct = null">
-                            <span class="material-symbols-outlined close-icon">close</span>
-                            <span class="material-symbols-outlined arrow-icon">arrow_back</span>
-                        </button>
-                        <div class="modal-slider" @click="openViewer(modalSlide)">
-                            <div class="modal-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (modalSlide * 100) + '%)' }">
-                                <div v-for="(img, i) in selectedProduct.images" :key="i" class="modal-slide">
-                                    <div class="modal-slide-img"><img :src="img" alt=""></div>
-                                </div>
-                            </div>
-                            <div v-if="selectedProduct.images.length > 1" class="modal-slider-dots">
-                                <span v-for="(img, i) in selectedProduct.images" :key="i" class="dot" :class="{ active: i === modalSlide }" @click.stop="modalSlide = i"></span>
-                            </div>
-                        </div>
-                        <div v-if="selectedProduct.images.length > 1" class="modal-thumbs">
-                            <div v-for="(img, i) in selectedProduct.images" :key="i" class="modal-thumb" :class="{ active: i === modalSlide }" @click="modalSlide = i">
-                                <img :src="img" alt="">
-                            </div>
+            <!-- ===== صفحة تفاصيل المنتج ===== -->
+            <div v-if="productDetailView" class="prod-detail-page">
+                <div class="exec-header">
+                    <button class="exec-back" @click="closeProductDetail">
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                    <div>
+                        <h2>تفاصيل المنتج</h2>
+                    </div>
+                </div>
+
+                <!-- معرض الصور -->
+                <div class="prod-gallery" @touchstart.passive="prodGalleryTouch.onTouchStart" @touchend="prodGalleryTouch.onTouchEnd">
+                    <div class="prod-gallery-track" dir="ltr" :style="{ transform: 'translateX(-' + (modalSlide * 100) + '%)' }">
+                        <div v-for="(img, i) in selectedProduct.images" :key="i" class="prod-gallery-slide" @click="openViewer(i)">
+                            <img :src="img" alt="">
                         </div>
                     </div>
-                    <div class="modal-details">
-                        <h2>{{ selectedProduct.name }}</h2>
-                        <div class="mkt-modal-price">{{ fmt(selectedProduct.price) }} د.ع</div>
-
-                        <!-- الألوان -->
-                        <div v-if="selectedProduct.colors && selectedProduct.colors.length" class="mkt-modal-section">
-                            <h4>الألوان المتاحة</h4>
-                            <div class="mkt-modal-colors">
-                                <div v-for="(c, i) in selectedProduct.colors" :key="i" class="mkt-color-dot"
-                                     :class="{ active: selectedColor === i }"
-                                     :style="{ background: c.hex }"
-                                     @click="selectedColor = i">
-                                </div>
-                            </div>
-                            <div class="mkt-modal-sel-name">{{ selectedProduct.colors[selectedColor] ? selectedProduct.colors[selectedColor].name : '' }}</div>
-                        </div>
-
-                        <!-- المقاسات -->
-                        <div v-if="selectedProduct.sizes && selectedProduct.sizes.length" class="mkt-modal-section">
-                            <h4>المقاسات</h4>
-                            <div class="mkt-modal-sizes">
-                                <div v-for="(sz, i) in selectedProduct.sizes" :key="i" class="mkt-size-btn"
-                                     :class="{ active: selectedSize === i }"
-                                     @click="selectedSize = i">{{ sz }}</div>
-                            </div>
-                        </div>
-
-                        <!-- عدد الكراتين -->
-                        <div v-if="selectedProduct.boxes" class="mkt-modal-section">
-                            <h4>عدد الكراتين</h4>
-                            <div class="mkt-qty-control">
-                                <button class="mkt-qty-btn" @click="selectedQty = Math.max(1, selectedQty - 1)">-</button>
-                                <span class="mkt-qty-val">{{ selectedQty }}</span>
-                                <button class="mkt-qty-btn" @click="selectedQty++">+</button>
-                            </div>
-                            <div class="mkt-modal-box-info">{{ selectedProduct.boxes }}</div>
-                        </div>
-
-                        <!-- التفاصيل -->
-                        <p class="mkt-modal-desc">{{ selectedProduct.desc }}</p>
-
-                        <button class="mkt-modal-add-btn" @click="addToCartFromModal">
-                            <span class="material-symbols-outlined">add_shopping_cart</span>
-                            أضف للسلة
-                        </button>
+                    <div v-if="selectedProduct.images.length > 1" class="prod-gallery-dots">
+                        <span v-for="(img, i) in selectedProduct.images" :key="i" class="dot" :class="{ active: i === modalSlide }" @click.stop="modalSlide = i"></span>
                     </div>
+                </div>
+
+                <!-- معلومات المنتج -->
+                <div class="prod-info-section">
+                    <div class="prod-brand-row">
+                        <div class="prod-brand-logo">
+                            <span class="material-symbols-outlined">business</span>
+                        </div>
+                        <div>
+                            <div class="prod-brand-name">{{ selectedProduct.brand }}</div>
+                            <div class="prod-supplier">{{ selectedProduct.supplierName }}</div>
+                        </div>
+                    </div>
+                    <h1 class="prod-title">{{ selectedProduct.name }}</h1>
+                    <div class="prod-cat-tag">{{ categories[selectedProduct.cat].name }}</div>
+                    <div class="prod-rating-row">
+                        <div class="prod-stars">
+                            <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= selectedProduct.rating }">star</span>
+                        </div>
+                        <span class="prod-reviews">({{ selectedProduct.reviewsCount }} تقييم)</span>
+                        <span class="prod-stock" :class="{ out: !selectedProduct.stock }">{{ selectedProduct.stock ? 'متوفر' : 'غير متوفر' }}</span>
+                    </div>
+                    <div class="prod-price-row">
+                        <span class="prod-price">{{ fmt(selectedProduct.price) }} د.ع</span>
+                    </div>
+                </div>
+
+                <!-- خيارات المنتج -->
+                <div class="prod-options-section">
+                    <!-- اللون -->
+                    <div v-if="selectedProduct.colors && selectedProduct.colors.length" class="prod-option-block">
+                        <h4>اللون</h4>
+                        <div class="prod-colors">
+                            <div v-for="(c, i) in selectedProduct.colors" :key="i" class="prod-color-dot"
+                                 :class="{ active: selectedColor === i }"
+                                 :style="{ background: c.hex }"
+                                 @click="selectedColor = i"
+                                 :title="c.name">
+                            </div>
+                        </div>
+                        <div class="prod-option-sel">{{ selectedProduct.colors[selectedColor].name }}</div>
+                    </div>
+
+                    <!-- نوع التشطيب -->
+                    <div v-if="selectedProduct.finishTypes && selectedProduct.finishTypes.length" class="prod-option-block">
+                        <h4>نوع التشطيب</h4>
+                        <div class="prod-finish-options">
+                            <div v-for="(ft, i) in selectedProduct.finishTypes" :key="i" class="prod-finish-btn"
+                                 :class="{ active: selectedFinish === i }"
+                                 @click="selectedFinish = i">{{ ft }}</div>
+                        </div>
+                    </div>
+
+                    <!-- الحجم -->
+                    <div v-if="selectedProduct.sizes && selectedProduct.sizes.length" class="prod-option-block">
+                        <h4>حجم العبوة</h4>
+                        <div class="prod-sizes">
+                            <div v-for="(sz, i) in selectedProduct.sizes" :key="i" class="prod-size-btn"
+                                 :class="{ active: selectedSize === i }"
+                                 @click="selectedSize = i">{{ sz }}</div>
+                        </div>
+                    </div>
+
+                    <!-- الكمية -->
+                    <div class="prod-option-block">
+                        <h4>الكمية</h4>
+                        <div class="prod-qty-control">
+                            <button class="prod-qty-btn" @click="selectedQty = Math.max(1, selectedQty - 1)">-</button>
+                            <span class="prod-qty-val">{{ selectedQty }}</span>
+                            <button class="prod-qty-btn" @click="selectedQty++">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- معلومات التوصيل -->
+                <div class="prod-delivery-section">
+                    <h4>معلومات التوصيل</h4>
+                    <div class="prod-delivery-form">
+                        <select class="prod-del-select" v-model="deliveryGov">
+                            <option value="">اختر المحافظة</option>
+                            <option v-for="g in governorates" :key="g.name" :value="g.name">{{ g.name }}</option>
+                        </select>
+                        <select class="prod-del-select" v-model="deliveryCity" :disabled="!deliveryGov">
+                            <option value="">اختر المدينة</option>
+                            <option v-for="city in (deliveryGov ? governorates.find(g => g.name === deliveryGov).cities : [])" :key="city" :value="city">{{ city }}</option>
+                        </select>
+                        <input type="text" class="prod-del-input" placeholder="عنوان التوصيل">
+                    </div>
+                    <div class="prod-del-time">
+                        <span class="material-symbols-outlined">local_shipping</span>
+                        <span>التوصيل خلال 24–48 ساعة</span>
+                    </div>
+                </div>
+
+                <!-- ملخص الطلب -->
+                <div class="prod-summary-section">
+                    <h4>ملخص الطلب</h4>
+                    <div class="prod-summary-row">
+                        <span>المنتج</span>
+                        <span>{{ selectedProduct.name }}</span>
+                    </div>
+                    <div v-if="selectedProduct.sizes.length" class="prod-summary-row">
+                        <span>الحجم</span>
+                        <span>{{ selectedProduct.sizes[selectedSize] || '-' }}</span>
+                    </div>
+                    <div v-if="selectedProduct.colors.length" class="prod-summary-row">
+                        <span>اللون</span>
+                        <span>{{ selectedProduct.colors[selectedColor] ? selectedProduct.colors[selectedColor].name : '-' }}</span>
+                    </div>
+                    <div class="prod-summary-row">
+                        <span>الكمية</span>
+                        <span>{{ selectedQty }}</span>
+                    </div>
+                    <div class="prod-summary-row">
+                        <span>السعر</span>
+                        <span>{{ fmt(selectedProduct.price) }} د.ع</span>
+                    </div>
+                    <div class="prod-summary-row">
+                        <span>التوصيل</span>
+                        <span>5,000 د.ع</span>
+                    </div>
+                    <div class="prod-summary-row prod-summary-total">
+                        <span>الإجمالي</span>
+                        <span>{{ fmt(selectedProduct.price * selectedQty + 5000) }} د.ع</span>
+                    </div>
+                </div>
+
+                <!-- بطاقة العروض -->
+                <div class="prod-offer-card" v-if="selectedQty >= 3">
+                    <div class="prod-offer-badge">عرض خاص</div>
+                    <div class="prod-offer-text">احصل على خصم 10% عند شراء {{ 3 }} قطع أو أكثر!</div>
+                </div>
+
+                <!-- حيز للفوتر -->
+                <div style="height: 90px;"></div>
+
+                <!-- أزرار ثابتة أسفل -->
+                <div class="prod-actions-bar">
+                    <button class="prod-action-btn prod-add-cart" @click="addToCartFromDetail">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                        أضف للسلة
+                    </button>
+                    <button class="prod-action-btn prod-buy-now">
+                        <span class="material-symbols-outlined">flash_on</span>
+                        الشراء الآن
+                    </button>
                 </div>
             </div>
 
@@ -658,7 +756,7 @@
             </div>
 
             <!-- زر السلة العائم - يسار فوق حسابي -->
-            <div v-if="cart.length > 0 && !cartView && !checkoutView && !selectedProduct" class="mkt-floating-cart" @click="cartView = true">
+            <div v-if="cart.length > 0 && !cartView && !checkoutView && !productDetailView" class="mkt-floating-cart" @click="cartView = true">
                 <span class="material-symbols-outlined">shopping_cart</span>
                 <span class="mkt-cart-badge">{{ cartCount }}</span>
             </div>
@@ -699,8 +797,12 @@
                 var selectedProduct = ref(null);
                 var selectedColor = ref(0);
                 var selectedSize = ref(0);
+                var selectedFinish = ref(0);
                 var selectedQty = ref(1);
                 var modalSlide = ref(0);
+                var productDetailView = ref(false);
+                var deliveryGov = ref('');
+                var deliveryCity = ref('');
 
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
@@ -719,6 +821,17 @@
                     { name: 'أدوات ومعدات', icon: 'handyman' }
                 ]);
 
+                var governorates = [
+                    { name: 'بغداد', cities: ['الكرادة', 'المنصور', 'الرصافة', 'اليرموك', 'الأعظمية', 'الكاظمية'] },
+                    { name: 'البصرة', cities: ['المركز', 'الزبير', 'أبو الخصيب', 'القرنة', 'المدينة'] },
+                    { name: 'نينوى', cities: ['الموصل', 'تلعفر', 'الحمدانية', 'القيارة', 'الشيخان'] },
+                    { name: 'أربيل', cities: ['المركز', 'شاندر', 'كويسنجق', 'الرواندز', 'شقلاوة'] },
+                    { name: 'كركوك', cities: ['المركز', 'داقوق', 'الحويجة', 'الدبس'] },
+                    { name: 'النجف', cities: ['المركز', 'الغري', 'المناذرة', 'الكوفة'] },
+                    { name: 'كربلاء', cities: ['المركز', 'الحر', 'الهندية', 'عين التمر'] },
+                    { name: 'السليمانية', cities: ['المركز', 'بينجوين', 'حلبجة', 'رانية', 'بشدر'] }
+                ];
+
                 var sliderImages = ref([
                     { img: 'images/img1.jpg', title: 'عروض مواد البناء', desc: 'خصومات تصل إلى 40% على جميع المنتجات' },
                     { img: 'images/img6.jpg', title: 'سيراميك وبلاط', desc: 'تشكيلة واسعة من أجود أنواع السيراميك' },
@@ -734,8 +847,13 @@
                         name: name, price: price, cat: catIdx, rating: rating,
                         img: rndImg(prodIdx), images: images,
                         colors: opts.colors || [], sizes: opts.sizes || [],
+                        finishTypes: opts.finishTypes || [],
                         boxes: opts.boxes || '', desc: opts.desc || name + ' من أجود المواد المتاحة في السوق العراقي.',
-                        oldPrice: 0, discount: 0
+                        oldPrice: 0, discount: 0,
+                        brand: opts.brand || 'بنيان',
+                        supplierName: opts.supplierName || 'متجر بنيان',
+                        stock: opts.stock !== undefined ? opts.stock : true,
+                        reviewsCount: opts.reviewsCount || 0
                     };
                 }
 
@@ -882,8 +1000,10 @@
                     selectedProduct.value = p;
                     selectedColor.value = 0;
                     selectedSize.value = 0;
+                    selectedFinish.value = 0;
                     selectedQty.value = 1;
                     modalSlide.value = 0;
+                    productDetailView.value = true;
                 }
 
                 function openSupplier(s) {
@@ -911,6 +1031,38 @@
                     if (exists) { exists.qty++; }
                     else { cart.value.push({ name: p.name, price: p.price, img: p.img, qty: 1 }); }
                 }
+
+                function closeProductDetail() {
+                    productDetailView.value = false;
+                    selectedProduct.value = null;
+                }
+
+                function addToCartFromDetail() {
+                    var p = selectedProduct.value;
+                    if (!p) return;
+                    var label = p.name;
+                    if (p.colors && p.colors.length) label += ' - ' + p.colors[selectedColor.value].name;
+                    if (p.sizes && p.sizes.length) label += ' (' + p.sizes[selectedSize.value] + ')';
+                    var exists = cart.value.find(function(c) { return c.name === label; });
+                    if (exists) { exists.qty += selectedQty.value; }
+                    else { cart.value.push({ name: label, price: p.price, img: p.img, qty: selectedQty.value }); }
+                    closeProductDetail();
+                }
+
+                var prodGalleryTouch = (function() {
+                    var sx = 0;
+                    return {
+                        onTouchStart: function(e) { sx = e.touches[0].clientX; },
+                        onTouchEnd: function(e) {
+                            if (!selectedProduct.value) return;
+                            var dx = e.changedTouches[0].clientX - sx;
+                            var len = selectedProduct.value.images.length;
+                            if (Math.abs(dx) > 40) {
+                                modalSlide.value = (modalSlide.value + (dx < 0 ? 1 : -1) + len) % len;
+                            }
+                        }
+                    };
+                })();
 
                 var cartCount = computed(function() {
                     var total = 0;
@@ -1062,10 +1214,12 @@
                     gypsumArea, gypsumSheets, gypsumCost,
                     calcTotal, addCalcToCart, confirmOrder,
                     priceFrom, priceTo,
-                    selectedProduct, selectedColor, selectedSize, selectedQty, modalSlide,
+                    selectedProduct, selectedColor, selectedSize, selectedFinish, selectedQty, modalSlide,
                     addToCartFromModal, openViewer, nextViewer, prevViewer,
                     viewerOpen, viewerImages, viewerIndex, viewerTouch,
                     selectedSupplier, openSupplier, closeSupplier,
+                    productDetailView, closeProductDetail, addToCartFromDetail, prodGalleryTouch,
+                    deliveryGov, deliveryCity, governorates,
                     fmt
                 };
             }
