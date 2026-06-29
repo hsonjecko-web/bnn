@@ -148,7 +148,7 @@
                 <!-- Projects View -->
                 <div v-if="showProjects" class="ideas-projects">
                     <div class="ideas-projects-header">
-                        <button v-if="activeCategory" class="ideas-back" @click="activeCategory = null; searchActive = false">
+                        <button v-if="activeCategory || searchActive" class="ideas-back" @click="activeCategory = null; searchActive = false">
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
                         <div>
