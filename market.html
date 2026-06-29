@@ -100,17 +100,14 @@
                     </div>
                     <div class="mkt-products-scroll">
                         <div v-for="(p, i) in topProducts" :key="i" class="mkt-prod-card" @click="openProduct(p)">
-                            <div class="mkt-prod-img">
-                                <img :src="p.img" alt="">
-                            </div>
-                            <div class="mkt-prod-info">
-                                <div class="mkt-prod-name">{{ p.name }}</div>
-                                <div class="mkt-prod-price">{{ fmt(p.price) }} د.ع</div>
-                                <div class="mkt-prod-rating">
-                                    <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= p.rating }">star</span>
-                                </div>
-                            </div>
-                            <button class="mkt-add-cart" @click.stop="addToCart(p)">
+                             <div class="mkt-prod-img">
+                                 <img :src="p.img" alt="">
+                             </div>
+                             <div class="mkt-prod-info">
+                                 <div class="mkt-prod-name">{{ p.name }}</div>
+                                 <div class="mkt-prod-price">{{ fmt(p.price) }} د.ع</div>
+                             </div>
+                             <button class="mkt-add-cart" @click.stop="addToCart(p)">
                                 <span class="material-symbols-outlined">add_shopping_cart</span>
                             </button>
                         </div>
@@ -124,22 +121,19 @@
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
                         <div>
-                            <h2>جميع المنتجات</h2>
-                            <p>{{ allProducts.length }} منتج</p>
+                            <h2>المنتجات الأكثر طلباً</h2>
+                             <p>{{ allTopProducts.length }} منتج</p>
                         </div>
                     </div>
                     <div class="mkt-cat-products-grid">
-                        <div v-for="(p, i) in allProducts" :key="i" class="mkt-grid-prod" @click="openProduct(p)">
-                            <div class="mkt-grid-prod-img">
-                                <img :src="p.img" alt="">
-                            </div>
-                            <div class="mkt-grid-prod-info">
-                                <div class="mkt-grid-prod-name">{{ p.name }}</div>
-                                <div class="mkt-grid-prod-price">{{ fmt(p.price) }} د.ع</div>
-                                <div class="mkt-prod-rating">
-                                    <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= p.rating }">star</span>
-                                </div>
-                                <button class="mkt-grid-add-btn" @click.stop="addToCart(p)">
+                        <div v-for="(p, i) in allTopProducts" :key="i" class="mkt-grid-prod" @click="openProduct(p)">
+                             <div class="mkt-grid-prod-img">
+                                 <img :src="p.img" alt="">
+                             </div>
+                             <div class="mkt-grid-prod-info">
+                                 <div class="mkt-grid-prod-name">{{ p.name }}</div>
+                                 <div class="mkt-grid-prod-price">{{ fmt(p.price) }} د.ع</div>
+                                 <button class="mkt-grid-add-btn" @click.stop="addToCart(p)">
                                     <span class="material-symbols-outlined">add_shopping_cart</span>
                                     أضف للسلة
                                 </button>
@@ -155,21 +149,26 @@
                         <span class="section-link">عرض الكل</span>
                     </div>
                     <div class="mkt-suppliers-scroll">
-                        <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card">
-                            <div class="mkt-supplier-logo">
-                                <img :src="s.logo" alt="">
-                            </div>
-                            <div class="mkt-supplier-info">
-                                <h4>{{ s.name }}</h4>
-                                <div class="mkt-supplier-rating">
-                                    <span class="material-symbols-outlined" style="color:#f59e0b;font-size:16px;">star</span>
-                                    <span>{{ s.rating }}</span>
-                                </div>
-                                <p>{{ s.desc }}</p>
-                            </div>
-                            <button class="mkt-supplier-btn">زيارة</button>
-                        </div>
-                    </div>
+                         <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card">
+                             <div class="mkt-supplier-logo">
+                                 <img :src="s.logo" alt="">
+                             </div>
+                             <div class="mkt-supplier-info">
+                                 <h4>{{ s.name }}</h4>
+                                 <div class="mkt-supplier-meta">
+                                     <span class="mkt-supplier-meta-item">
+                                         <span class="material-symbols-outlined">engineering</span>
+                                         {{ s.projects }} مشروع
+                                     </span>
+                                     <span class="mkt-supplier-meta-item">
+                                         <span class="material-symbols-outlined">location_on</span>
+                                         {{ s.location }}
+                                     </span>
+                                 </div>
+                             </div>
+                             <button class="mkt-supplier-btn">عرض الملف</button>
+                         </div>
+                     </div>
                 </div>
 
                 <!-- ===== عروض خاصة ===== -->
@@ -758,6 +757,9 @@
                 var topProducts = computed(function() {
                     return allProducts.value.filter(function(p) { return p.rating === 5; }).slice(0, 8);
                 });
+                var allTopProducts = computed(function() {
+                    return allProducts.value.filter(function(p) { return p.rating === 5; });
+                });
 
                 var catProducts = computed(function() {
                     if (activeCatView.value === null) return [];
@@ -772,9 +774,9 @@
                 });
 
                 var suppliers = ref([
-                    { name: 'مؤسسة البناء الحديث', logo: rndImg(3), rating: '4.8', desc: 'جميع أنواع مواد البناء والإسمنت والحديد' },
-                    { name: 'شركة البصرة للمواد', logo: rndImg(7), rating: '4.6', desc: 'موردين معتمدين منذ 15 عاماً' },
-                    { name: 'دير الصناعة', logo: rndImg(11), rating: '4.9', desc: 'أدوات ومعدات بناء بأفضل الأسعار' }
+                    { name: 'مؤسسة البناء الحديث', logo: rndImg(3), projects: '1,200+', location: 'بغداد', rating: '4.8' },
+                    { name: 'شركة البصرة للمواد', logo: rndImg(7), projects: '850+', location: 'البصرة', rating: '4.6' },
+                    { name: 'دير الصناعة', logo: rndImg(11), projects: '2,500+', location: 'أربيل', rating: '4.9' }
                 ]);
 
                 var offers = ref([
@@ -959,7 +961,7 @@
                 return {
                     categories, searchQuery, activeCatView, cartView, calculatorView, checkoutView,
                     sliderImages, mktSlide, sliderTouch, resetMktTimer,
-                    allProducts, topProducts, suppliers, offers, showAllView,
+                    allProducts, topProducts, allTopProducts, suppliers, offers, showAllView,
                     catProducts, filteredCatProducts, selectCat, applyFilter, openProduct, addToCart,
                     cart, cartCount, cartSubtotal, cartTotal,
                     calcLength, calcWidth, calcHeight, calcDone, doCalc, selectedCalcType, goToCalc,
