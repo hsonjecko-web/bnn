@@ -3144,6 +3144,48 @@ html.light-mode .ideas-projects-header h2 {
 }
 .exec-show-all:active { background: var(--bg-card-light); }
 
+.exec-stat-icon {
+  display: block;
+  font-size: 20px;
+  color: var(--accent-gold);
+  margin-bottom: 2px;
+}
+.exec-work-slider {
+  overflow: hidden;
+  border-radius: 14px;
+  position: relative;
+  border: 1px solid var(--border-light);
+}
+.exec-work-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.exec-work-slide {
+  min-width: 100%;
+  aspect-ratio: 16/9;
+}
+.exec-work-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.exec-work-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+}
+.exec-work-dots .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  opacity: 0.4;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.exec-work-dots .dot.active {
+  opacity: 1;
+  background: var(--accent-gold);
+  width: 18px;
+  border-radius: 4px;
+}
+
 @media (max-width: 380px) {
   .idea-project-img {
     height: 100px;

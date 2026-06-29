@@ -128,24 +128,39 @@
                     <!-- Stats -->
                     <div class="exec-stats">
                         <div class="exec-stat">
+                            <span class="exec-stat-icon material-symbols-outlined">groups</span>
                             <span class="exec-stat-num">{{ selectedCompany.stats.workers }}</span>
                             <span class="exec-stat-label">عدد العمال</span>
                         </div>
                         <div class="exec-stat">
+                            <span class="exec-stat-icon material-symbols-outlined">engineering</span>
                             <span class="exec-stat-num">{{ selectedCompany.stats.engineers }}</span>
                             <span class="exec-stat-label">عدد المهندسين</span>
                         </div>
                         <div class="exec-stat">
+                            <span class="exec-stat-icon material-symbols-outlined">calendar_month</span>
                             <span class="exec-stat-num">{{ selectedCompany.years }}</span>
                             <span class="exec-stat-label">سنة خبرة</span>
                         </div>
                         <div class="exec-stat">
+                            <span class="exec-stat-icon material-symbols-outlined">checklist</span>
                             <span class="exec-stat-num">{{ selectedCompany.stats.done }}</span>
                             <span class="exec-stat-label">مشروع منفذ</span>
                         </div>
-                        <div class="exec-stat">
-                            <span class="exec-stat-num">{{ selectedCompany.stats.completed }}</span>
-                            <span class="exec-stat-label">مكتمل</span>
+                    </div>
+
+                    <!-- Work Slider -->
+                    <div class="exec-section">
+                        <h3 class="exec-section-title">أعمال الشركة</h3>
+                        <div class="exec-work-slider">
+                            <div class="exec-work-track" dir="ltr" :style="{ transform: 'translateX(-' + (workSlide * 100) + '%)' }">
+                                <div v-for="(imgSrc, i) in selectedCompany.workImages" :key="i" class="exec-work-slide">
+                                    <img :src="imgSrc" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="selectedCompany.workImages.length > 1" class="exec-work-dots">
+                            <span v-for="(imgSrc, i) in selectedCompany.workImages" :key="i" class="dot" :class="{ active: i === workSlide }" @click="workSlide = i; resetWorkTimer()"></span>
                         </div>
                     </div>
 
@@ -369,6 +384,18 @@
                 var modalPullY = ref(0);
                 var modalClosing = ref(false);
                 var showAllProjects = ref(false);
+                var workSlide = ref(0);
+                var workTimer = null;
+
+                function resetWorkTimer() {
+                    if (workTimer) clearInterval(workTimer);
+                    if (!selectedCompany.value) return;
+                    var len = selectedCompany.value.workImages.length;
+                    if (len < 2) return;
+                    workTimer = setInterval(function() {
+                        workSlide.value = (workSlide.value + 1) % len;
+                    }, 3000);
+                }
 
                 var visibleProjects = computed(function() {
                     if (!selectedCompany.value) return [];
@@ -418,6 +445,8 @@
 
                 function selectCompany(comp) {
                     selectedCompany.value = comp;
+                    workSlide.value = 0;
+                    resetWorkTimer();
                 }
 
                 function openProject(proj) {
@@ -462,6 +491,7 @@
                 });
 
                 onUnmounted(function() {
+                    if (workTimer) clearInterval(workTimer);
                     window.removeEventListener('popstate', handlePopState);
                 });
 
@@ -470,7 +500,8 @@
                     selectCategory, selectCompany, openProject, closeModal,
                     viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
-                    visibleProjects, openProjectGallery, showAllProjects
+                    visibleProjects, openProjectGallery, showAllProjects,
+                    workSlide, resetWorkTimer
                 };
             }
         }).mount('#app');
