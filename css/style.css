@@ -2353,14 +2353,15 @@ html.light-mode .project-modal .modal-close {
     height: 40px;
   }
   .filter-bar {
-    padding: 6px 10px;
+    padding: 6px 6px;
+    gap: 3px;
   }
   .filter-bar .filter-btn {
-    padding: 5px 10px;
-    font-size: 11px;
+    padding: 4px 6px;
+    font-size: 9px;
   }
   .filter-bar .filter-btn .material-symbols-outlined {
-    font-size: 14px;
+    font-size: 11px;
   }
   .filter-dropdown {
     right: 0;
@@ -2413,11 +2414,9 @@ html.light-mode .exit-toast {
 /* ===== شريط التصفية ===== */
 .filter-bar {
   display: flex;
-  gap: 6px;
-  padding: 8px 12px;
-  overflow-x: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  gap: 4px;
+  padding: 8px 8px;
+  justify-content: center;
 }
 
 .filter-bar::-webkit-scrollbar {
@@ -2432,21 +2431,24 @@ html.light-mode .exit-toast {
 .filter-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
+  gap: 3px;
+  padding: 5px 8px;
   background: var(--bg-card-light);
   border: 1px solid var(--border-input);
   border-radius: 50px;
   color: var(--text-light);
-  font-size: 12px;
+  font-size: 10px;
   font-family: "Cairo", sans-serif;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
 }
 
 .filter-btn .material-symbols-outlined {
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .filter-btn.active {
