@@ -149,7 +149,7 @@
                         <span class="section-link">عرض الكل</span>
                     </div>
                     <div class="mkt-suppliers-scroll">
-                         <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card">
+                         <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card" @click="openSupplier(s)">
                              <div class="mkt-supplier-logo">
                                  <img :src="s.logo" alt="">
                              </div>
@@ -592,6 +592,60 @@
                 </div>
             </div>
 
+            <!-- ===== مودال المورد ===== -->
+            <div v-if="selectedSupplier" class="project-modal" @click.self="selectedSupplier = null">
+                <div class="modal-content">
+                    <div class="modal-pull-bar"><span></span></div>
+                    <button class="modal-close" @click="selectedSupplier = null">
+                        <span class="material-symbols-outlined close-icon">close</span>
+                        <span class="material-symbols-outlined arrow-icon">arrow_back</span>
+                    </button>
+                    <div class="supplier-profile">
+                        <div class="supplier-profile-header">
+                            <div class="supplier-profile-logo">
+                                <img :src="selectedSupplier.logo" alt="">
+                            </div>
+                            <h2>{{ selectedSupplier.name }}</h2>
+                            <div class="supplier-profile-rating">
+                                <span class="material-symbols-outlined">star</span>
+                                <span>{{ selectedSupplier.rating }}</span>
+                            </div>
+                        </div>
+                        <div class="supplier-profile-desc">
+                            <p>{{ selectedSupplier.desc }}</p>
+                        </div>
+                        <div class="supplier-profile-info">
+                            <div class="supplier-profile-row">
+                                <span class="material-symbols-outlined">location_on</span>
+                                <span>{{ selectedSupplier.location }}</span>
+                            </div>
+                            <div class="supplier-profile-row">
+                                <span class="material-symbols-outlined">engineering</span>
+                                <span>{{ selectedSupplier.projects }} مشروع منجز</span>
+                            </div>
+                            <div class="supplier-profile-row">
+                                <span class="material-symbols-outlined">phone</span>
+                                <span dir="ltr">{{ selectedSupplier.phone }}</span>
+                            </div>
+                            <div class="supplier-profile-row">
+                                <span class="material-symbols-outlined">mail</span>
+                                <span>{{ selectedSupplier.email }}</span>
+                            </div>
+                        </div>
+                        <div class="supplier-profile-specs">
+                            <h4>التخصصات</h4>
+                            <div class="supplier-profile-tags">
+                                <span v-for="(spec, i) in selectedSupplier.specialties" :key="i" class="supplier-tag">{{ spec }}</span>
+                            </div>
+                        </div>
+                        <button class="mkt-confirm-btn" style="margin:16px;" @click="selectedSupplier = null">
+                            <span class="material-symbols-outlined">close</span>
+                            إغلاق
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- ===== عارض الصور الممتلئ ===== -->
             <div v-if="viewerOpen" class="image-viewer"
                  @touchstart.passive="viewerTouch.onTouchStart"
@@ -802,10 +856,11 @@
                 });
 
                 var showAllOffers = ref(false);
+                var selectedSupplier = ref(null);
                 var suppliers = ref([
-                    { name: 'مؤسسة البناء الحديث', logo: rndImg(3), projects: '1,200+', location: 'بغداد', rating: '4.8' },
-                    { name: 'شركة البصرة للمواد', logo: rndImg(7), projects: '850+', location: 'البصرة', rating: '4.6' },
-                    { name: 'دير الصناعة', logo: rndImg(11), projects: '2,500+', location: 'أربيل', rating: '4.9' }
+                    { name: 'مؤسسة البناء الحديث', logo: rndImg(3), projects: '1,200+', location: 'بغداد', rating: '4.8', phone: '07711223344', email: 'info@modernbuild.iq', specialties: ['حديد', 'إسمنت', 'مواد عازلة', 'بلاط'], desc: 'مؤسسة رائدة في توريد مواد البناء منذ 25 عاماً، نقدم أجود أنواع الحديد والإسمنت والمواد العازلة بأفضل الأسعار.' },
+                    { name: 'شركة البصرة للمواد', logo: rndImg(7), projects: '850+', location: 'البصرة', rating: '4.6', phone: '07755667788', email: 'sales@basramaterials.iq', specialties: ['خشب', 'دهانات', 'أدوات صحية', 'سيراميك'], desc: 'شركة متخصصة في توريد مواد البناء والدهانات والأدوات الصحية، معتمدون رسمياً من وزارة الإعمار والإسكان.' },
+                    { name: 'دير الصناعة', logo: rndImg(11), projects: '2,500+', location: 'أربيل', rating: '4.9', phone: '07501234567', email: 'info@deeralsenaa.iq', specialties: ['أدوات كهربائية', 'معدات بناء', 'عدد يدوية', 'إضاءة'], desc: 'الوكيل الحصري لأكبر العلامات التجارية في مجال الأدوات الكهربائية ومعدات البناء في إقليم كردستان.' }
                 ]);
 
                 var offers = ref([
@@ -829,6 +884,14 @@
                     selectedSize.value = 0;
                     selectedQty.value = 1;
                     modalSlide.value = 0;
+                }
+
+                function openSupplier(s) {
+                    selectedSupplier.value = s;
+                }
+
+                function closeSupplier() {
+                    selectedSupplier.value = null;
                 }
 
                 function addToCartFromModal() {
@@ -1002,6 +1065,7 @@
                     selectedProduct, selectedColor, selectedSize, selectedQty, modalSlide,
                     addToCartFromModal, openViewer, nextViewer, prevViewer,
                     viewerOpen, viewerImages, viewerIndex, viewerTouch,
+                    selectedSupplier, openSupplier, closeSupplier,
                     fmt
                 };
             }
