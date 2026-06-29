@@ -34,43 +34,49 @@
 
                 <!-- Hero -->
                 <div class="ideas-hero">
-                    <h1 style="font-size:18px;">اكتشف آلاف المشاريع والأفكار الملهمة</h1>
+                    <h1 style="font-size:18px;">
+                        اكتشف آلاف المشاريع والأفكار
+                        <span class="hero-filter-trigger" @click="filterPanelOpen = true">
+                            الملهمة
+                            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">filter_list</span>
+                        </span>
+                    </h1>
                 </div>
 
-                <!-- Filter Bar -->
-                <div class="filter-bar">
-                    <div class="filter-btn-wrap" v-for="fb in filterBtns" :key="fb.key">
-                        <button class="filter-btn" :class="{ active: openDropdown === fb.key || fb.active }" @click.stop="toggleDropdown(fb.key)">
-                            <span class="material-symbols-outlined">{{ fb.icon }}</span>
-                            <span>{{ fb.val() || fb.label }}</span>
-                        </button>
-                        <div v-if="openDropdown === fb.key" class="filter-dropdown" @click.stop>
-                            <div v-if="fb.key === 'gov'" class="drop-list">
-                                <div v-for="g in governorates" :key="g" class="drop-item" :class="{ selected: filters.gov === g }" @click="filters.gov = (filters.gov === g ? '' : g); closeDropdown()">{{ g }}</div>
-                            </div>
-                            <div v-if="fb.key === 'style'" class="drop-list">
-                                <div v-for="s in styles" :key="s" class="drop-item" :class="{ selected: filters.style === s }" @click="filters.style = (filters.style === s ? '' : s); closeDropdown()">{{ s }}</div>
-                            </div>
-                            <div v-if="fb.key === 'budget'" class="drop-range">
-                                <label>من</label>
-                                <input type="text" inputmode="numeric" :value="filters.budgetFrom" @input="filters.budgetFrom = formatInput($event.target.value)" placeholder="0">
-                                <label>إلى</label>
-                                <input type="text" inputmode="numeric" :value="filters.budgetTo" @input="filters.budgetTo = formatInput($event.target.value)" placeholder="999,999,999">
-                            </div>
-                            <div v-if="fb.key === 'area'" class="drop-range">
-                                <label>من</label>
-                                <input type="text" inputmode="numeric" :value="filters.areaFrom" @input="filters.areaFrom = formatInput($event.target.value)" placeholder="0">
-                                <label>إلى</label>
-                                <input type="text" inputmode="numeric" :value="filters.areaTo" @input="filters.areaTo = formatInput($event.target.value)" placeholder="9999">
-                                <span class="drop-unit">م²</span>
-                            </div>
-
+                <!-- Filter Panel Overlay -->
+                <div v-if="filterPanelOpen" class="filter-panel" @click.self="filterPanelOpen = false">
+                    <div class="filter-panel-content">
+                        <div class="filter-panel-header">
+                            <h3>تصفية المشاريع</h3>
+                            <button class="filter-panel-close" @click="filterPanelOpen = false"><span class="material-symbols-outlined">close</span></button>
                         </div>
+
+                        <label class="filter-panel-label">المحافظة</label>
+                        <div class="filter-chip-list">
+                            <span v-for="g in governorates" :key="g" class="filter-chip" :class="{ selected: filters.gov === g }" @click="filters.gov = (filters.gov === g ? '' : g)">{{ g }}</span>
+                        </div>
+
+                        <label class="filter-panel-label">النمط</label>
+                        <div class="filter-chip-list">
+                            <span v-for="s in styles" :key="s" class="filter-chip" :class="{ selected: filters.style === s }" @click="filters.style = (filters.style === s ? '' : s)">{{ s }}</span>
+                        </div>
+
+                        <label class="filter-panel-label">الميزانية (د.ع)</label>
+                        <div class="filter-range">
+                            <input type="text" inputmode="numeric" :value="filters.budgetFrom" @input="filters.budgetFrom = formatInput($event.target.value)" placeholder="من">
+                            <span class="filter-range-sep">-</span>
+                            <input type="text" inputmode="numeric" :value="filters.budgetTo" @input="filters.budgetTo = formatInput($event.target.value)" placeholder="إلى">
+                        </div>
+
+                        <label class="filter-panel-label">المساحة (م²)</label>
+                        <div class="filter-range">
+                            <input type="text" inputmode="numeric" :value="filters.areaFrom" @input="filters.areaFrom = formatInput($event.target.value)" placeholder="من">
+                            <span class="filter-range-sep">-</span>
+                            <input type="text" inputmode="numeric" :value="filters.areaTo" @input="filters.areaTo = formatInput($event.target.value)" placeholder="إلى">
+                        </div>
+
+                        <button class="filter-panel-search" @click="doSearch">ابحث</button>
                     </div>
-                    <button class="filter-btn filter-btn-search" @click="doSearch">
-                        <span class="material-symbols-outlined">search</span>
-                        <span>ابحث</span>
-                    </button>
                 </div>
 
                 <!-- Categories Grid -->
@@ -250,7 +256,7 @@
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
                 var viewerIndex = ref(0);
-                var openDropdown = ref(null);
+                var filterPanelOpen = ref(false);
                 var searchActive = ref(false);
                 var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '' });
                 var modalPullY = ref(0);
@@ -267,13 +273,6 @@
 
                 var governorates = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية', 'ديالى', 'واسط', 'ميسان', 'ذي قار', 'المثنى', 'القادسية', 'بابل', 'صلاح الدين', 'الأنبار', 'دهوك'];
                 var styles = ['كلاسيكي', 'عصري', 'أندلسي', 'بسيط', 'فاخر', 'حديث', 'مودرن', 'عربي'];
-
-                var filterBtns = [
-                    { key: 'gov', icon: 'map', label: 'المحافظة', active: false, val: function() { return filters.value.gov; } },
-                    { key: 'style', icon: 'style', label: 'النمط', active: false, val: function() { return filters.value.style; } },
-                    { key: 'budget', icon: 'payments', label: 'الميزانية', active: false, val: function() { var f = filters.value; if (f.budgetFrom && f.budgetTo) return f.budgetFrom + ' - ' + f.budgetTo; if (f.budgetFrom) return 'من ' + f.budgetFrom; if (f.budgetTo) return 'حتى ' + f.budgetTo; return ''; } },
-                    { key: 'area', icon: 'straighten', label: 'المساحة', active: false, val: function() { var f = filters.value; if (f.areaFrom && f.areaTo) return f.areaFrom + ' - ' + f.areaTo; if (f.areaFrom) return 'من ' + f.areaFrom; if (f.areaTo) return 'حتى ' + f.areaTo; return ''; } }
-                ];
 
                 var allProjects = computed(function() {
                     var result = [];
@@ -404,15 +403,6 @@
                     exitTimer = setTimeout(function() { toast.classList.remove('show'); }, 2000);
                 }
 
-                function toggleDropdown(key) {
-                    openDropdown.value = openDropdown.value === key ? null : key;
-                    for (var i = 0; i < filterBtns.length; i++) {
-                        filterBtns[i].active = openDropdown.value === filterBtns[i].key;
-                    }
-                }
-
-                function closeDropdown() { openDropdown.value = null; for (var i = 0; i < filterBtns.length; i++) filterBtns[i].active = false; }
-
                 function formatInput(v) {
                     var num = v.replace(/[^0-9]/g, '');
                     if (!num) return '';
@@ -422,13 +412,12 @@
                 function doSearch() {
                     searchActive.value = true;
                     activeCategory.value = null;
-                    closeDropdown();
+                    filterPanelOpen.value = false;
                 }
 
                 function selectCategory(cat) {
                     activeCategory.value = cat;
                     searchActive.value = false;
-                    closeDropdown();
                 }
 
                 function openProject(proj) { modalSlide.value = 0; selectedProject.value = proj; history.pushState({ action: 'modal' }, ''); }
@@ -446,17 +435,14 @@
                 function nextViewer() { if (viewerIndex.value < viewerImages.value.length - 1) viewerIndex.value++; }
                 function prevViewer() { if (viewerIndex.value > 0) viewerIndex.value--; }
 
-                function onDocClick() { closeDropdown(); }
-
-                onMounted(function() { document.addEventListener('click', onDocClick); window.addEventListener('popstate', handlePopState); });
-                onUnmounted(function() { document.removeEventListener('click', onDocClick); window.removeEventListener('popstate', handlePopState); });
+                onMounted(function() { window.addEventListener('popstate', handlePopState); });
+                onUnmounted(function() { window.removeEventListener('popstate', handlePopState); });
 
                 return {
                     searchQuery, activeCategory, categories, selectedProject, modalSlide,
                     selectCategory, openProject, closeModal,
                     viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer, nextViewer, prevViewer,
-                    governorates, styles, filterBtns, filters, openDropdown,
-                    toggleDropdown, closeDropdown, formatInput, doSearch,
+                    governorates, styles, filters, formatInput, doSearch, filterPanelOpen,
                     filteredProjects, showCategories, showProjects, projectsTitle, searchActive,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing
                 };
