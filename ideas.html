@@ -320,6 +320,44 @@
                     return '';
                 });
 
+                /* ---- Back Button (History API) ---- */
+                var exitPending = false;
+                var exitTimer = null;
+                function handlePopState() {
+                    if (viewerOpen.value) {
+                        viewerOpen.value = false;
+                        return;
+                    }
+                    if (selectedProject.value) {
+                        selectedProject.value = null;
+                        return;
+                    }
+                    if (!exitPending) {
+                        exitPending = true;
+                        showExitToast();
+                        history.pushState({ action: 'exit' }, '');
+                        setTimeout(function() { exitPending = false; }, 2000);
+                        return;
+                    }
+                }
+                function showExitToast() {
+                    var t = document.getElementById('exitToast');
+                    if (t) {
+                        t.classList.add('show');
+                        clearTimeout(exitTimer);
+                        exitTimer = setTimeout(function() { t.classList.remove('show'); }, 2000);
+                        return;
+                    }
+                    var toast = document.createElement('div');
+                    toast.id = 'exitToast';
+                    toast.className = 'exit-toast';
+                    toast.textContent = 'اضغط مرة أخرى للخروج';
+                    document.body.appendChild(toast);
+                    requestAnimationFrame(function() { toast.classList.add('show'); });
+                    clearTimeout(exitTimer);
+                    exitTimer = setTimeout(function() { toast.classList.remove('show'); }, 2000);
+                }
+
                 function toggleDropdown(key) {
                     openDropdown.value = openDropdown.value === key ? null : key;
                     for (var i = 0; i < filterBtns.length; i++) {
@@ -347,17 +385,17 @@
                     closeDropdown();
                 }
 
-                function openProject(proj) { modalSlide.value = 0; selectedProject.value = proj; }
+                function openProject(proj) { modalSlide.value = 0; selectedProject.value = proj; history.pushState({ action: 'modal' }, ''); }
                 function closeModal() { selectedProject.value = null; }
-                function openViewer(index) { if (!selectedProject.value) return; viewerImages.value = selectedProject.value.images; viewerIndex.value = index; viewerOpen.value = true; }
+                function openViewer(index) { if (!selectedProject.value) return; viewerImages.value = selectedProject.value.images; viewerIndex.value = index; viewerOpen.value = true; history.pushState({ action: 'viewer' }, ''); }
                 function closeViewer() { viewerOpen.value = false; }
                 function nextViewer() { if (viewerIndex.value < viewerImages.value.length - 1) viewerIndex.value++; }
                 function prevViewer() { if (viewerIndex.value > 0) viewerIndex.value--; }
 
                 function onDocClick() { closeDropdown(); }
 
-                onMounted(function() { document.addEventListener('click', onDocClick); });
-                onUnmounted(function() { document.removeEventListener('click', onDocClick); });
+                onMounted(function() { document.addEventListener('click', onDocClick); window.addEventListener('popstate', handlePopState); });
+                onUnmounted(function() { document.removeEventListener('click', onDocClick); window.removeEventListener('popstate', handlePopState); });
 
                 return {
                     searchQuery, activeCategory, categories, selectedProject, modalSlide,
