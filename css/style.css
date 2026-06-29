@@ -5032,7 +5032,10 @@ html.light-mode .mkt-modal-desc { color: #666; }
 
 /* --- صفحة تفاصيل المنتج --- */
 .prod-detail-page {
-  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
 }
 /* --- صف علوي: صور + معلومات --- */
 .prod-top-row {

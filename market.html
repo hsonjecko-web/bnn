@@ -28,10 +28,9 @@
 <body>
     <div id="app">
         <div class="app-container">
-            <div id="header"></div>
+            <div v-if="!productDetailView" id="header"></div>
 
-            <div class="page-content">
-                <div v-if="!productDetailView">
+            <div v-if="!productDetailView" class="page-content">
 
                 <!-- ===== أقسام دائرية ===== -->
                 <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers" class="mkt-cats-scroll">
@@ -516,7 +515,6 @@
                         تأكيد الطلب
                     </button>
                 </div>
-                </div>
 
             </div>
 
@@ -754,7 +752,7 @@
                 <span class="mkt-cart-badge">{{ cartCount }}</span>
             </div>
 
-            <div id="bottomNav"></div>
+            <div v-if="!productDetailView" id="bottomNav"></div>
         </div>
     </div>
 
