@@ -72,7 +72,7 @@
                 </div>
                 <div class="ad-slider">
                     <div class="ad-slider-track" dir="ltr" :style="{ transform: `translateX(-${adSlide * 100}%)` }">
-                        <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openAd(ad)">
+                        <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openProject(ad)">
                             <div class="ad-slider-img">
                                 <img :src="ad.bg" alt="">
                                 <span class="ad-sponsor">ممول</span>
@@ -515,9 +515,6 @@
                     if (adTimer) { clearInterval(adTimer); adTimer = null; }
                 }
                 function resetAdTimer() { startAdTimer(); }
-                function openAd(ad) {
-                    window.location.href = ad.companyLink;
-                }
 
                 function openProject(project) {
                     stopSlideTimer();
@@ -581,7 +578,7 @@
                     openViewer, closeViewer, nextViewer, prevViewer,
                     heroSwipe, modalTouch, viewerTouch,
                     modalPullY, pullTransform, modalClosing,
-                    adSlide, openAd, resetAdTimer
+                    adSlide, resetAdTimer
                 };
             }
         }).mount('#app');
