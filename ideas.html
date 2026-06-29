@@ -42,7 +42,7 @@
                     <div class="filter-btn-wrap" v-for="fb in filterBtns" :key="fb.key">
                         <button class="filter-btn" :class="{ active: openDropdown === fb.key || fb.active }" @click.stop="toggleDropdown(fb.key)">
                             <span class="material-symbols-outlined">{{ fb.icon }}</span>
-                            <span>{{ fb.label }}</span>
+                            <span>{{ fb.val() || fb.label }}</span>
                         </button>
                         <div v-if="openDropdown === fb.key" class="filter-dropdown" @click.stop>
                             <div v-if="fb.key === 'gov'" class="drop-list">
@@ -269,10 +269,10 @@
                 var styles = ['كلاسيكي', 'عصري', 'أندلسي', 'بسيط', 'فاخر', 'حديث', 'مودرن', 'عربي'];
 
                 var filterBtns = [
-                    { key: 'gov', icon: 'map', label: 'المحافظة', active: false },
-                    { key: 'style', icon: 'style', label: 'النمط', active: false },
-                    { key: 'budget', icon: 'payments', label: 'الميزانية', active: false },
-                    { key: 'area', icon: 'straighten', label: 'المساحة', active: false },
+                    { key: 'gov', icon: 'map', label: 'المحافظة', active: false, val: function() { return filters.value.gov; } },
+                    { key: 'style', icon: 'style', label: 'النمط', active: false, val: function() { return filters.value.style; } },
+                    { key: 'budget', icon: 'payments', label: 'الميزانية', active: false, val: function() { var f = filters.value; if (f.budgetFrom && f.budgetTo) return f.budgetFrom + ' - ' + f.budgetTo; if (f.budgetFrom) return 'من ' + f.budgetFrom; if (f.budgetTo) return 'حتى ' + f.budgetTo; return ''; } },
+                    { key: 'area', icon: 'straighten', label: 'المساحة', active: false, val: function() { var f = filters.value; if (f.areaFrom && f.areaTo) return f.areaFrom + ' - ' + f.areaTo; if (f.areaFrom) return 'من ' + f.areaFrom; if (f.areaTo) return 'حتى ' + f.areaTo; return ''; } }
                 ];
 
                 var allProjects = computed(function() {
