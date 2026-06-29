@@ -2158,8 +2158,8 @@ html.light-mode .project-modal .modal-close {
   .filter-bar { padding: 6px 6px; gap: 3px; }
   .filter-bar .filter-btn { padding: 4px 6px; font-size: 9px; }
   .filter-bar .filter-btn .material-symbols-outlined { font-size: 11px; }
-  .filter-dropdown { right: 0; left: auto; min-width: 180px; }
-  .drop-range input { width: 60px; }
+  .filter-dropdown { min-width: 140px; }
+  .drop-range input { width: 50px; }
 }
 
 /* ===== Exit Toast ===== */
@@ -2241,7 +2241,8 @@ html.light-mode .exit-toast {
     position: absolute;
     top: calc(100% + 6px);
     right: 0;
-    min-width: 200px;
+    min-width: 160px;
+    max-width: 90vw;
     background: var(--bg-input);
     border: 1px solid var(--border-light);
     border-radius: 12px;
@@ -2267,10 +2268,10 @@ html.light-mode .exit-toast {
     gap: 8px;
     padding: 8px 4px;
 }
-.drop-range label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.drop-range label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
 .drop-range input {
-    width: 80px;
-    padding: 6px 8px;
+    width: 60px;
+    padding: 4px 6px;
     background: var(--bg-card-light);
     border: 1px solid var(--border-input);
     border-radius: 8px;
