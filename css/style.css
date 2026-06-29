@@ -3237,6 +3237,10 @@ html.light-mode .ideas-projects-header h2 {
   margin: 0;
 }
 
+.exec-companies {
+  padding-bottom: 16px;
+}
+
 .exec-company-list {
   padding: 0 16px;
   display: flex;
