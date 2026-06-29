@@ -2402,11 +2402,13 @@ html.light-mode .exit-toast {
 
 /* ===== زر البحث والتصفية ===== */
 .ideas-actions {
+  display: flex;
+  gap: 8px;
   padding: 0 16px 8px;
 }
 
 .ideas-filter-btn {
-  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2429,6 +2431,24 @@ html.light-mode .exit-toast {
 
 .ideas-filter-btn:active {
   opacity: 0.8;
+}
+
+.ideas-show-all-btn {
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid var(--border-input);
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: "Cairo", sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.ideas-show-all-btn:active {
+  background: var(--bg-card-light);
 }
 
 /* ===== وسوم التصفية النشطة ===== */

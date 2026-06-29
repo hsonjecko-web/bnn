@@ -43,6 +43,7 @@
                         <span class="material-symbols-outlined">filter_list</span>
                         <span>بحث وتصفية</span>
                     </button>
+                    <button class="ideas-show-all-btn" @click="clearFilters">عرض الكل</button>
                 </div>
 
                 <!-- Active Filter Tags -->
@@ -463,6 +464,7 @@
                 function clearFilters() {
                     filters.value = { gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '' };
                     searchActive.value = false;
+                    history.replaceState({}, '', window.location.pathname);
                 }
 
                 function selectCategory(cat) {
