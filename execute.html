@@ -33,9 +33,8 @@
             <div class="page-content">
 
                 <!-- Hero -->
-                <div class="exec-hero">
+                <div class="exec-hero" v-if="!activeCategory && !selectedCompany">
                     <h1>خدمات التنفيذ</h1>
-                    <p>اختر التخصص وابحث عن أفضل شركات التنفيذ</p>
                 </div>
 
                 <!-- Categories Grid -->
@@ -93,23 +92,18 @@
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
                         <div class="exec-cover-img">
-                            <img :src="selectedCompany.cover" alt="">
+                            <img :src="selectedCompany.logo" alt="">
                         </div>
                         <div class="exec-cover-overlay"></div>
                         <div class="exec-cover-content">
-                            <div class="exec-cover-logo">
-                                <img :src="selectedCompany.logo" alt="">
-                            </div>
                             <h2>{{ selectedCompany.name }}</h2>
                             <div class="exec-cover-meta">
-                                <span>{{ selectedCompany.years }} سنة خبرة</span>
-                                <span class="dot-sep">·</span>
-                                <span class="exec-badge" v-if="selectedCompany.verified">
-                                    <span class="material-symbols-outlined">verified</span>
-                                    موثقة
+                                <span class="exec-meta-icon"><span class="material-symbols-outlined">calendar_month</span> {{ selectedCompany.years }} سنة</span>
+                                <span class="exec-meta-icon"><span class="material-symbols-outlined">location_on</span> {{ selectedCompany.location }}</span>
+                                <span class="exec-meta-icon exec-badge" v-if="selectedCompany.verified">
+                                    <span class="material-symbols-outlined">verified</span> موثقة
                                 </span>
-                                <span class="dot-sep">·</span>
-                                <span class="exec-cover-rating">
+                                <span class="exec-meta-rating">
                                     <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= selectedCompany.rating }">star</span>
                                 </span>
                             </div>
@@ -135,11 +129,11 @@
                     <div class="exec-stats">
                         <div class="exec-stat">
                             <span class="exec-stat-num">{{ selectedCompany.stats.workers }}</span>
-                            <span class="exec-stat-label">عامل</span>
+                            <span class="exec-stat-label">عدد العمال</span>
                         </div>
                         <div class="exec-stat">
                             <span class="exec-stat-num">{{ selectedCompany.stats.engineers }}</span>
-                            <span class="exec-stat-label">مهندس</span>
+                            <span class="exec-stat-label">عدد المهندسين</span>
                         </div>
                         <div class="exec-stat">
                             <span class="exec-stat-num">{{ selectedCompany.years }}</span>
@@ -298,6 +292,7 @@
                 workImages: workImgs,
                 about: opts.about || 'شركة متخصصة في مجال البناء والتنفيذ بأعلى معايير الجودة، نمتلك فريقاً من المهندسين والفنيين ذوي الخبرة الطويلة.',
                 specs: opts.specs || ['بناء', 'تشطيبات', 'تصميم'],
+                location: opts.location || 'بغداد',
                 verified: true,
                 rating: opts.rating || 4,
                 years: opts.years || 15,

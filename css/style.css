@@ -3389,23 +3389,6 @@ html.light-mode .ideas-projects-header h2 {
   z-index: 2;
 }
 
-.exec-cover-logo {
-  width: 72px;
-  height: 72px;
-  border-radius: 18px;
-  overflow: hidden;
-  margin: 0 auto 10px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: var(--bg-card);
-}
-
-.exec-cover-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
 .exec-cover-content h2 {
   font-size: 20px;
   font-weight: 800;
@@ -3418,40 +3401,39 @@ html.light-mode .ideas-projects-header h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.85);
   flex-wrap: wrap;
 }
 
-.exec-cover-meta .dot-sep {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.exec-cover-meta .exec-badge {
+.exec-meta-icon {
   display: inline-flex;
   align-items: center;
   gap: 2px;
+}
+
+.exec-meta-icon .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.exec-meta-icon.exec-badge {
   color: var(--accent-gold);
   font-weight: 600;
 }
 
-.exec-cover-meta .exec-badge .material-symbols-outlined {
-  font-size: 14px;
-}
-
-.exec-cover-rating {
+.exec-meta-rating {
   display: inline-flex;
   gap: 1px;
 }
 
-.exec-cover-rating .star {
+.exec-meta-rating .star {
   font-family: "Material Symbols Outlined";
   font-size: 14px;
   color: rgba(255, 255, 255, 0.4);
 }
 
-.exec-cover-rating .star.filled {
+.exec-meta-rating .star.filled {
   color: #f5a623;
   font-variation-settings: "FILL" 1;
 }
