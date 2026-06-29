@@ -62,7 +62,7 @@
                 </div>
 
                 <!-- ===== حاسبة مواد البناء ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView" class="mkt-calc-compact">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers" class="mkt-calc-compact">
                     <div class="mkt-calc-compact-top">
                         <div class="mkt-calc-compact-icon">
                             <span class="material-symbols-outlined">calculate</span>
@@ -93,7 +93,7 @@
                 </div>
 
                 <!-- ===== المنتجات الأكثر طلباً ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers">
                     <div class="section-header">
                         <span class="section-title">المنتجات الأكثر طلباً</span>
                         <span class="section-link" @click="showAllView = true">عرض الكل</span>
@@ -143,7 +143,7 @@
                 </div>
 
                 <!-- ===== الموردون المعتمدون ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers">
                     <div class="section-header">
                         <span class="section-title">الموردون المعتمدون</span>
                         <span class="section-link">عرض الكل</span>
@@ -172,10 +172,10 @@
                 </div>
 
                 <!-- ===== عروض خاصة ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers">
                     <div class="section-header">
                         <span class="section-title">عروض خاصة</span>
-                        <span class="section-link">عرض الكل</span>
+                        <span class="section-link" @click="showAllOffers = true">عرض الكل</span>
                     </div>
                     <div class="mkt-offers-scroll">
                         <div v-for="(o, i) in offers" :key="i" class="mkt-offer-card" @click="openProduct(o)">
@@ -191,6 +191,34 @@
                                 </div>
                                 <button class="mkt-add-cart" @click.stop="addToCart(o)">
                                     <span class="material-symbols-outlined">add_shopping_cart</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== صفحة عرض كل العروض ===== -->
+                <div v-if="showAllOffers && !cartView && !calculatorView && !checkoutView" class="mkt-cat-view">
+                    <div class="exec-header">
+                        <button class="exec-back" @click="showAllOffers = false">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <div>
+                            <h2>جميع العروض</h2>
+                            <p>{{ offers.length }} عرض</p>
+                        </div>
+                    </div>
+                    <div class="mkt-cat-products-grid">
+                        <div v-for="(o, i) in offers" :key="i" class="mkt-grid-prod" @click="openProduct(o)">
+                            <div class="mkt-grid-prod-img">
+                                <img :src="o.img" alt="">
+                            </div>
+                            <div class="mkt-grid-prod-info">
+                                <div class="mkt-grid-prod-name">{{ o.name }}</div>
+                                <div class="mkt-grid-prod-price">{{ fmt(o.price) }} د.ع</div>
+                                <button class="mkt-grid-add-btn" @click.stop="addToCart(o)">
+                                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                                    أضف للسلة
                                 </button>
                             </div>
                         </div>
@@ -773,6 +801,7 @@
                     return list.filter(function(p) { return p.price >= from && p.price <= to; });
                 });
 
+                var showAllOffers = ref(false);
                 var suppliers = ref([
                     { name: 'مؤسسة البناء الحديث', logo: rndImg(3), projects: '1,200+', location: 'بغداد', rating: '4.8' },
                     { name: 'شركة البصرة للمواد', logo: rndImg(7), projects: '850+', location: 'البصرة', rating: '4.6' },
@@ -780,10 +809,10 @@
                 ]);
 
                 var offers = ref([
-                    { name: 'دهان جوتن 20 لتر', price: 35000, oldPrice: 50000, discount: 30, rating: 5, img: rndImg(4), cat: 1 },
-                    { name: 'بلاط بورسلان 80x80', price: 28000, oldPrice: 40000, discount: 30, rating: 5, img: rndImg(10), cat: 1 },
-                    { name: 'تكييف سبليت 1.5 طن', price: 750000, oldPrice: 950000, discount: 21, rating: 5, img: rndImg(15), cat: 5 },
-                    { name: 'حوض استحمام فاخر', price: 280000, oldPrice: 400000, discount: 30, rating: 5, img: rndImg(20), cat: 2 }
+                    { name: 'دهان جوتن 20 لتر', price: 35000, oldPrice: 50000, discount: 30, rating: 5, img: rndImg(4), cat: 1, images: [rndImg(4), rndImg(5), rndImg(6)] },
+                    { name: 'بلاط بورسلان 80x80', price: 28000, oldPrice: 40000, discount: 30, rating: 5, img: rndImg(10), cat: 1, images: [rndImg(10), rndImg(11), rndImg(12)] },
+                    { name: 'تكييف سبليت 1.5 طن', price: 750000, oldPrice: 950000, discount: 21, rating: 5, img: rndImg(15), cat: 5, images: [rndImg(15), rndImg(16), rndImg(17)] },
+                    { name: 'حوض استحمام فاخر', price: 280000, oldPrice: 400000, discount: 30, rating: 5, img: rndImg(20), cat: 2, images: [rndImg(20), rndImg(21), rndImg(22)] }
                 ]);
 
                 function selectCat(i) {
@@ -961,7 +990,7 @@
                 return {
                     categories, searchQuery, activeCatView, cartView, calculatorView, checkoutView,
                     sliderImages, mktSlide, sliderTouch, resetMktTimer,
-                    allProducts, topProducts, allTopProducts, suppliers, offers, showAllView,
+                    allProducts, topProducts, allTopProducts, suppliers, offers, showAllView, showAllOffers,
                     catProducts, filteredCatProducts, selectCat, applyFilter, openProduct, addToCart,
                     cart, cartCount, cartSubtotal, cartTotal,
                     calcLength, calcWidth, calcHeight, calcDone, doCalc, selectedCalcType, goToCalc,
