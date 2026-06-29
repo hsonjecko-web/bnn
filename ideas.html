@@ -129,7 +129,11 @@
 
             <!-- Project Detail Modal -->
             <div v-if="selectedProject" class="project-modal" @click.self="closeModal">
-                <div class="modal-content">
+                <div class="modal-content"
+                     :style="{ transform: pullTransform }"
+                     @touchstart.passive="modalTouch.onTouchStart"
+                     @touchmove.passive="modalTouch.onTouchMove"
+                     @touchend="modalTouch.onTouchEnd">
                     <div class="modal-pull-bar"><span></span></div>
                     <div style="position:relative;">
                         <button class="modal-close" @click="closeModal">
@@ -174,7 +178,9 @@
             </div>
 
             <!-- Full-Screen Image Viewer -->
-            <div v-if="viewerOpen" class="image-viewer">
+            <div v-if="viewerOpen" class="image-viewer"
+                 @touchstart.passive="viewerTouch.onTouchStart"
+                 @touchend="viewerTouch.onTouchEnd">
                 <button class="viewer-close" @click="closeViewer"><span class="material-symbols-outlined">close</span></button>
                 <button v-if="viewerImages.length > 1" class="viewer-nav viewer-prev" @click="prevViewer"><span class="material-symbols-outlined">chevron_right</span></button>
                 <div class="viewer-image-wrap"><img :src="viewerImages[viewerIndex]" class="viewer-image" alt="" @click="closeViewer"></div>
@@ -250,6 +256,8 @@
                 var openDropdown = ref(null);
                 var searchActive = ref(false);
                 var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '', sort: 'latest' });
+                var modalPullY = ref(0);
+                var modalClosing = ref(false);
 
                 var categories = ref([
                     makeCat('عمارات سكنية', 'apartment', img(16), 0, { company: 'شركة الإنشاءات الوطنية', location: 'حي المنصور' }),
@@ -309,6 +317,49 @@
                     if (f.sort === 'oldest') list.reverse();
 
                     return list;
+                });
+
+                var modalTouch = (function() {
+                    var sx = 0, sy = 0;
+                    return {
+                        onTouchStart: function(e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; modalPullY.value = 0; },
+                        onTouchMove: function(e) { var dy = e.touches[0].clientY - sy; if (dy > 0) modalPullY.value = dy * 0.5; },
+                        onTouchEnd: function(e) {
+                            var dx = e.changedTouches[0].clientX - sx;
+                            var dy = e.changedTouches[0].clientY - sy;
+                            if (Math.abs(dy) > Math.abs(dx) && dy > 100) {
+                                closeModal();
+                            } else if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+                                if (selectedProject.value) {
+                                    var next = modalSlide.value + (dx < 0 ? 1 : -1);
+                                    var len = selectedProject.value.images.length;
+                                    if (next >= 0 && next < len) modalSlide.value = next;
+                                }
+                            } else { modalPullY.value = 0; }
+                        }
+                    };
+                })();
+                var viewerTouch = (function() {
+                    var sx = 0, sy = 0;
+                    return {
+                        onTouchStart: function(e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; },
+                        onTouchEnd: function(e) {
+                            var dx = e.changedTouches[0].clientX - sx;
+                            var dy = e.changedTouches[0].clientY - sy;
+                            if (Math.abs(dy) > Math.abs(dx) && dy > 80) {
+                                closeViewer();
+                            } else if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+                                var next = viewerIndex.value + (dx < 0 ? 1 : -1);
+                                var len = viewerImages.value.length;
+                                if (next >= 0 && next < len) viewerIndex.value = next;
+                            }
+                        }
+                    };
+                })();
+                var pullTransform = computed(function() {
+                    if (modalClosing.value) return 'translateY(100%)';
+                    if (modalPullY.value > 0) return 'translateY(' + modalPullY.value + 'px)';
+                    return '';
                 });
 
                 var showCategories = computed(function() { return !activeCategory.value && !searchActive.value; });
@@ -386,7 +437,15 @@
                 }
 
                 function openProject(proj) { modalSlide.value = 0; selectedProject.value = proj; history.pushState({ action: 'modal' }, ''); }
-                function closeModal() { selectedProject.value = null; }
+                function closeModal() {
+                    if (modalClosing.value) return;
+                    modalClosing.value = true;
+                    setTimeout(function() {
+                        selectedProject.value = null;
+                        modalClosing.value = false;
+                        modalPullY.value = 0;
+                    }, 350);
+                }
                 function openViewer(index) { if (!selectedProject.value) return; viewerImages.value = selectedProject.value.images; viewerIndex.value = index; viewerOpen.value = true; history.pushState({ action: 'viewer' }, ''); }
                 function closeViewer() { viewerOpen.value = false; }
                 function nextViewer() { if (viewerIndex.value < viewerImages.value.length - 1) viewerIndex.value++; }
@@ -403,7 +462,8 @@
                     viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer, nextViewer, prevViewer,
                     governorates, styles, filterBtns, filters, openDropdown,
                     toggleDropdown, closeDropdown, formatInput, doSearch,
-                    filteredProjects, showCategories, showProjects, projectsTitle, searchActive
+                    filteredProjects, showCategories, showProjects, projectsTitle, searchActive,
+                    modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing
                 };
             }
         }).mount('#app');
