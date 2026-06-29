@@ -277,44 +277,49 @@
             width: 100%;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 40px;
+            gap: 10px;
             margin-top: 14px;
-            padding: 12px 18px;
+            padding: 14px 18px;
             background: rgba(20, 45, 75, 0.6);
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.12);
             flex-shrink: 0;
         }
 
-        .register-text {
-            color: #ffffff;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .register-divider {
-            width: 1px;
-            height: 18px;
-            background: #c9a243;
-        }
-
-        .register-btn {
-            padding: 7px 16px;
+.register-btn {
+            flex: 1;
+            padding: 10px 12px;
             background: linear-gradient(135deg, #d4aa4a 0%, #c9993a 100%);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             color: #0a1628;
             font-size: 13px;
             font-weight: 700;
             font-family: 'Cairo', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .register-btn.register-btn-company {
+            background: transparent;
+            border: 1px solid #c9a243;
+            color: #c9a243;
         }
 
         .register-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(201, 162, 67, 0.3);
+        }
+
+        select.input-field {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        select.input-field option {
+            background: #1a3a5c;
+            color: #fff;
         }
 
         /* ===== مشهد البناء السفلي ===== */
@@ -622,10 +627,143 @@
             </div>
 
             <!-- Register Section -->
-            <div class="register-section animate-in animate-delay-3">
-                <span class="register-text">ليس لديك حساب؟</span>
+            <div v-if="view === 'login'" class="register-section animate-in animate-delay-3">
+                <button class="register-btn" @click="openUserRegister">إنشاء حساب مستخدم</button>
                 <div class="register-divider"></div>
-                <button class="register-btn" @click="handleRegister">إنشاء حساب</button>
+                <button class="register-btn register-btn-company" @click="openCompanyRegister">تسجيل شركة</button>
+            </div>
+
+            <!-- User Registration Form -->
+            <div v-if="view === 'user-register'" class="login-card animate-in">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+                    <span class="material-symbols-outlined" style="color:#c9a243;font-size:22px;cursor:pointer;" @click="view='login'">arrow_forward</span>
+                    <span style="font-size:16px;font-weight:700;color:#fff;">إنشاء حساب مستخدم</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="الاسم الكامل" v-model="regFullName">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">person</span>
+                </div>
+                <div class="input-group">
+                    <select class="input-field" v-model="regGovernorate">
+                        <option value="" disabled>المحافظة</option>
+                        <option value="بغداد">بغداد</option>
+                        <option value="البصرة">البصرة</option>
+                        <option value="نينوى">نينوى</option>
+                        <option value="أربيل">أربيل</option>
+                        <option value="السليمانية">السليمانية</option>
+                        <option value="كركوك">كركوك</option>
+                        <option value="الأنبار">الأنبار</option>
+                        <option value="بابل">بابل</option>
+                        <option value="ذي قار">ذي قار</option>
+                        <option value="القادسية">القادسية</option>
+                        <option value="واسط">واسط</option>
+                        <option value="المثنى">المثنى</option>
+                        <option value="ميسان">ميسان</option>
+                        <option value="دهوك">دهوك</option>
+                        <option value="صلاح الدين">صلاح الدين</option>
+                        <option value="ديالى">ديالى</option>
+                        <option value="كربلاء">كربلاء</option>
+                        <option value="النجف">النجف</option>
+                    </select>
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">location_city</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="العنوان" v-model="regAddress">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">home_pin</span>
+                </div>
+                <div class="input-group">
+                    <input type="tel" class="input-field" placeholder="رقم الهاتف" v-model="regPhone">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">phone</span>
+                </div>
+                <div class="input-group">
+                    <input :type="regShowPwd ? 'text' : 'password'" class="input-field" placeholder="كلمة المرور" v-model="regPassword">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">lock</span>
+                    <div class="input-icon-left" @click="regShowPwd = !regShowPwd">
+                        <span class="material-symbols-outlined" style="font-size:20px;">{{ regShowPwd ? 'visibility' : 'visibility_off' }}</span>
+                    </div>
+                </div>
+                <button class="login-btn" @click="submitRegistration('user')" :disabled="regLoading" style="margin-top:4px;">
+                    <span v-if="!regLoading">إنشاء الحساب</span>
+                    <span v-else>جاري...</span>
+                </button>
+            </div>
+
+            <!-- Company Registration Form -->
+            <div v-if="view === 'company-register'" class="login-card animate-in">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+                    <span class="material-symbols-outlined" style="color:#c9a243;font-size:22px;cursor:pointer;" @click="view='login'">arrow_forward</span>
+                    <span style="font-size:16px;font-weight:700;color:#fff;">تسجيل شركة</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="الاسم الكامل (صاحب الشركة)" v-model="regFullName">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">person</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="اسم الشركة" v-model="regCompanyName">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">business</span>
+                </div>
+                <div class="input-group">
+                    <select class="input-field" v-model="regGovernorate">
+                        <option value="" disabled>المحافظة</option>
+                        <option value="بغداد">بغداد</option>
+                        <option value="البصرة">البصرة</option>
+                        <option value="نينوى">نينوى</option>
+                        <option value="أربيل">أربيل</option>
+                        <option value="السليمانية">السليمانية</option>
+                        <option value="كركوك">كركوك</option>
+                        <option value="الأنبار">الأنبار</option>
+                        <option value="بابل">بابل</option>
+                        <option value="ذي قار">ذي قار</option>
+                        <option value="القادسية">القادسية</option>
+                        <option value="واسط">واسط</option>
+                        <option value="المثنى">المثنى</option>
+                        <option value="ميسان">ميسان</option>
+                        <option value="دهوك">دهوك</option>
+                        <option value="صلاح الدين">صلاح الدين</option>
+                        <option value="ديالى">ديالى</option>
+                        <option value="كربلاء">كربلاء</option>
+                        <option value="النجف">النجف</option>
+                    </select>
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">location_city</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="العنوان" v-model="regAddress">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">home_pin</span>
+                </div>
+                <div class="input-group">
+                    <input type="tel" class="input-field" placeholder="رقم الهاتف" v-model="regPhone">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">phone</span>
+                </div>
+                <div class="input-group">
+                    <input :type="regShowPwd ? 'text' : 'password'" class="input-field" placeholder="كلمة المرور" v-model="regPassword">
+                    <span class="material-symbols-outlined input-icon-right" style="font-size:20px;color:#c9a243;">lock</span>
+                    <div class="input-icon-left" @click="regShowPwd = !regShowPwd">
+                        <span class="material-symbols-outlined" style="font-size:20px;">{{ regShowPwd ? 'visibility' : 'visibility_off' }}</span>
+                    </div>
+                </div>
+                <button class="login-btn" @click="submitRegistration('company')" :disabled="regLoading" style="margin-top:4px;">
+                    <span v-if="!regLoading">تسجيل الشركة</span>
+                    <span v-else>جاري...</span>
+                </button>
+            </div>
+
+            <!-- OTP Verification -->
+            <div v-if="view === 'otp-verify'" class="login-card animate-in">
+                <div style="text-align:center;margin-bottom:16px;">
+                    <span class="material-symbols-outlined" style="font-size:48px;color:#c9a243;display:block;margin-bottom:8px;">verified</span>
+                    <div style="font-size:16px;font-weight:700;color:#fff;">التحقق من الرقم</div>
+                    <div style="font-size:13px;color:#b0c4d9;margin-top:4px;">أدخل رمز التحقق المرسل إلى {{ regPhone }}</div>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="رمز التحقق" v-model="otpCode" maxlength="6" style="text-align:center;font-size:24px;letter-spacing:8px;font-weight:700;">
+                </div>
+                <button class="login-btn" @click="verifyOtp" :disabled="otpLoading" style="margin-top:4px;">
+                    <span v-if="!otpLoading">تحقق</span>
+                    <span v-else>جاري...</span>
+                </button>
+                <div style="text-align:center;margin-top:12px;">
+                    <span style="color:#b0c4d9;font-size:12px;cursor:pointer;" @click="view='login'">العودة لتسجيل الدخول</span>
+                </div>
             </div>
 
             <!-- Bottom Construction Scene -->
@@ -673,6 +811,7 @@
 
         createApp({
             setup() {
+                // Login
                 const username = ref('');
                 const password = ref('');
                 const showPassword = ref(false);
@@ -683,6 +822,23 @@
                 const resetEmail = ref('');
                 const usernameInput = ref(null);
                 const passwordInput = ref(null);
+
+                // View: login | user-register | company-register | otp-verify
+                const view = ref('login');
+
+                // Registration
+                const regFullName = ref('');
+                const regCompanyName = ref('');
+                const regGovernorate = ref('');
+                const regAddress = ref('');
+                const regPhone = ref('');
+                const regPassword = ref('');
+                const regShowPwd = ref(false);
+                const regLoading = ref(false);
+
+                // OTP
+                const otpCode = ref('');
+                const otpLoading = ref(false);
 
                 const focusPassword = () => {
                     passwordInput.value?.focus();
@@ -720,8 +876,45 @@
                     window.location.href = 'home.html';
                 };
 
-                const handleRegister = () => {
-                    alert('يمكنك استخدام: admin / 123456 للدخول');
+                const openUserRegister = () => {
+                    resetRegForm();
+                    view.value = 'user-register';
+                };
+
+                const openCompanyRegister = () => {
+                    resetRegForm();
+                    view.value = 'company-register';
+                };
+
+                const resetRegForm = () => {
+                    regFullName.value = '';
+                    regCompanyName.value = '';
+                    regGovernorate.value = '';
+                    regAddress.value = '';
+                    regPhone.value = '';
+                    regPassword.value = '';
+                    regShowPwd.value = false;
+                    otpCode.value = '';
+                };
+
+                const submitRegistration = (type) => {
+                    if (!regFullName.value.trim()) { alert('أدخل الاسم الكامل'); return; }
+                    if (type === 'company' && !regCompanyName.value.trim()) { alert('أدخل اسم الشركة'); return; }
+                    if (!regGovernorate.value) { alert('اختر المحافظة'); return; }
+                    if (!regAddress.value.trim()) { alert('أدخل العنوان'); return; }
+                    if (!regPhone.value.trim()) { alert('أدخل رقم الهاتف'); return; }
+                    if (!regPassword.value.trim()) { alert('أدخل كلمة المرور'); return; }
+                    view.value = 'otp-verify';
+                };
+
+                const verifyOtp = () => {
+                    if (otpCode.value === '123456') {
+                        alert('تم إنشاء الحساب بنجاح!');
+                        resetRegForm();
+                        view.value = 'login';
+                    } else {
+                        alert('رمز التحقق غير صحيح');
+                    }
                 };
 
                 const handleResetPassword = () => {
@@ -740,7 +933,11 @@
                     showForgotModal, resetEmail,
                     usernameInput, passwordInput,
                     focusPassword,
-                    handleLogin, handleGuest, handleRegister, handleResetPassword
+                    handleLogin, handleGuest, handleResetPassword,
+                    view, openUserRegister, openCompanyRegister,
+                    regFullName, regCompanyName, regGovernorate, regAddress, regPhone, regPassword,
+                    regShowPwd, regLoading, submitRegistration,
+                    otpCode, otpLoading, verifyOtp
                 };
             }
         }).mount('#app');
