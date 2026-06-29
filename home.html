@@ -70,16 +70,21 @@
                     <span class="section-title">إعلانات ممولة</span>
                     <span class="section-link">احجز اعلانك</span>
                 </div>
-                <div class="ads-scroll">
-                    <div v-for="(ad, i) in ads" :key="i" class="ad-card" @click="openProject(ad)">
-                        <div class="ad-image">
-                            <img :src="ad.bg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
-                            <span class="ad-sponsor">ممول</span>
+                <div class="ad-slider">
+                    <div class="ad-slider-track" dir="ltr" :style="{ transform: `translateX(-${adSlide * 100}%)` }">
+                        <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openAd(ad)">
+                            <div class="ad-slider-img">
+                                <img :src="ad.bg" alt="">
+                                <span class="ad-sponsor">ممول</span>
+                            </div>
+                            <div class="ad-slider-info">
+                                <div class="ad-title">{{ ad.title }}</div>
+                                <div class="ad-company">{{ ad.company }}</div>
+                            </div>
                         </div>
-                        <div class="ad-info">
-                            <div class="ad-title">{{ ad.title }}</div>
-                            <div class="ad-company">{{ ad.company }}</div>
-                        </div>
+                    </div>
+                    <div v-if="ads.length > 1" class="ad-slider-dots">
+                        <span v-for="(ad, i) in ads" :key="i" class="dot" :class="{ active: i === adSlide }" @click="adSlide = i; resetAdTimer()"></span>
                     </div>
                 </div>
 
@@ -202,7 +207,9 @@
                 const viewerIndex = ref(0);
                 const modalPullY = ref(0);
                 const modalClosing = ref(false);
+                const adSlide = ref(0);
                 let slideTimer = null;
+                let adTimer = null;
                 let exitTimer = null;
 
                 /* ---- Unified Touch Handlers ---- */
@@ -498,6 +505,20 @@
                     }
                 }
 
+                function startAdTimer() {
+                    stopAdTimer();
+                    adTimer = setInterval(() => {
+                        adSlide.value = (adSlide.value + 1) % ads.value.length;
+                    }, 3500);
+                }
+                function stopAdTimer() {
+                    if (adTimer) { clearInterval(adTimer); adTimer = null; }
+                }
+                function resetAdTimer() { startAdTimer(); }
+                function openAd(ad) {
+                    window.location.href = ad.companyLink;
+                }
+
                 function openProject(project) {
                     stopSlideTimer();
                     modalSlide.value = 0;
@@ -542,11 +563,13 @@
 
                 onMounted(() => {
                     startSlideTimer();
+                    startAdTimer();
                     window.addEventListener('popstate', handlePopState);
                 });
 
                 onUnmounted(() => {
                     stopSlideTimer();
+                    stopAdTimer();
                     window.removeEventListener('popstate', handlePopState);
                 });
 
@@ -557,7 +580,8 @@
                     viewerOpen, viewerImages, viewerIndex,
                     openViewer, closeViewer, nextViewer, prevViewer,
                     heroSwipe, modalTouch, viewerTouch,
-                    modalPullY, pullTransform, modalClosing
+                    modalPullY, pullTransform, modalClosing,
+                    adSlide, openAd, resetAdTimer
                 };
             }
         }).mount('#app');
