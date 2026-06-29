@@ -20,6 +20,7 @@
   --card-bg: rgba(18, 40, 70, 0.7);
   --text-on-accent: #0a1628;
   --toggle-thumb: #ffffff;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ===== الوضع النهاري (Light Mode) ===== */
@@ -401,6 +402,7 @@ input, textarea, select {
   border-radius: 16px;
   position: relative;
   min-width: 56px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .bottom-nav .nav-item .material-symbols-outlined {
