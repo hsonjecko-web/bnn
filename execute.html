@@ -137,15 +137,18 @@
                             <span class="exec-stat-num">{{ selectedCompany.stats.engineers }}</span>
                             <span class="exec-stat-label">عدد المهندسين</span>
                         </div>
-                        <div class="exec-stat">
-                            <span class="exec-stat-icon material-symbols-outlined">calendar_month</span>
-                            <span class="exec-stat-num">{{ selectedCompany.years }}</span>
-                            <span class="exec-stat-label">سنة خبرة</span>
+                    </div>
+                    <div class="exec-stat-bar">
+                        <div class="exec-stat-bar-item">
+                            <span class="material-symbols-outlined">calendar_month</span>
+                            <span class="exec-stat-bar-num">{{ selectedCompany.years }}</span>
+                            <span class="exec-stat-bar-label">سنة خبرة</span>
                         </div>
-                        <div class="exec-stat">
-                            <span class="exec-stat-icon material-symbols-outlined">checklist</span>
-                            <span class="exec-stat-num">{{ selectedCompany.stats.done }}</span>
-                            <span class="exec-stat-label">مشروع منفذ</span>
+                        <div class="exec-stat-bar-divider"></div>
+                        <div class="exec-stat-bar-item">
+                            <span class="material-symbols-outlined">checklist</span>
+                            <span class="exec-stat-bar-num">{{ selectedCompany.stats.done }}</span>
+                            <span class="exec-stat-bar-label">مشروع منفذ</span>
                         </div>
                     </div>
 
@@ -329,7 +332,8 @@
                     makeCompany('مقاولون العرب', 5, 11, { about: 'من كبرى شركات المقاولات في العراق، نقدم خدمات البناء والتشييد بأعلى المواصفات.', specs: ['بناء عام', 'هندسة مدنية', 'بنية تحتية'], rating: 4, years: 25, workers: 350, engineers: 50, done: 200, completed: 180 }),
                     makeCompany('شركة الأساس المتين', 7, 21, { about: 'متخصصون في بناء الأساسات والأعمدة والهياكل الخرسانية المسلحة.', specs: ['خرسانة مسلحة', 'أساسات عميقة', 'هياكل خرسانية'], rating: 4, years: 12, workers: 80, engineers: 15, done: 45, completed: 40 }),
                     makeCompany('بناء الوطنية', 9, 8, { about: 'شركة وطنية متخصصة في تشييد المباني السكنية والتجارية.' }),
-                    makeCompany('العمران الحديث', 11, 3, { about: 'نقدم حلولاً عصرية في البناء باستخدام أحدث التقنيات والمواد.', rating: 5 })
+                    makeCompany('العمران الحديث', 11, 3, { about: 'نقدم حلولاً عصرية في البناء باستخدام أحدث التقنيات والمواد.', rating: 5 }),
+                    makeCompany('شركة الإنشاءات الوطنية', 13, 8, { about: 'شركة وطنية رائدة في تشييد المباني السكنية والتجارية والمشاريع الضخمة.', specs: ['بناء سكني', 'مشاريع تجارية', 'بنية تحتية'], rating: 5, years: 22, workers: 280, engineers: 45, done: 160, completed: 145 })
                 ]
             },
             {
@@ -449,6 +453,15 @@
                     resetWorkTimer();
                 }
 
+                function findCompanyByName(name) {
+                    for (var i = 0; i < categoriesData.length; i++) {
+                        for (var j = 0; j < categoriesData[i].companies.length; j++) {
+                            if (categoriesData[i].companies[j].name === name) return categoriesData[i].companies[j];
+                        }
+                    }
+                    return null;
+                }
+
                 function openProject(proj) {
                     modalSlide.value = 0;
                     selectedProject.value = proj;
@@ -488,6 +501,16 @@
 
                 onMounted(function() {
                     window.addEventListener('popstate', handlePopState);
+                    var params = new URLSearchParams(window.location.search);
+                    var companyName = params.get('company');
+                    if (companyName) {
+                        var comp = findCompanyByName(companyName);
+                        if (comp) {
+                            selectedCompany.value = comp;
+                            workSlide.value = 0;
+                            resetWorkTimer();
+                        }
+                    }
                 });
 
                 onUnmounted(function() {

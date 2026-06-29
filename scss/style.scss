@@ -3056,6 +3056,42 @@ html.light-mode .ideas-projects-header h2 {
   margin-top: 2px;
 }
 
+.exec-stat-bar {
+  display: flex;
+  align-items: center;
+  margin: 0 16px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.exec-stat-bar-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.exec-stat-bar-item .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--accent-gold);
+}
+.exec-stat-bar-num {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-white);
+}
+.exec-stat-bar-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.exec-stat-bar-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border-light);
+  flex-shrink: 0;
+}
+
 .exec-section { padding: 0 16px 4px; }
 .exec-section-title {
   font-size: 15px;

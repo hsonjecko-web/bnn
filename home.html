@@ -72,7 +72,7 @@
                 </div>
                 <div class="ad-slider">
                     <div class="ad-slider-track" dir="ltr" :style="{ transform: `translateX(-${adSlide * 100}%)` }">
-                        <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openProject(ad)">
+                        <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openCompany(ad.company)">
                             <div class="ad-slider-img">
                                 <img :src="ad.bg" alt="">
                                 <span class="ad-sponsor">ممول</span>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="works-grid">
                     <div v-for="(work, i) in latestWorks" :key="i"
-                         class="work-card" @click="openProject(work)">
+                         class="work-card" @click="openCompany(work.company)">
                         <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
                         <div class="work-overlay">
                             <span class="work-title">{{ work.title }}</span>
@@ -523,6 +523,10 @@
                     history.pushState({ action: 'modal' }, '');
                 }
 
+                function openCompany(name) {
+                    window.location.href = 'execute.html?company=' + encodeURIComponent(name);
+                }
+
                 function closeModal() {
                     if (modalClosing.value) return;
                     modalClosing.value = true;
@@ -573,7 +577,7 @@
                 return {
                     searchQuery, currentSlide, slides, sections, ads, latestWorks,
                     selectedProject, modalSlide,
-                    openProject, closeModal,
+                    openProject, closeModal, openCompany,
                     viewerOpen, viewerImages, viewerIndex,
                     openViewer, closeViewer, nextViewer, prevViewer,
                     heroSwipe, modalTouch, viewerTouch,
