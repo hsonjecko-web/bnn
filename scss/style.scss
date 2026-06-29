@@ -2144,6 +2144,9 @@ html.light-mode .project-modal .modal-close {
   .ad-card {
     min-width: 220px;
   }
+  .ad-slider-img {
+    height: 130px;
+  }
   .works-grid {
     gap: 8px;
     padding: 0 12px 12px;
@@ -2274,6 +2277,59 @@ html.light-mode .exit-toast {
     transition: all 0.2s ease;
 }
 .active-filters-clear:active { background: var(--bg-card-light); }
+
+/* ===== إعلانات ممولة - سلايدر ===== */
+.ads-section {
+    padding-bottom: 8px;
+}
+.ad-slider {
+    overflow: hidden;
+    padding: 0 16px;
+    position: relative;
+}
+.ad-slider-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.ad-slider-slide {
+    min-width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+}
+.ad-slider-slide:active { opacity: 0.85; }
+.ad-slider-img {
+    width: 100%;
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+}
+.ad-slider-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ad-slider-info {
+    padding: 10px 12px;
+}
+.ad-slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 0 4px;
+}
+.ad-slider-dots .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    opacity: 0.4;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.ad-slider-dots .dot.active {
+    opacity: 1;
+    background: var(--accent-gold);
+    width: 18px;
+    border-radius: 4px;
+}
 
 /* ===== لوحة التصفية ===== */
 .filter-panel {

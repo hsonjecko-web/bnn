@@ -67,6 +67,30 @@
                     <button class="active-filters-clear" @click="clearFilters">مسح الكل</button>
                 </div>
 
+                <!-- Sponsored Ads Slider -->
+                <div class="ads-section">
+                    <div class="section-header">
+                        <span class="section-title">إعلانات ممولة</span>
+                    </div>
+                    <div class="ad-slider">
+                        <div class="ad-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (adSlide * 100) + '%)' }">
+                            <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openAd(ad)">
+                                <div class="ad-slider-img">
+                                    <img :src="ad.bg" alt="">
+                                    <span class="ad-sponsor">ممول</span>
+                                </div>
+                                <div class="ad-slider-info">
+                                    <div class="ad-title">{{ ad.title }}</div>
+                                    <div class="ad-company">{{ ad.company }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="ads.length > 1" class="ad-slider-dots">
+                            <span v-for="(ad, i) in ads" :key="i" class="dot" :class="{ active: i === adSlide }" @click="adSlide = i; resetAdTimer()"></span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Filter Panel Overlay -->
                 <div v-if="filterPanelOpen" class="filter-panel" @click.self="filterPanelOpen = false">
                     <div class="filter-panel-content">
@@ -284,6 +308,14 @@
                 var filterPanelOpen = ref(false);
                 var searchActive = ref(false);
                 var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '' });
+                var adSlide = ref(0);
+                var adTimer = null;
+                var ads = ref([
+                    { title: 'مجمع النخيل السكني', company: 'شركة البناء الحديث', bg: 'images/img1.jpg', companyLink: 'company.html' },
+                    { title: 'فيلا العندس السكنية', company: 'مقاولون العرب', bg: 'images/img6.jpg', companyLink: 'company.html' },
+                    { title: 'مول بغداد التجاري', company: 'شركة الإنشاءات الوطنية', bg: 'images/img11.jpg', companyLink: 'company.html' },
+                    { title: 'منتجع قرية العائلة', company: 'مجموعة الضيافة الراقية', bg: 'images/img16.jpg', companyLink: 'company.html' }
+                ]);
                 var modalPullY = ref(0);
                 var modalClosing = ref(false);
 
@@ -487,8 +519,30 @@
                 function nextViewer() { if (viewerIndex.value < viewerImages.value.length - 1) viewerIndex.value++; }
                 function prevViewer() { if (viewerIndex.value > 0) viewerIndex.value--; }
 
-                onMounted(function() { window.addEventListener('popstate', handlePopState); });
-                onUnmounted(function() { window.removeEventListener('popstate', handlePopState); });
+                onMounted(function() {
+                    window.addEventListener('popstate', handlePopState);
+                    startAdTimer();
+                });
+                onUnmounted(function() {
+                    window.removeEventListener('popstate', handlePopState);
+                    stopAdTimer();
+                });
+
+                function startAdTimer() {
+                    stopAdTimer();
+                    adTimer = setInterval(function() {
+                        adSlide.value = (adSlide.value + 1) % ads.value.length;
+                    }, 3500);
+                }
+                function stopAdTimer() {
+                    if (adTimer) { clearInterval(adTimer); adTimer = null; }
+                }
+                function resetAdTimer() {
+                    startAdTimer();
+                }
+                function openAd(ad) {
+                    window.location.href = ad.companyLink;
+                }
 
                 return {
                     searchQuery, activeCategory, categories, selectedProject, modalSlide,
@@ -497,7 +551,8 @@
                     governorates, styles, filters, formatInput, doSearch, filterPanelOpen,
                     hasActiveFilters, budgetLabel, areaLabel, autoSearch, clearFilters,
                     filteredProjects, showCategories, showProjects, projectsTitle, searchActive,
-                    modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing
+                    modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
+                    ads, adSlide, openAd, resetAdTimer
                 };
             }
         }).mount('#app');
