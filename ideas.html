@@ -76,13 +76,13 @@
                         </div>
 
                         <label class="filter-panel-label">المحافظة</label>
-                        <div class="filter-chip-list">
-                            <span v-for="g in governorates" :key="g" class="filter-chip" :class="{ selected: filters.gov === g }" @click="filters.gov = (filters.gov === g ? '' : g)">{{ g }}</span>
+                        <div class="filter-scroll-x" ref="govScroll">
+                            <span v-for="g in governorates" :key="g" class="filter-opt" :class="{ selected: filters.gov === g }" @click="filters.gov = (filters.gov === g ? '' : g); smoothScroll($event, 'gov')">{{ g }}</span>
                         </div>
 
                         <label class="filter-panel-label">النمط</label>
-                        <div class="filter-chip-list">
-                            <span v-for="s in styles" :key="s" class="filter-chip" :class="{ selected: filters.style === s }" @click="filters.style = (filters.style === s ? '' : s)">{{ s }}</span>
+                        <div class="filter-scroll-x" ref="styleScroll">
+                            <span v-for="s in styles" :key="s" class="filter-opt" :class="{ selected: filters.style === s }" @click="filters.style = (filters.style === s ? '' : s); smoothScroll($event, 'style')">{{ s }}</span>
                         </div>
 
                         <label class="filter-panel-label">الميزانية (د.ع)</label>
@@ -277,6 +277,8 @@
                 var searchQuery = ref('');
                 var activeCategory = ref(null);
                 var selectedProject = ref(null);
+                var govScroll = ref(null);
+                var styleScroll = ref(null);
                 var modalSlide = ref(0);
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
@@ -466,6 +468,14 @@
                     searchActive.value = true;
                     history.replaceState({}, '', window.location.pathname);
                 }
+                function smoothScroll(e, type) {
+                    var el = e.currentTarget;
+                    var parent = type === 'gov' ? govScroll.value : styleScroll.value;
+                    if (parent) {
+                        var left = el.offsetLeft - parent.offsetWidth / 2 + el.offsetWidth / 2;
+                        parent.scrollTo({ left: left, behavior: 'smooth' });
+                    }
+                }
 
                 function selectCategory(cat) {
                     activeCategory.value = cat;
@@ -497,7 +507,8 @@
                     governorates, styles, filters, formatInput, doSearch, filterPanelOpen,
                     hasActiveFilters, budgetLabel, areaLabel, autoSearch, clearFilters,
                     filteredProjects, showCategories, showProjects, projectsTitle, searchActive,
-                    modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing
+                    modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
+                    govScroll, styleScroll, smoothScroll
                 };
             }
         }).mount('#app');

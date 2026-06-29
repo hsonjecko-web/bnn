@@ -2158,8 +2158,38 @@ html.light-mode .project-modal .modal-close {
     width: 54px;
     height: 40px;
   }
-  .filter-chip { font-size: 11px; padding: 5px 10px; }
+  .filter-opt { font-size: 11px; padding: 5px 12px; }
   .filter-range input { font-size: 12px; padding: 6px 8px; }
+.filter-scroll-x {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 4px 0;
+  flex-wrap: nowrap;
+}
+.filter-scroll-x::-webkit-scrollbar { display: none; }
+.filter-opt {
+  flex-shrink: 0;
+  padding: 7px 16px;
+  font-size: 13px;
+  background: var(--bg-card-light);
+  border: 1px solid var(--border-input);
+  border-radius: 50px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  white-space: nowrap;
+}
+.filter-opt.selected {
+  background: var(--accent-gold);
+  border-color: var(--accent-gold);
+  color: var(--text-on-accent);
+  font-weight: 700;
+  transform: scale(1.04);
+  box-shadow: 0 2px 12px rgba(201,162,67,0.35);
+}
 }
 
 /* ===== Exit Toast ===== */
@@ -2375,27 +2405,6 @@ html.light-mode .exit-toast {
     margin: 12px 0 6px;
     font-weight: 600;
 }
-.filter-chip-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.filter-chip {
-    padding: 6px 12px;
-    font-size: 12px;
-    background: var(--bg-card-light);
-    border: 1px solid var(--border-input);
-    border-radius: 50px;
-    color: var(--text-light);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.filter-chip.selected {
-    background: rgba(201,162,67,0.15);
-    border-color: var(--accent-gold);
-    color: var(--accent-gold);
-    font-weight: 600;
-}
 .filter-range {
     display: flex;
     align-items: center;
@@ -2446,7 +2455,7 @@ html.light-mode .exit-toast {
 }
 .filter-panel-clear:active { background: var(--bg-card-light); }
 .light-mode .filter-panel-content { background: rgba(255,255,255,0.95); }
-.light-mode .filter-chip { background: rgba(0,0,0,0.04); }
+.light-mode .filter-opt { background: rgba(0,0,0,0.04); }
 
 /* ===== Ideas Page ===== */
 .ideas-hero {
