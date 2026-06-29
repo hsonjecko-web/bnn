@@ -531,103 +531,105 @@
                     </div>
                 </div>
 
-                <!-- معرض الصور -->
-                <div class="prod-gallery" @touchstart.passive="prodGalleryTouch.onTouchStart" @touchend="prodGalleryTouch.onTouchEnd">
-                    <div class="prod-gallery-track" dir="ltr" :style="{ transform: 'translateX(-' + (modalSlide * 100) + '%)' }">
-                        <div v-for="(img, i) in selectedProduct.images" :key="i" class="prod-gallery-slide" @click="openViewer(i)">
-                            <img :src="img" alt="">
-                        </div>
-                    </div>
-                    <div v-if="selectedProduct.images.length > 1" class="prod-gallery-dots">
-                        <span v-for="(img, i) in selectedProduct.images" :key="i" class="dot" :class="{ active: i === modalSlide }" @click.stop="modalSlide = i"></span>
-                    </div>
-                </div>
-
-                <!-- معلومات المنتج -->
-                <div class="prod-info-section">
-                    <div class="prod-brand-row">
-                        <div class="prod-brand-logo">
-                            <span class="material-symbols-outlined">business</span>
-                        </div>
-                        <div>
-                            <div class="prod-brand-name">{{ selectedProduct.brand }}</div>
-                            <div class="prod-supplier">{{ selectedProduct.supplierName }}</div>
-                        </div>
-                    </div>
-                    <h1 class="prod-title">{{ selectedProduct.name }}</h1>
-                    <div class="prod-cat-tag">{{ categories[selectedProduct.cat].name }}</div>
-                    <div class="prod-rating-row">
-                        <div class="prod-stars">
-                            <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= selectedProduct.rating }">star</span>
-                        </div>
-                        <span class="prod-reviews">({{ selectedProduct.reviewsCount }} تقييم)</span>
-                        <span class="prod-stock" :class="{ out: !selectedProduct.stock }">{{ selectedProduct.stock ? 'متوفر' : 'غير متوفر' }}</span>
-                    </div>
-                    <div class="prod-price-row">
-                        <span class="prod-price">{{ fmt(selectedProduct.price) }} د.ع</span>
-                    </div>
-                </div>
-
-                <!-- خيارات المنتج -->
-                <div class="prod-options-section">
-                    <!-- اللون -->
-                    <div v-if="selectedProduct.colors && selectedProduct.colors.length" class="prod-option-block">
-                        <h4>اللون</h4>
-                        <div class="prod-colors">
-                            <div v-for="(c, i) in selectedProduct.colors" :key="i" class="prod-color-dot"
-                                 :class="{ active: selectedColor === i }"
-                                 :style="{ background: c.hex }"
-                                 @click="selectedColor = i"
-                                 :title="c.name">
+                <!-- ===== صف علوي: صور يسار + تفاصيل يمين ===== -->
+                <div class="prod-top-row">
+                    <div class="prod-gallery-col">
+                        <div class="prod-gallery" @touchstart.passive="prodGalleryTouch.onTouchStart" @touchend="prodGalleryTouch.onTouchEnd">
+                            <div class="prod-gallery-track" dir="ltr" :style="{ transform: 'translateX(-' + (modalSlide * 100) + '%)' }">
+                                <div v-for="(img, i) in selectedProduct.images" :key="i" class="prod-gallery-slide" @click="openViewer(i)">
+                                    <img :src="img" alt="">
+                                </div>
+                            </div>
+                            <div v-if="selectedProduct.images.length > 1" class="prod-gallery-dots">
+                                <span v-for="(img, i) in selectedProduct.images" :key="i" class="dot" :class="{ active: i === modalSlide }" @click.stop="modalSlide = i"></span>
                             </div>
                         </div>
-                        <div class="prod-option-sel">{{ selectedProduct.colors[selectedColor].name }}</div>
                     </div>
+                    <div class="prod-info-col">
+                        <div class="prod-brand-row">
+                            <div class="prod-brand-logo">
+                                <span class="material-symbols-outlined">business</span>
+                            </div>
+                            <div>
+                                <div class="prod-brand-name">{{ selectedProduct.brand }}</div>
+                                <div class="prod-supplier">{{ selectedProduct.supplierName }}</div>
+                            </div>
+                        </div>
+                        <h1 class="prod-title">{{ selectedProduct.name }}</h1>
+                        <div class="prod-cat-tag">{{ categories[selectedProduct.cat].name }}</div>
+                        <div class="prod-rating-row">
+                            <div class="prod-stars">
+                                <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= selectedProduct.rating }">star</span>
+                            </div>
+                            <span class="prod-reviews">({{ selectedProduct.reviewsCount }})</span>
+                            <span class="prod-stock" :class="{ out: !selectedProduct.stock }">{{ selectedProduct.stock ? 'متوفر' : 'غير متوفر' }}</span>
+                        </div>
+                        <div class="prod-price">{{ fmt(selectedProduct.price) }} د.ع</div>
+                    </div>
+                </div>
 
-                    <!-- نوع التشطيب -->
-                    <div v-if="selectedProduct.finishTypes && selectedProduct.finishTypes.length" class="prod-option-block">
-                        <h4>نوع التشطيب</h4>
-                        <div class="prod-finish-options">
-                            <div v-for="(ft, i) in selectedProduct.finishTypes" :key="i" class="prod-finish-btn"
-                                 :class="{ active: selectedFinish === i }"
-                                 @click="selectedFinish = i">{{ ft }}</div>
+                <!-- ===== خيارات المنتج ===== -->
+                <div class="prod-options-section">
+                    <div v-if="selectedProduct.colors && selectedProduct.colors.length" class="prod-option-row">
+                        <span class="prod-option-label"><span class="material-symbols-outlined">palette</span> اللون</span>
+                        <div class="prod-option-value">
+                            <div class="prod-colors">
+                                <div v-for="(c, i) in selectedProduct.colors" :key="i" class="prod-color-dot"
+                                     :class="{ active: selectedColor === i }"
+                                     :style="{ background: c.hex }"
+                                     @click="selectedColor = i" :title="c.name">
+                                </div>
+                            </div>
+                            <span class="prod-option-sel">{{ selectedProduct.colors[selectedColor].name }}</span>
                         </div>
                     </div>
-
-                    <!-- الحجم -->
-                    <div v-if="selectedProduct.sizes && selectedProduct.sizes.length" class="prod-option-block">
-                        <h4>حجم العبوة</h4>
-                        <div class="prod-sizes">
-                            <div v-for="(sz, i) in selectedProduct.sizes" :key="i" class="prod-size-btn"
-                                 :class="{ active: selectedSize === i }"
-                                 @click="selectedSize = i">{{ sz }}</div>
+                    <div v-if="selectedProduct.finishTypes && selectedProduct.finishTypes.length" class="prod-option-row">
+                        <span class="prod-option-label"><span class="material-symbols-outlined">spa</span> نوع التشطيب</span>
+                        <div class="prod-option-value">
+                            <div class="prod-finish-options">
+                                <div v-for="(ft, i) in selectedProduct.finishTypes" :key="i" class="prod-finish-btn"
+                                     :class="{ active: selectedFinish === i }"
+                                     @click="selectedFinish = i">{{ ft }}</div>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- الكمية -->
-                    <div class="prod-option-block">
-                        <h4>الكمية</h4>
-                        <div class="prod-qty-control">
-                            <button class="prod-qty-btn" @click="selectedQty = Math.max(1, selectedQty - 1)">-</button>
-                            <span class="prod-qty-val">{{ selectedQty }}</span>
-                            <button class="prod-qty-btn" @click="selectedQty++">+</button>
+                    <div v-if="selectedProduct.sizes && selectedProduct.sizes.length" class="prod-option-row">
+                        <span class="prod-option-label"><span class="material-symbols-outlined">inventory_2</span> حجم العبوة</span>
+                        <div class="prod-option-value">
+                            <div class="prod-sizes">
+                                <div v-for="(sz, i) in selectedProduct.sizes" :key="i" class="prod-size-btn"
+                                     :class="{ active: selectedSize === i }"
+                                     @click="selectedSize = i">{{ sz }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prod-option-row">
+                        <span class="prod-option-label"><span class="material-symbols-outlined">qty</span> الكمية</span>
+                        <div class="prod-option-value">
+                            <div class="prod-qty-control">
+                                <button class="prod-qty-btn" @click="selectedQty = Math.max(1, selectedQty - 1)">-</button>
+                                <span class="prod-qty-val">{{ selectedQty }}</span>
+                                <button class="prod-qty-btn" @click="selectedQty++">+</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- معلومات التوصيل -->
+                <!-- ===== معلومات التوصيل ===== -->
                 <div class="prod-delivery-section">
                     <h4>معلومات التوصيل</h4>
                     <div class="prod-delivery-form">
+                        <input type="text" class="prod-del-input" placeholder="الاسم" v-model="deliveryName">
+                        <input type="tel" class="prod-del-input" placeholder="رقم الهاتف" v-model="deliveryPhone">
                         <select class="prod-del-select" v-model="deliveryGov">
-                            <option value="">اختر المحافظة</option>
+                            <option value="">المحافظة</option>
                             <option v-for="g in governorates" :key="g.name" :value="g.name">{{ g.name }}</option>
                         </select>
                         <select class="prod-del-select" v-model="deliveryCity" :disabled="!deliveryGov">
-                            <option value="">اختر المدينة</option>
+                            <option value="">المدينة</option>
                             <option v-for="city in (deliveryGov ? governorates.find(g => g.name === deliveryGov).cities : [])" :key="city" :value="city">{{ city }}</option>
                         </select>
-                        <input type="text" class="prod-del-input" placeholder="عنوان التوصيل">
+                        <input type="text" class="prod-del-input" placeholder="العنوان" v-model="deliveryAddress">
                     </div>
                     <div class="prod-del-time">
                         <span class="material-symbols-outlined">local_shipping</span>
@@ -635,20 +637,12 @@
                     </div>
                 </div>
 
-                <!-- ملخص الطلب -->
+                <!-- ===== ملخص الطلب ===== -->
                 <div class="prod-summary-section">
                     <h4>ملخص الطلب</h4>
                     <div class="prod-summary-row">
                         <span>المنتج</span>
-                        <span>{{ selectedProduct.name }}</span>
-                    </div>
-                    <div v-if="selectedProduct.sizes.length" class="prod-summary-row">
-                        <span>الحجم</span>
-                        <span>{{ selectedProduct.sizes[selectedSize] || '-' }}</span>
-                    </div>
-                    <div v-if="selectedProduct.colors.length" class="prod-summary-row">
-                        <span>اللون</span>
-                        <span>{{ selectedProduct.colors[selectedColor] ? selectedProduct.colors[selectedColor].name : '-' }}</span>
+                        <span>{{ selectedProduct.name }} <span v-if="selectedProduct.sizes.length">- {{ selectedProduct.sizes[selectedSize] }}</span></span>
                     </div>
                     <div class="prod-summary-row">
                         <span>الكمية</span>
@@ -656,7 +650,7 @@
                     </div>
                     <div class="prod-summary-row">
                         <span>السعر</span>
-                        <span>{{ fmt(selectedProduct.price) }} د.ع</span>
+                        <span>{{ fmt(selectedProduct.price * selectedQty) }} د.ع</span>
                     </div>
                     <div class="prod-summary-row">
                         <span>التوصيل</span>
@@ -668,24 +662,23 @@
                     </div>
                 </div>
 
-                <!-- بطاقة العروض -->
+                <!-- بطاقة العرض -->
                 <div class="prod-offer-card" v-if="selectedQty >= 3">
                     <div class="prod-offer-badge">عرض خاص</div>
-                    <div class="prod-offer-text">احصل على خصم 10% عند شراء {{ 3 }} قطع أو أكثر!</div>
+                    <div class="prod-offer-text">خصم 10% عند شراء {{ selectedQty }} قطع أو أكثر!</div>
                 </div>
 
-                <!-- حيز للفوتر -->
                 <div style="height: 90px;"></div>
 
-                <!-- أزرار ثابتة أسفل -->
+                <!-- ===== أزرار ثابتة ===== -->
                 <div class="prod-actions-bar">
                     <button class="prod-action-btn prod-add-cart" @click="addToCartFromDetail">
                         <span class="material-symbols-outlined">add_shopping_cart</span>
                         أضف للسلة
                     </button>
-                    <button class="prod-action-btn prod-buy-now">
-                        <span class="material-symbols-outlined">flash_on</span>
-                        الشراء الآن
+                    <button class="prod-action-btn prod-buy-now" @click="confirmOrderFromDetail">
+                        <span class="material-symbols-outlined">check_circle</span>
+                        تأكيد الطلب
                     </button>
                 </div>
             </div>
@@ -803,6 +796,9 @@
                 var productDetailView = ref(false);
                 var deliveryGov = ref('');
                 var deliveryCity = ref('');
+                var deliveryName = ref('');
+                var deliveryPhone = ref('');
+                var deliveryAddress = ref('');
 
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
@@ -1049,6 +1045,24 @@
                     closeProductDetail();
                 }
 
+                function confirmOrderFromDetail() {
+                    var p = selectedProduct.value;
+                    if (!p) return;
+                    if (!deliveryName.value || !deliveryPhone.value || !deliveryGov.value || !deliveryCity.value || !deliveryAddress.value) {
+                        alert('يرجى إكمال معلومات التوصيل');
+                        return;
+                    }
+                    var label = p.name;
+                    if (p.colors && p.colors.length) label += ' - ' + p.colors[selectedColor.value].name;
+                    if (p.sizes && p.sizes.length) label += ' (' + p.sizes[selectedSize.value] + ')';
+                    var exists = cart.value.find(function(c) { return c.name === label; });
+                    if (exists) { exists.qty += selectedQty.value; }
+                    else { cart.value.push({ name: label, price: p.price, img: p.img, qty: selectedQty.value }); }
+                    closeProductDetail();
+                    cartView.value = true;
+                    checkoutView.value = true;
+                }
+
                 var prodGalleryTouch = (function() {
                     var sx = 0;
                     return {
@@ -1218,8 +1232,8 @@
                     addToCartFromModal, openViewer, nextViewer, prevViewer,
                     viewerOpen, viewerImages, viewerIndex, viewerTouch,
                     selectedSupplier, openSupplier, closeSupplier,
-                    productDetailView, closeProductDetail, addToCartFromDetail, prodGalleryTouch,
-                    deliveryGov, deliveryCity, governorates,
+                    productDetailView, closeProductDetail, addToCartFromDetail, confirmOrderFromDetail, prodGalleryTouch,
+                    deliveryGov, deliveryCity, deliveryName, deliveryPhone, deliveryAddress, governorates,
                     fmt
                 };
             }
