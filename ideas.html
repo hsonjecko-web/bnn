@@ -100,7 +100,7 @@
                         </div>
 
                         <button class="filter-panel-search" @click="doSearch">ابحث</button>
-                        <button v-if="hasActiveFilters" class="filter-panel-clear" @click="clearFilters; filterPanelOpen = false">إلغاء التصفية</button>
+                        <button v-if="hasActiveFilters" class="filter-panel-clear" @click="clearFilters(); filterPanelOpen = false">إلغاء التصفية</button>
                     </div>
                 </div>
 
@@ -463,7 +463,7 @@
                 }
                 function clearFilters() {
                     filters.value = { gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '' };
-                    searchActive.value = false;
+                    searchActive.value = true;
                     history.replaceState({}, '', window.location.pathname);
                 }
 
