@@ -261,7 +261,7 @@ input, textarea, select {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 75px;
+  padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px));
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -378,8 +378,7 @@ input, textarea, select {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 8px 4px;
-  padding-bottom: env(safe-area-inset-bottom, 8px);
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
   z-index: 100;
   max-width: 430px;
   margin: 0 auto;
@@ -4486,7 +4485,7 @@ html.light-mode .mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
 .mkt-cat-products-scroll::-webkit-scrollbar { display: none; }
 
 .all-works-view {
-  padding-bottom: 80px;
+  padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
 }
 .mkt-cat-view { padding-bottom: 16px; }
 
@@ -4929,7 +4928,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
   .banner::before { width: 80px; height: 80px; }
   .banner { padding: 14px; }
   .banner-title { font-size: 15px; }
-  .page-content { padding-bottom: 65px; }
+  .page-content { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ===== منع hover على أجهزة اللمس ===== */
