@@ -2197,16 +2197,67 @@ html.light-mode .exit-toast {
   pointer-events: auto;
 }
 
-/* ===== زر التصفية بجانب العنوان ===== */
-.hero-filter-trigger {
-    color: var(--accent-gold);
+/* ===== زر البحث والتصفية ===== */
+.ideas-actions {
+    padding: 0 16px 8px;
+}
+.ideas-filter-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--accent-gold);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+.ideas-filter-btn .material-symbols-outlined { font-size: 20px; }
+.ideas-filter-btn:active { opacity: 0.8; }
+
+/* ===== وسوم التصفية النشطة ===== */
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 16px 8px;
+    align-items: center;
+}
+.active-filter-tag {
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    padding: 4px 10px;
+    background: rgba(201,162,67,0.12);
+    border: 1px solid rgba(201,162,67,0.3);
+    border-radius: 50px;
+    font-size: 11px;
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+.active-filter-tag .material-symbols-outlined {
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--accent-gold);
+}
+.active-filters-clear {
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid var(--border-input);
+    border-radius: 50px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
     transition: all 0.2s ease;
 }
-.hero-filter-trigger:active { opacity: 0.7; }
+.active-filters-clear:active { background: var(--bg-card-light); }
 
 /* ===== لوحة التصفية ===== */
 .filter-panel {
@@ -2307,6 +2358,21 @@ html.light-mode .exit-toast {
     transition: all 0.2s ease;
 }
 .filter-panel-search:active { opacity: 0.8; }
+.filter-panel-clear {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-input);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.filter-panel-clear:active { background: var(--bg-card-light); }
 .light-mode .filter-panel-content { background: rgba(255,255,255,0.95); }
 .light-mode .filter-chip { background: rgba(0,0,0,0.04); }
 

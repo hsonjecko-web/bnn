@@ -34,20 +34,43 @@
 
                 <!-- Hero -->
                 <div class="ideas-hero">
-                    <h1 style="font-size:18px;">
-                        اكتشف آلاف المشاريع والأفكار
-                        <span class="hero-filter-trigger" @click="filterPanelOpen = true">
-                            الملهمة
-                            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">filter_list</span>
-                        </span>
-                    </h1>
+                    <h1 style="font-size:18px;">اكتشف آلاف المشاريع والأفكار الملهمة</h1>
+                </div>
+
+                <!-- Search & Filter Button / Active Filters -->
+                <div class="ideas-actions">
+                    <button class="ideas-filter-btn" @click="filterPanelOpen = true">
+                        <span class="material-symbols-outlined">filter_list</span>
+                        <span>بحث وتصفية</span>
+                    </button>
+                </div>
+
+                <!-- Active Filter Tags -->
+                <div v-if="hasActiveFilters" class="active-filters">
+                    <span v-if="filters.gov" class="active-filter-tag">
+                        {{ filters.gov }}
+                        <span class="material-symbols-outlined" @click="filters.gov = ''; autoSearch()">close</span>
+                    </span>
+                    <span v-if="filters.style" class="active-filter-tag">
+                        {{ filters.style }}
+                        <span class="material-symbols-outlined" @click="filters.style = ''; autoSearch()">close</span>
+                    </span>
+                    <span v-if="filters.budgetFrom || filters.budgetTo" class="active-filter-tag">
+                        ميزانية{{ budgetLabel }}
+                        <span class="material-symbols-outlined" @click="filters.budgetFrom = ''; filters.budgetTo = ''; autoSearch()">close</span>
+                    </span>
+                    <span v-if="filters.areaFrom || filters.areaTo" class="active-filter-tag">
+                        مساحة{{ areaLabel }}
+                        <span class="material-symbols-outlined" @click="filters.areaFrom = ''; filters.areaTo = ''; autoSearch()">close</span>
+                    </span>
+                    <button class="active-filters-clear" @click="clearFilters">مسح الكل</button>
                 </div>
 
                 <!-- Filter Panel Overlay -->
                 <div v-if="filterPanelOpen" class="filter-panel" @click.self="filterPanelOpen = false">
                     <div class="filter-panel-content">
                         <div class="filter-panel-header">
-                            <h3>تصفية المشاريع</h3>
+                            <h3>بحث وتصفية</h3>
                             <button class="filter-panel-close" @click="filterPanelOpen = false"><span class="material-symbols-outlined">close</span></button>
                         </div>
 
@@ -76,6 +99,7 @@
                         </div>
 
                         <button class="filter-panel-search" @click="doSearch">ابحث</button>
+                        <button v-if="hasActiveFilters" class="filter-panel-clear" @click="clearFilters; filterPanelOpen = false">إلغاء التصفية</button>
                     </div>
                 </div>
 
@@ -274,6 +298,25 @@
                 var governorates = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية', 'ديالى', 'واسط', 'ميسان', 'ذي قار', 'المثنى', 'القادسية', 'بابل', 'صلاح الدين', 'الأنبار', 'دهوك'];
                 var styles = ['كلاسيكي', 'عصري', 'أندلسي', 'بسيط', 'فاخر', 'حديث', 'مودرن', 'عربي'];
 
+                var hasActiveFilters = computed(function() {
+                    var f = filters.value;
+                    return f.gov || f.style || f.budgetFrom || f.budgetTo || f.areaFrom || f.areaTo;
+                });
+                var budgetLabel = computed(function() {
+                    var f = filters.value;
+                    if (f.budgetFrom && f.budgetTo) return ': ' + f.budgetFrom + ' - ' + f.budgetTo;
+                    if (f.budgetFrom) return ': من ' + f.budgetFrom;
+                    if (f.budgetTo) return ': حتى ' + f.budgetTo;
+                    return '';
+                });
+                var areaLabel = computed(function() {
+                    var f = filters.value;
+                    if (f.areaFrom && f.areaTo) return ': ' + f.areaFrom + ' - ' + f.areaTo;
+                    if (f.areaFrom) return ': من ' + f.areaFrom;
+                    if (f.areaTo) return ': حتى ' + f.areaTo;
+                    return '';
+                });
+
                 var allProjects = computed(function() {
                     var result = [];
                     for (var i = 0; i < categories.value.length; i++) {
@@ -414,6 +457,13 @@
                     activeCategory.value = null;
                     filterPanelOpen.value = false;
                 }
+                function autoSearch() {
+                    if (!searchActive.value) return;
+                }
+                function clearFilters() {
+                    filters.value = { gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '' };
+                    searchActive.value = false;
+                }
 
                 function selectCategory(cat) {
                     activeCategory.value = cat;
@@ -443,6 +493,7 @@
                     selectCategory, openProject, closeModal,
                     viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer, nextViewer, prevViewer,
                     governorates, styles, filters, formatInput, doSearch, filterPanelOpen,
+                    hasActiveFilters, budgetLabel, areaLabel, autoSearch, clearFilters,
                     filteredProjects, showCategories, showProjects, projectsTitle, searchActive,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing
                 };
