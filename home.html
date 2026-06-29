@@ -89,44 +89,24 @@
                 </div>
 
                 <!-- Latest Works -->
-                <div v-if="!showAllWorks" class="section-header">
+                <div class="section-header">
                     <span class="section-title">آخر الأعمال</span>
-                    <span class="section-link" @click="showAllWorks = true">عرض الكل</span>
+                    <span class="section-link" @click="showAllWorks = !showAllWorks">عرض الكل</span>
                 </div>
-                <div v-if="!showAllWorks" class="works-grid">
-                    <div v-for="(work, i) in latestWorks" :key="i"
-                         class="work-card" @click="openProject(work)">
-                        <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
-                        <div class="work-overlay">
-                            <span class="work-title">{{ work.title }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ===== عرض كل الأعمال ===== -->
-                <div v-if="showAllWorks" class="mkt-cat-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="showAllWorks = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>جميع الأعمال</h2>
-                            <p>{{ latestWorks.length }} مشروع</p>
-                        </div>
-                    </div>
-                    <div class="works-grid">
-                        <div v-for="(work, i) in latestWorks" :key="i"
+                <div class="works-grid">
+                    <template v-for="(work, i) in latestWorks" :key="i">
+                        <div v-if="showAllWorks || i < 4"
                              class="work-card" @click="openProject(work)">
                             <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
                             <div class="work-overlay">
                                 <span class="work-title">{{ work.title }}</span>
                             </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
 
                 <!-- padding -->
-                <div v-if="!showAllWorks" style="height: 20px;"></div>
+                <div style="height: 20px;"></div>
             </div>
 
             <!-- Project Detail Modal -->
@@ -510,6 +490,74 @@
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'اليرموك' },
                             { icon: 'straighten', label: 'المساحة', value: '3000 م²' }
+                        ]
+                    },
+                    {
+                        title: 'مجمع النخيل التجاري',
+                        company: 'شركة الإنشاءات الوطنية',
+                        companyLink: 'company.html',
+                        bg: 'images/img1.jpg',
+                        images: [
+                            'images/img1.jpg',
+                            'images/img2.jpg',
+                            'images/img3.jpg',
+                            'images/img4.jpg'
+                        ],
+                        details: 'مجمع تجاري متكامل يضم 50 محلاً تجارياً ومطاعم.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'الكرادة' },
+                            { icon: 'straighten', label: 'المساحة', value: '5000 م²' }
+                        ]
+                    },
+                    {
+                        title: 'عمارة سكنية فاخرة',
+                        company: 'مقاولون العرب',
+                        companyLink: 'company.html',
+                        bg: 'images/img5.jpg',
+                        images: [
+                            'images/img5.jpg',
+                            'images/img6.jpg',
+                            'images/img7.jpg',
+                            'images/img8.jpg'
+                        ],
+                        details: 'عمارة سكنية بمساحة 500 م² تحتوي على 12 شقة فاخرة.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'الزهراء' },
+                            { icon: 'straighten', label: 'المساحة', value: '500 م²' }
+                        ]
+                    },
+                    {
+                        title: 'فيلا دوبلكس',
+                        company: 'شركة البناء الحديث',
+                        companyLink: 'company.html',
+                        bg: 'images/img9.jpg',
+                        images: [
+                            'images/img9.jpg',
+                            'images/img10.jpg',
+                            'images/img11.jpg',
+                            'images/img12.jpg'
+                        ],
+                        details: 'فيلا دوبلكس بتصميم عصري مع حديقة خاصة وحوض سباحة.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'المنصور' },
+                            { icon: 'straighten', label: 'المساحة', value: '600 م²' }
+                        ]
+                    },
+                    {
+                        title: 'مكتب حديث',
+                        company: 'شركة الإنشاءات الوطنية',
+                        companyLink: 'company.html',
+                        bg: 'images/img13.jpg',
+                        images: [
+                            'images/img13.jpg',
+                            'images/img14.jpg',
+                            'images/img15.jpg',
+                            'images/img16.jpg'
+                        ],
+                        details: 'مكتب إداري حديث بمساحة 200 م² مع تجهيزات متكاملة.',
+                        meta: [
+                            { icon: 'location_on', label: 'الموقع', value: 'الرصافة' },
+                            { icon: 'straighten', label: 'المساحة', value: '200 م²' }
                         ]
                     }
                 ]);
