@@ -64,10 +64,7 @@
                                 <input type="text" inputmode="numeric" :value="filters.areaTo" @input="filters.areaTo = formatInput($event.target.value)" placeholder="9999">
                                 <span class="drop-unit">م²</span>
                             </div>
-                            <div v-if="fb.key === 'sort'" class="drop-list">
-                                <div class="drop-item" :class="{ selected: filters.sort === 'latest' }" @click="filters.sort = 'latest'; closeDropdown()">الأحدث</div>
-                                <div class="drop-item" :class="{ selected: filters.sort === 'oldest' }" @click="filters.sort = 'oldest'; closeDropdown()">الأقدم</div>
-                            </div>
+
                         </div>
                     </div>
                     <button class="filter-btn filter-btn-search" @click="doSearch">
@@ -255,7 +252,7 @@
                 var viewerIndex = ref(0);
                 var openDropdown = ref(null);
                 var searchActive = ref(false);
-                var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '', sort: 'latest' });
+                var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '' });
                 var modalPullY = ref(0);
                 var modalClosing = ref(false);
 
@@ -276,7 +273,6 @@
                     { key: 'style', icon: 'style', label: 'النمط', active: false },
                     { key: 'budget', icon: 'payments', label: 'الميزانية', active: false },
                     { key: 'area', icon: 'straighten', label: 'المساحة', active: false },
-                    { key: 'sort', icon: 'sort', label: 'الأحدث', active: false }
                 ];
 
                 var allProjects = computed(function() {
@@ -314,7 +310,6 @@
                         var atVal = f.areaTo ? parseNum(f.areaTo) : Infinity;
                         list = list.filter(function(p) { return p.areaNum >= af && p.areaNum <= atVal; });
                     }
-                    if (f.sort === 'oldest') list.reverse();
 
                     return list;
                 });
