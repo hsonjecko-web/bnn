@@ -2364,10 +2364,8 @@ html.light-mode .project-modal .modal-close {
     font-size: 11px;
   }
   .filter-dropdown {
-    min-width: 140px;
-  }
-  .drop-range input {
-    width: 50px;
+    min-width: 120px;
+    max-width: 85vw;
   }
 }
 /* ===== Exit Toast ===== */
@@ -2508,8 +2506,10 @@ html.light-mode .exit-toast {
 .drop-range {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 4px;
+  gap: 4px;
+  padding: 6px 4px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .drop-range label {
@@ -2519,16 +2519,19 @@ html.light-mode .exit-toast {
 }
 
 .drop-range input {
-  width: 60px;
-  padding: 4px 6px;
+  width: 70px;
+  max-width: 70px;
+  padding: 4px 4px;
   background: var(--bg-card-light);
   border: 1px solid var(--border-input);
   border-radius: 8px;
   color: var(--text-white);
-  font-size: 13px;
+  font-size: 11px;
   font-family: "Cairo", sans-serif;
   text-align: center;
   direction: ltr;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .drop-range input::placeholder {
