@@ -38,8 +38,47 @@
                     <p>تصفح مشاريع حقيقية من مختلف المحافظات</p>
                 </div>
 
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-btn-wrap" v-for="fb in filterBtns" :key="fb.key">
+                        <button class="filter-btn" :class="{ active: openDropdown === fb.key || fb.active }" @click.stop="toggleDropdown(fb.key)">
+                            <span class="material-symbols-outlined">{{ fb.icon }}</span>
+                            <span>{{ fb.label }}</span>
+                        </button>
+                        <div v-if="openDropdown === fb.key" class="filter-dropdown" @click.stop>
+                            <div v-if="fb.key === 'gov'" class="drop-list">
+                                <div v-for="g in governorates" :key="g" class="drop-item" :class="{ selected: filters.gov === g }" @click="filters.gov = (filters.gov === g ? '' : g); closeDropdown()">{{ g }}</div>
+                            </div>
+                            <div v-if="fb.key === 'style'" class="drop-list">
+                                <div v-for="s in styles" :key="s" class="drop-item" :class="{ selected: filters.style === s }" @click="filters.style = (filters.style === s ? '' : s); closeDropdown()">{{ s }}</div>
+                            </div>
+                            <div v-if="fb.key === 'budget'" class="drop-range">
+                                <label>من</label>
+                                <input type="text" inputmode="numeric" :value="filters.budgetFrom" @input="filters.budgetFrom = formatInput($event.target.value)" placeholder="0">
+                                <label>إلى</label>
+                                <input type="text" inputmode="numeric" :value="filters.budgetTo" @input="filters.budgetTo = formatInput($event.target.value)" placeholder="999,999,999">
+                            </div>
+                            <div v-if="fb.key === 'area'" class="drop-range">
+                                <label>من</label>
+                                <input type="text" inputmode="numeric" :value="filters.areaFrom" @input="filters.areaFrom = formatInput($event.target.value)" placeholder="0">
+                                <label>إلى</label>
+                                <input type="text" inputmode="numeric" :value="filters.areaTo" @input="filters.areaTo = formatInput($event.target.value)" placeholder="9999">
+                                <span class="drop-unit">م²</span>
+                            </div>
+                            <div v-if="fb.key === 'sort'" class="drop-list">
+                                <div class="drop-item" :class="{ selected: filters.sort === 'latest' }" @click="filters.sort = 'latest'; closeDropdown()">الأحدث</div>
+                                <div class="drop-item" :class="{ selected: filters.sort === 'oldest' }" @click="filters.sort = 'oldest'; closeDropdown()">الأقدم</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="filter-btn filter-btn-search" @click="doSearch">
+                        <span class="material-symbols-outlined">search</span>
+                        <span>ابحث</span>
+                    </button>
+                </div>
+
                 <!-- Categories Grid -->
-                <div v-if="!activeCategory" class="ideas-categories">
+                <div v-if="showCategories" class="ideas-categories">
                     <div v-for="(cat, i) in categories" :key="i" class="idea-cat-card" @click="selectCategory(cat)">
                         <div class="idea-cat-img">
                             <img :src="cat.cover" alt="">
@@ -52,20 +91,23 @@
                     </div>
                 </div>
 
-                <!-- Projects Grid (when category selected) -->
-                <div v-if="activeCategory" class="ideas-projects">
+                <!-- Projects View -->
+                <div v-if="showProjects" class="ideas-projects">
                     <div class="ideas-projects-header">
-                        <button class="ideas-back" @click="activeCategory = null">
+                        <button v-if="activeCategory" class="ideas-back" @click="activeCategory = null; searchActive = false">
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
                         <div>
-                            <h2>{{ activeCategory.name }}</h2>
-                            <p>{{ activeCategory.projects.length }} مشاريع</p>
+                            <h2>{{ projectsTitle }}</h2>
+                            <p>{{ filteredProjects.length }} مشروع</p>
                         </div>
                     </div>
-
-                    <div class="ideas-projects-grid">
-                        <div v-for="(proj, i) in activeCategory.projects" :key="i" class="idea-project-card" @click="openProject(proj)">
+                    <div v-if="filteredProjects.length === 0" style="text-align:center;padding:40px 0;color:var(--text-muted);">
+                        <span class="material-symbols-outlined" style="font-size:48px;margin-bottom:12px;display:block;">search_off</span>
+                        لا توجد نتائج للبحث
+                    </div>
+                    <div v-else class="ideas-projects-grid">
+                        <div v-for="(proj, i) in filteredProjects" :key="i" class="idea-project-card" @click="openProject(proj)">
                             <div class="idea-project-img">
                                 <img :src="proj.images[0]" alt="">
                                 <div class="idea-project-badge">{{ proj.governorate }}</div>
@@ -84,36 +126,29 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- padding -->
-                <div style="height: 20px;"></div>
             </div>
 
-            <!-- Project Detail Modal (same as home page) -->
+            <!-- Project Detail Modal -->
             <div v-if="selectedProject" class="project-modal" @click.self="closeModal">
                 <div class="modal-content">
+                    <div class="modal-pull-bar"><span></span></div>
                     <div style="position:relative;">
                         <button class="modal-close" @click="closeModal">
-                            <span class="material-symbols-outlined">close</span>
+                            <span class="material-symbols-outlined close-icon">close</span>
+                            <span class="material-symbols-outlined arrow-icon">arrow_back</span>
                         </button>
                         <div class="modal-slider" @click="openViewer(modalSlide)">
-                            <div class="modal-slider-track" dir="ltr" :style="{ transform: `translateX(-${modalSlide * 100}%)` }">
+                            <div class="modal-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (modalSlide * 100) + '%)' }">
                                 <div v-for="(img, i) in selectedProject.images" :key="i" class="modal-slide">
-                                    <div class="modal-slide-img">
-                                        <img :src="img" alt="">
-                                    </div>
+                                    <div class="modal-slide-img"><img :src="img" alt=""></div>
                                 </div>
                             </div>
                             <div v-if="selectedProject.images.length > 1" class="modal-slider-dots">
-                                <span v-for="(img, i) in selectedProject.images" :key="i"
-                                      class="dot" :class="{ active: i === modalSlide }"
-                                      @click.stop="modalSlide = i"></span>
+                                <span v-for="(img, i) in selectedProject.images" :key="i" class="dot" :class="{ active: i === modalSlide }" @click.stop="modalSlide = i"></span>
                             </div>
                         </div>
                         <div v-if="selectedProject.images.length > 1" class="modal-thumbs">
-                            <div v-for="(img, i) in selectedProject.images" :key="i"
-                                 class="modal-thumb" :class="{ active: i === modalSlide }"
-                                 @click="modalSlide = i">
+                            <div v-for="(img, i) in selectedProject.images" :key="i" class="modal-thumb" :class="{ active: i === modalSlide }" @click="modalSlide = i">
                                 <img :src="img" alt="">
                             </div>
                         </div>
@@ -141,18 +176,10 @@
 
             <!-- Full-Screen Image Viewer -->
             <div v-if="viewerOpen" class="image-viewer">
-                <button class="viewer-close" @click="closeViewer">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-                <button v-if="viewerImages.length > 1" class="viewer-nav viewer-prev" @click="prevViewer">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                </button>
-                <div class="viewer-image-wrap" @click="closeViewer">
-                    <img :src="viewerImages[viewerIndex]" class="viewer-image" alt="">
-                </div>
-                <button v-if="viewerImages.length > 1" class="viewer-nav viewer-next" @click="nextViewer">
-                    <span class="material-symbols-outlined">chevron_left</span>
-                </button>
+                <button class="viewer-close" @click="closeViewer"><span class="material-symbols-outlined">close</span></button>
+                <button v-if="viewerImages.length > 1" class="viewer-nav viewer-prev" @click="prevViewer"><span class="material-symbols-outlined">chevron_right</span></button>
+                <div class="viewer-image-wrap"><img :src="viewerImages[viewerIndex]" class="viewer-image" alt="" @click="closeViewer"></div>
+                <button v-if="viewerImages.length > 1" class="viewer-nav viewer-next" @click="nextViewer"><span class="material-symbols-outlined">chevron_left</span></button>
                 <div v-if="viewerImages.length > 1" class="viewer-counter">{{ viewerIndex + 1 }} / {{ viewerImages.length }}</div>
             </div>
 
@@ -165,35 +192,41 @@
         document.getElementById('header').innerHTML = renderHeader({ searchVModel: 'searchQuery', searchPlaceholder: 'ابحث عن أفكار ومشاريع...' });
         document.getElementById('bottomNav').innerHTML = renderNav('ideas');
 
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
 
         function img(n) { return 'images/img' + n + '.jpg'; }
 
+        function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+        function parseNum(s) { return parseInt(s.replace(/,/g, ''), 10) || 0; }
+
         function makeProjects(baseIdx, count, prefix, opts) {
-            const names = ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح'];
-            const govs = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية'];
-            const areas = [120, 200, 350, 500, 85, 650, 75, 150];
-            const prices = ['15,000,000', '25,000,000', '40,000,000', '60,000,000', '12,000,000', '80,000,000', '10,000,000', '35,000,000'];
-            const result = [];
+            var names = ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح'];
+            var govs = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية'];
+            var areas = [120, 200, 350, 500, 85, 650, 75, 150];
+            var priceVals = [15000000, 25000000, 40000000, 60000000, 12000000, 80000000, 10000000, 35000000];
+            var sty = ['كلاسيكي', 'عصري', 'أندلسي', 'بسيط', 'فاخر', 'حديث', 'مودرن', 'عربي'];
+            var result = [];
             for (var i = 0; i < count; i++) {
                 var idx = (baseIdx + i) % 31;
                 var images = [];
-                for (var j = 0; j < 5; j++) {
-                    images.push(img(((idx + j * 7) % 31) + 1));
-                }
+                for (var j = 0; j < 5; j++) images.push(img(((idx + j * 7) % 31) + 1));
                 result.push({
                     title: prefix + ' ' + names[i % 8],
                     company: opts.company || 'شركة البناء الحديث',
                     companyLink: 'company.html',
                     governorate: govs[i % 8],
+                    style: sty[i % 8],
+                    areaNum: areas[i % 8],
                     area: areas[i % 8],
-                    price: prices[i % 8] + ' د.ع',
+                    priceNum: priceVals[i % 8],
+                    price: fmt(priceVals[i % 8]) + ' د.ع',
                     images: images,
-                    details: opts.details || prefix + ' من إنجاز شركة ' + (opts.company || 'البناء الحديث') + ' بمساحة ' + areas[i % 8] + ' م² في محافظة ' + govs[i % 8] + '. تم التنفيذ بأعلى المواصفات وجودة التشطيب.',
+                    details: prefix + ' من إنجاز شركة ' + (opts.company || 'البناء الحديث') + ' بمساحة ' + areas[i % 8] + ' م² في محافظة ' + govs[i % 8] + '.',
                     meta: [
                         { icon: 'location_on', label: 'الموقع', value: opts.location || 'حي ' + names[i % 8] },
                         { icon: 'straighten', label: 'المساحة', value: areas[i % 8] + ' م²' },
-                        { icon: 'payments', label: 'السعر', value: prices[i % 8] + ' د.ع' },
+                        { icon: 'payments', label: 'السعر', value: fmt(priceVals[i % 8]) + ' د.ع' },
                         { icon: 'map', label: 'المحافظة', value: govs[i % 8] }
                     ]
                 });
@@ -201,79 +234,139 @@
             return result;
         }
 
+        function makeCat(name, icon, cover, baseIdx, opts) {
+            return { name: name, icon: icon, cover: cover, projects: makeProjects(baseIdx, 8, name, opts) };
+        }
+
         createApp({
             setup() {
                 initTheme();
-                const searchQuery = ref('');
-                const activeCategory = ref(null);
-                const selectedProject = ref(null);
-                const modalSlide = ref(0);
-                const viewerOpen = ref(false);
-                const viewerImages = ref([]);
-                const viewerIndex = ref(0);
+                var searchQuery = ref('');
+                var activeCategory = ref(null);
+                var selectedProject = ref(null);
+                var modalSlide = ref(0);
+                var viewerOpen = ref(false);
+                var viewerImages = ref([]);
+                var viewerIndex = ref(0);
+                var openDropdown = ref(null);
+                var searchActive = ref(false);
+                var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '', sort: 'latest' });
 
-                var cats = [
-                    { name: 'عمارات سكنية', icon: 'apartment', cover: img(16) },
-                    { name: 'حدائق', icon: 'park', cover: img(28) },
-                    { name: 'حمامات', icon: 'bathtub', cover: img(24) },
-                    { name: 'مطابخ', icon: 'kitchen', cover: img(20) },
-                    { name: 'تصميم داخلي', icon: 'living', cover: img(1) },
-                    { name: 'واجهات منزل', icon: 'fence', cover: img(11) }
+                var categories = ref([
+                    makeCat('عمارات سكنية', 'apartment', img(16), 0, { company: 'شركة الإنشاءات الوطنية', location: 'حي المنصور' }),
+                    makeCat('حدائق', 'park', img(28), 5, { company: 'لمسات الطبيعة', location: 'حي الزهراء' }),
+                    makeCat('حمامات', 'bathtub', img(24), 10, { company: 'سيراميك الخليج', location: 'الكرادة' }),
+                    makeCat('مطابخ', 'kitchen', img(20), 15, { company: 'مطابخ الأصالة', location: 'المنصور' }),
+                    makeCat('تصميم داخلي', 'living', img(1), 20, { company: 'تصميمات الإبداع', location: 'اليرموك' }),
+                    makeCat('واجهات منزل', 'fence', img(11), 25, { company: 'واجهات العصر', location: 'الرصافة' })
+                ]);
+
+                var governorates = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية', 'ديالى', 'واسط', 'ميسان', 'ذي قار', 'المثنى', 'القادسية', 'بابل', 'صلاح الدين', 'الأنبار', 'دهوك'];
+                var styles = ['كلاسيكي', 'عصري', 'أندلسي', 'بسيط', 'فاخر', 'حديث', 'مودرن', 'عربي'];
+
+                var filterBtns = [
+                    { key: 'gov', icon: 'map', label: 'المحافظة', active: false },
+                    { key: 'style', icon: 'style', label: 'النمط', active: false },
+                    { key: 'budget', icon: 'payments', label: 'الميزانية', active: false },
+                    { key: 'area', icon: 'straighten', label: 'المساحة', active: false },
+                    { key: 'sort', icon: 'sort', label: 'الأحدث', active: false }
                 ];
 
-                function makeCat(name, icon, cover, baseIdx, opts) {
-                    return {
-                        name: name, icon: icon, cover: cover,
-                        projects: makeProjects(baseIdx, 8, name, opts)
-                    };
+                var allProjects = computed(function() {
+                    var result = [];
+                    for (var i = 0; i < categories.value.length; i++) {
+                        for (var j = 0; j < categories.value[i].projects.length; j++) {
+                            var p = categories.value[i].projects[j];
+                            p._catName = categories.value[i].name;
+                            result.push(p);
+                        }
+                    }
+                    return result;
+                });
+
+                var sourceProjects = computed(function() {
+                    if (activeCategory.value) return activeCategory.value.projects;
+                    return allProjects.value;
+                });
+
+                var filteredProjects = computed(function() {
+                    var list = sourceProjects.value.slice();
+                    var q = searchQuery.value.trim().toLowerCase();
+                    var f = filters.value;
+
+                    if (q) list = list.filter(function(p) { return p.title.toLowerCase().includes(q) || p.company.toLowerCase().includes(q) || p.governorate.includes(q); });
+                    if (f.gov) list = list.filter(function(p) { return p.governorate === f.gov; });
+                    if (f.style) list = list.filter(function(p) { return p.style === f.style; });
+                    if (f.budgetFrom || f.budgetTo) {
+                        var bf = f.budgetFrom ? parseNum(f.budgetFrom) : 0;
+                        var bt = f.budgetTo ? parseNum(f.budgetTo) : Infinity;
+                        list = list.filter(function(p) { return p.priceNum >= bf && p.priceNum <= bt; });
+                    }
+                    if (f.areaFrom || f.areaTo) {
+                        var af = f.areaFrom ? parseNum(f.areaFrom) : 0;
+                        var atVal = f.areaTo ? parseNum(f.areaTo) : Infinity;
+                        list = list.filter(function(p) { return p.areaNum >= af && p.areaNum <= atVal; });
+                    }
+                    if (f.sort === 'oldest') list.reverse();
+
+                    return list;
+                });
+
+                var showCategories = computed(function() { return !activeCategory.value && !searchActive.value; });
+                var showProjects = computed(function() { return activeCategory.value || searchActive.value; });
+
+                var projectsTitle = computed(function() {
+                    if (searchActive.value) return 'نتائج البحث';
+                    if (activeCategory.value) return activeCategory.value.name;
+                    return '';
+                });
+
+                function toggleDropdown(key) {
+                    openDropdown.value = openDropdown.value === key ? null : key;
+                    for (var i = 0; i < filterBtns.length; i++) {
+                        filterBtns[i].active = openDropdown.value === filterBtns[i].key;
+                    }
                 }
 
-                const categories = ref([
-                    makeCat('عمارات سكنية', 'apartment', img(16), 0, { company: 'شركة الإنشاءات الوطنية', location: 'حي المنصور', details: 'عمارة سكنية حديثة التصميم تحتوي على شقق سكنية فاخرة بمواصفات عالية.' }),
-                    makeCat('حدائق', 'park', img(28), 5, { company: 'لمسات الطبيعة', location: 'حي الزهراء', details: 'تصميم حدائق خارجية وداخلية بأسلوب عصري مع نوافير وإضاءة متكاملة.' }),
-                    makeCat('حمامات', 'bathtub', img(24), 10, { company: 'سيراميك الخليج', location: 'الكرادة', details: 'تصميم وتنفيذ حمامات فاخرة بأجود أنواع السيراميك والأدوات الصحية.' }),
-                    makeCat('مطابخ', 'kitchen', img(20), 15, { company: 'مطابخ الأصالة', location: 'المنصور', details: 'مطابخ عصرية بتصاميم أوروبية مع أحدث الأجهزة والتجهيزات المنزلية.' }),
-                    makeCat('تصميم داخلي', 'living', img(1), 20, { company: 'تصميمات الإبداع', location: 'اليرموك', details: 'تصميم داخلي للشقق والفلل والقصور بأحدث الأساليب العالمية.' }),
-                    makeCat('واجهات منزل', 'fence', img(11), 25, { company: 'واجهات العصر', location: 'الرصافة', details: 'تصميم وتنفيذ واجهات منزلية عصرية باستخدام الحجر والزجاج والألمنيوم.' })
-                ]);
+                function closeDropdown() { openDropdown.value = null; for (var i = 0; i < filterBtns.length; i++) filterBtns[i].active = false; }
+
+                function formatInput(v) {
+                    var num = v.replace(/[^0-9]/g, '');
+                    if (!num) return '';
+                    return fmt(parseInt(num, 10));
+                }
+
+                function doSearch() {
+                    searchActive.value = true;
+                    activeCategory.value = null;
+                    closeDropdown();
+                }
 
                 function selectCategory(cat) {
                     activeCategory.value = cat;
+                    searchActive.value = false;
+                    closeDropdown();
                 }
 
-                function openProject(proj) {
-                    modalSlide.value = 0;
-                    selectedProject.value = proj;
-                }
+                function openProject(proj) { modalSlide.value = 0; selectedProject.value = proj; }
+                function closeModal() { selectedProject.value = null; }
+                function openViewer(index) { if (!selectedProject.value) return; viewerImages.value = selectedProject.value.images; viewerIndex.value = index; viewerOpen.value = true; }
+                function closeViewer() { viewerOpen.value = false; }
+                function nextViewer() { if (viewerIndex.value < viewerImages.value.length - 1) viewerIndex.value++; }
+                function prevViewer() { if (viewerIndex.value > 0) viewerIndex.value--; }
 
-                function closeModal() {
-                    selectedProject.value = null;
-                }
+                function onDocClick() { closeDropdown(); }
 
-                function openViewer(index) {
-                    if (!selectedProject.value) return;
-                    viewerImages.value = selectedProject.value.images;
-                    viewerIndex.value = index;
-                    viewerOpen.value = true;
-                }
-
-                function closeViewer() {
-                    viewerOpen.value = false;
-                }
-
-                function nextViewer() {
-                    if (viewerIndex.value < viewerImages.value.length - 1) viewerIndex.value++;
-                }
-
-                function prevViewer() {
-                    if (viewerIndex.value > 0) viewerIndex.value--;
-                }
+                onMounted(function() { document.addEventListener('click', onDocClick); });
+                onUnmounted(function() { document.removeEventListener('click', onDocClick); });
 
                 return {
                     searchQuery, activeCategory, categories, selectedProject, modalSlide,
                     selectCategory, openProject, closeModal,
-                    viewerOpen, viewerImages, viewerIndex,
-                    openViewer, closeViewer, nextViewer, prevViewer
+                    viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer, nextViewer, prevViewer,
+                    governorates, styles, filterBtns, filters, openDropdown,
+                    toggleDropdown, closeDropdown, formatInput, doSearch,
+                    filteredProjects, showCategories, showProjects, projectsTitle, searchActive
                 };
             }
         }).mount('#app');
