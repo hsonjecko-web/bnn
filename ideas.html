@@ -48,6 +48,10 @@
 
                 <!-- Active Filter Tags -->
                 <div v-if="hasActiveFilters" class="active-filters">
+                    <span v-if="filters.cat" class="active-filter-tag">
+                        {{ filters.cat }}
+                        <span class="material-symbols-outlined" @click="filters.cat = ''; autoSearch()">close</span>
+                    </span>
                     <span v-if="filters.gov" class="active-filter-tag">
                         {{ filters.gov }}
                         <span class="material-symbols-outlined" @click="filters.gov = ''; autoSearch()">close</span>
@@ -73,6 +77,15 @@
                         <div class="filter-panel-header">
                             <h3>بحث وتصفية</h3>
                             <button class="filter-panel-close" @click="filterPanelOpen = false"><span class="material-symbols-outlined">close</span></button>
+                        </div>
+
+                        <label class="filter-panel-label">القسم</label>
+                        <div class="filter-select" @click="catOpen = !catOpen">
+                            <span :class="{ placeholder: !filters.cat }">{{ filters.cat || 'اختر القسم' }}</span>
+                            <span class="material-symbols-outlined">expand_more</span>
+                        </div>
+                        <div v-if="catOpen" class="filter-options">
+                            <div v-for="c in catNames" :key="c" class="filter-option" :class="{ selected: filters.cat === c }" @click="filters.cat = c; catOpen = false">{{ c }}</div>
                         </div>
 
                         <label class="filter-panel-label">المحافظة</label>
@@ -287,13 +300,14 @@
                 var selectedProject = ref(null);
                 var govOpen = ref(false);
                 var styleOpen = ref(false);
+                var catOpen = ref(false);
                 var modalSlide = ref(0);
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
                 var viewerIndex = ref(0);
                 var filterPanelOpen = ref(false);
                 var searchActive = ref(false);
-                var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '' });
+                var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '', cat: '' });
                 var modalPullY = ref(0);
                 var modalClosing = ref(false);
 
@@ -311,7 +325,10 @@
 
                 var hasActiveFilters = computed(function() {
                     var f = filters.value;
-                    return f.gov || f.style || f.budgetFrom || f.budgetTo || f.areaFrom || f.areaTo;
+                    return f.gov || f.style || f.budgetFrom || f.budgetTo || f.areaFrom || f.areaTo || f.cat;
+                });
+                var catNames = computed(function() {
+                    return categories.value.map(function(c) { return c.name; });
                 });
                 var budgetLabel = computed(function() {
                     var f = filters.value;
@@ -351,6 +368,7 @@
                     var f = filters.value;
 
                     if (q) list = list.filter(function(p) { return p.title.toLowerCase().includes(q) || p.company.toLowerCase().includes(q) || p.governorate.includes(q); });
+                    if (f.cat) list = list.filter(function(p) { return p._catName === f.cat; });
                     if (f.gov) list = list.filter(function(p) { return p.governorate === f.gov; });
                     if (f.style) list = list.filter(function(p) { return p.style === f.style; });
                     if (f.budgetFrom || f.budgetTo) {
@@ -472,7 +490,7 @@
                     if (!searchActive.value) return;
                 }
                 function clearFilters() {
-                    filters.value = { gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '' };
+                    filters.value = { gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '', cat: '' };
                     searchActive.value = true;
                     history.replaceState({}, '', window.location.pathname);
                 }
@@ -508,7 +526,7 @@
                     hasActiveFilters, budgetLabel, areaLabel, autoSearch, clearFilters,
                     filteredProjects, showCategories, showProjects, projectsTitle, searchActive,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
-                    govOpen, styleOpen
+                    govOpen, styleOpen, catOpen, catNames
                 };
             }
         }).mount('#app');
