@@ -72,7 +72,7 @@
                 </div>
                 <div class="ad-slider">
                     <div class="ad-slider-track" dir="ltr" :style="{ transform: `translateX(-${adSlide * 100}%)` }">
-                        <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openCompany(ad.company)">
+                        <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openProject(ad)">
                             <div class="ad-slider-img">
                                 <img :src="ad.bg" alt="">
                                 <span class="ad-sponsor">ممول</span>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="works-grid">
                     <div v-for="(work, i) in latestWorks" :key="i"
-                         class="work-card" @click="openCompany(work.company)">
+                         class="work-card" @click="openProject(work)">
                         <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
                         <div class="work-overlay">
                             <span class="work-title">{{ work.title }}</span>
@@ -147,11 +147,10 @@
                         <h2>{{ selectedProject.title }}</h2>
                         <div class="modal-company">
                             <span class="material-symbols-outlined">business</span>
-                            <a v-if="selectedProject.companyLink" :href="selectedProject.companyLink" class="modal-company-link">
+                            <a :href="'execute.html?company=' + encodeURIComponent(selectedProject.company)" class="modal-company-link">
                                 <span>{{ selectedProject.company }}</span>
                                 <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
                             </a>
-                            <span v-else>{{ selectedProject.company }}</span>
                         </div>
                         <p class="modal-desc">{{ selectedProject.details }}</p>
                         <div v-if="selectedProject.meta" class="modal-meta">
@@ -523,10 +522,6 @@
                     history.pushState({ action: 'modal' }, '');
                 }
 
-                function openCompany(name) {
-                    window.location.href = 'execute.html?company=' + encodeURIComponent(name);
-                }
-
                 function closeModal() {
                     if (modalClosing.value) return;
                     modalClosing.value = true;
@@ -577,7 +572,7 @@
                 return {
                     searchQuery, currentSlide, slides, sections, ads, latestWorks,
                     selectedProject, modalSlide,
-                    openProject, closeModal, openCompany,
+                    openProject, closeModal,
                     viewerOpen, viewerImages, viewerIndex,
                     openViewer, closeViewer, nextViewer, prevViewer,
                     heroSwipe, modalTouch, viewerTouch,
