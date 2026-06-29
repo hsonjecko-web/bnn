@@ -91,18 +91,16 @@
                 <!-- Latest Works -->
                 <div class="section-header">
                     <span class="section-title">آخر الأعمال</span>
-                    <span class="section-link" @click="showAllWorks = !showAllWorks">عرض الكل</span>
+                    <span class="section-link" @click="showAllWorks = !showAllWorks">{{ showAllWorks ? 'إخفاء' : 'عرض الكل' }}</span>
                 </div>
                 <div class="works-grid">
-                    <template v-for="(work, i) in latestWorks" :key="i">
-                        <div v-if="showAllWorks || i < 4"
-                             class="work-card" @click="openProject(work)">
-                            <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
-                            <div class="work-overlay">
-                                <span class="work-title">{{ work.title }}</span>
-                            </div>
+                    <div v-for="(work, i) in (showAllWorks ? latestWorks : latestWorks.slice(0, 4))" :key="i"
+                         class="work-card" @click="openProject(work)">
+                        <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
+                        <div class="work-overlay">
+                            <span class="work-title">{{ work.title }}</span>
                         </div>
-                    </template>
+                    </div>
                 </div>
 
                 <!-- padding -->
