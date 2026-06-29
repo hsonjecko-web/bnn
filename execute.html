@@ -41,8 +41,12 @@
                 <!-- Categories Grid -->
                 <div v-if="!activeCategory && !selectedCompany" class="exec-categories">
                     <div v-for="(cat, i) in categories" :key="i" class="exec-cat-card" @click="selectCategory(cat)">
-                        <div class="exec-cat-img">
-                            <img :src="cat.cover" alt="">
+                        <div class="exec-cat-slider">
+                            <div class="exec-cat-track" :style="{ transform: 'translateX(-' + (cat.slide * 100) + '%)' }">
+                                <div v-for="(imgSrc, j) in cat.images" :key="j" class="exec-cat-slide">
+                                    <img :src="imgSrc" alt="">
+                                </div>
+                            </div>
                             <div class="exec-cat-overlay"></div>
                         </div>
                         <div class="exec-cat-info">
@@ -52,7 +56,7 @@
                     </div>
                 </div>
 
-                <!-- Companies List -->
+                <!-- Companies Grid -->
                 <div v-if="activeCategory && !selectedCompany" class="exec-companies">
                     <div class="exec-header">
                         <button class="exec-back" @click="activeCategory = null">
@@ -63,17 +67,16 @@
                             <p>{{ activeCategory.companies.length }} شركة</p>
                         </div>
                     </div>
-                    <div class="exec-company-list">
-                        <div v-for="(comp, i) in activeCategory.companies" :key="i" class="exec-company-card" @click="selectedCompany = comp">
+                    <div class="exec-company-grid">
+                        <div v-for="(comp, i) in activeCategory.companies" :key="i" class="exec-company-card" @click="selectCompany(comp)">
                             <div class="exec-company-logo">
                                 <img :src="comp.logo" alt="">
+                                <div class="exec-company-badge" v-if="comp.verified">
+                                    <span class="material-symbols-outlined">verified</span>
+                                </div>
                             </div>
                             <div class="exec-company-info">
                                 <h3>{{ comp.name }}</h3>
-                                <div class="exec-company-badge" v-if="comp.verified">
-                                    <span class="material-symbols-outlined">verified</span>
-                                    موثقة من بنيان
-                                </div>
                                 <div class="exec-company-rating">
                                     <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= comp.rating }">star</span>
                                 </div>
@@ -82,45 +85,57 @@
                                     <span>{{ comp.stats.done }} مشروع</span>
                                 </div>
                             </div>
-                            <span class="material-symbols-outlined exec-company-arrow">chevron_left</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Company Profile -->
                 <div v-if="selectedCompany" class="exec-profile">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="selectedCompany = null">
+                    <!-- Cover Image with Overlay -->
+                    <div class="exec-cover">
+                        <button class="exec-cover-back" @click="selectedCompany = null">
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
-                        <div><h2>{{ selectedCompany.name }}</h2></div>
+                        <div class="exec-cover-slider">
+                            <div class="exec-cover-track" dir="ltr" :style="{ transform: 'translateX(-' + (coverSlide * 100) + '%)' }">
+                                <div v-for="(imgSrc, i) in selectedCompany.workImages" :key="i" class="exec-cover-slide">
+                                    <img :src="imgSrc" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exec-cover-overlay"></div>
+                        <div class="exec-cover-content">
+                            <div class="exec-cover-logo">
+                                <img :src="selectedCompany.logo" alt="">
+                            </div>
+                            <h2>{{ selectedCompany.name }}</h2>
+                            <div class="exec-cover-meta">
+                                <span>{{ selectedCompany.years }} سنة خبرة</span>
+                                <span class="dot-sep">·</span>
+                                <span class="exec-badge" v-if="selectedCompany.verified">
+                                    <span class="material-symbols-outlined">verified</span>
+                                    موثقة
+                                </span>
+                                <span class="dot-sep">·</span>
+                                <span class="exec-cover-rating">
+                                    <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= selectedCompany.rating }">star</span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Profile Hero -->
-                    <div class="exec-profile-hero">
-                        <div class="exec-profile-logo">
-                            <img :src="selectedCompany.logo" alt="">
+                    <!-- About + Specializations -->
+                    <div class="exec-about-specs">
+                        <div class="exec-about-block">
+                            <h3>نبذة عن الشركة</h3>
+                            <p>{{ selectedCompany.about }}</p>
                         </div>
-                        <h2>{{ selectedCompany.name }}</h2>
-                        <div class="exec-badge" v-if="selectedCompany.verified">
-                            <span class="material-symbols-outlined">verified</span>
-                            موثقة من بنيان
-                        </div>
-                        <div class="exec-profile-rating">
-                            <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= selectedCompany.rating }">star</span>
-                        </div>
-                    </div>
-
-                    <!-- About & Specializations -->
-                    <div class="exec-section">
-                        <h3 class="exec-section-title">نبذة عن الشركة</h3>
-                        <p class="exec-about">{{ selectedCompany.about }}</p>
-                    </div>
-
-                    <div class="exec-section">
-                        <h3 class="exec-section-title">التخصصات</h3>
-                        <div class="exec-tags">
-                            <span v-for="(spec, i) in selectedCompany.specs" :key="i" class="exec-tag">{{ spec }}</span>
+                        <div class="exec-specs-block">
+                            <h3>التخصصات</h3>
+                            <div v-for="(spec, i) in selectedCompany.specs" :key="i" class="exec-spec-item">
+                                <span class="material-symbols-outlined">check_circle</span>
+                                <span>{{ spec }}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -145,21 +160,6 @@
                         <div class="exec-stat">
                             <span class="exec-stat-num">{{ selectedCompany.stats.completed }}</span>
                             <span class="exec-stat-label">مكتمل</span>
-                        </div>
-                    </div>
-
-                    <!-- Work Slider -->
-                    <div class="exec-section">
-                        <h3 class="exec-section-title">أعمال الشركة</h3>
-                        <div class="exec-work-slider">
-                            <div class="exec-work-track" dir="ltr" :style="{ transform: 'translateX(-' + (workSlide * 100) + '%)' }">
-                                <div v-for="(img, i) in selectedCompany.workImages" :key="i" class="exec-work-slide">
-                                    <img :src="img" alt="">
-                                </div>
-                            </div>
-                            <div v-if="selectedCompany.workImages.length > 1" class="exec-work-dots">
-                                <span v-for="(img, i) in selectedCompany.workImages" :key="i" class="dot" :class="{ active: i === workSlide }" @click="workSlide = i"></span>
-                            </div>
                         </div>
                     </div>
 
@@ -297,13 +297,13 @@
                 name: name,
                 logo: img(logoIdx),
                 cover: img(coverIdx),
+                workImages: workImgs,
                 about: opts.about || 'شركة متخصصة في مجال البناء والتنفيذ بأعلى معايير الجودة، نمتلك فريقاً من المهندسين والفنيين ذوي الخبرة الطويلة.',
                 specs: opts.specs || ['بناء', 'تشطيبات', 'تصميم'],
                 verified: true,
                 rating: opts.rating || 4,
                 years: opts.years || 15,
                 projects: projs,
-                workImages: workImgs,
                 stats: {
                     workers: opts.workers || 120,
                     engineers: opts.engineers || 25,
@@ -313,19 +313,25 @@
             };
         }
 
+        function makeCatImages(base) {
+            var result = [];
+            for (var j = 0; j < 4; j++) result.push(img(((base + j * 7) % 31) + 1));
+            return result;
+        }
+
         var categoriesData = [
             {
-                name: 'بناء', icon: 'foundation', cover: img(16),
+                name: 'بناء', icon: 'foundation', images: makeCatImages(16),
                 companies: [
-                    makeCompany('شركة البناء الحديث', 3, 16, { about: 'شركة رائدة في مجال البناء السكني والتجاري، تأسست عام 2005، متخصصة في بناء الفلل والمجمعات السكنية.', specs: ['بناء سكني', 'بناء تجاري', 'خرسانة مسلحة'], rating: 5, years: 18, workers: 200, engineers: 35, done: 120, completed: 100 }),
-                    makeCompany('مقاولون العرب', 5, 11, { about: 'من كبرى شركات المقاولات في العراق، نقدم خدمات البناء والتشييد بأعلى المواصفات.', specs: ['بناء', 'هندسة مدنية', 'بنية تحتية'], rating: 4, years: 25, workers: 350, engineers: 50, done: 200, completed: 180 }),
-                    makeCompany('شركة الأساس المتين', 7, 21, { about: 'متخصصون في بناء الأساسات والأعمدة والهياكل الخرسانية المسلحة.', specs: ['خرسانة مسلحة', 'هياكل حديدية', 'أساسات'], rating: 4, years: 12, workers: 80, engineers: 15, done: 45, completed: 40 }),
+                    makeCompany('شركة البناء الحديث', 3, 16, { about: 'شركة رائدة في مجال البناء السكني والتجاري، تأسست عام 2005، متخصصة في بناء الفلل والمجمعات السكنية.', specs: ['بناء سكني وتجاري', 'خرسانة مسلحة', 'هياكل حديدية'], rating: 5, years: 18, workers: 200, engineers: 35, done: 120, completed: 100 }),
+                    makeCompany('مقاولون العرب', 5, 11, { about: 'من كبرى شركات المقاولات في العراق، نقدم خدمات البناء والتشييد بأعلى المواصفات.', specs: ['بناء عام', 'هندسة مدنية', 'بنية تحتية'], rating: 4, years: 25, workers: 350, engineers: 50, done: 200, completed: 180 }),
+                    makeCompany('شركة الأساس المتين', 7, 21, { about: 'متخصصون في بناء الأساسات والأعمدة والهياكل الخرسانية المسلحة.', specs: ['خرسانة مسلحة', 'أساسات عميقة', 'هياكل خرسانية'], rating: 4, years: 12, workers: 80, engineers: 15, done: 45, completed: 40 }),
                     makeCompany('بناء الوطنية', 9, 8, { about: 'شركة وطنية متخصصة في تشييد المباني السكنية والتجارية.' }),
                     makeCompany('العمران الحديث', 11, 3, { about: 'نقدم حلولاً عصرية في البناء باستخدام أحدث التقنيات والمواد.', rating: 5 })
                 ]
             },
             {
-                name: 'تشطيبات', icon: 'format_paint', cover: img(1),
+                name: 'تشطيبات', icon: 'format_paint', images: makeCatImages(1),
                 companies: [
                     makeCompany('شركة التشطيب الذهبي', 13, 1, { about: 'متخصصون في التشطيبات الداخلية والخارجية بأعلى جودة.', specs: ['تشطيبات داخلية', 'تشطيبات خارجية', 'ديكور'], rating: 5, years: 10, workers: 60, engineers: 10, done: 150, completed: 140 }),
                     makeCompany('لمسة الجمال', 15, 23, { about: 'شركة متخصصة في التشطيبات الفاخرة والتصميم الداخلي.', specs: ['جبس بورد', 'سيراميك', 'باركيه'], rating: 4, years: 8, workers: 40, engineers: 8, done: 90, completed: 85 }),
@@ -334,7 +340,7 @@
                 ]
             },
             {
-                name: 'كهرباء', icon: 'bolt', cover: img(24),
+                name: 'كهرباء', icon: 'bolt', images: makeCatImages(24),
                 companies: [
                     makeCompany('شركة الكهرباء الحديثة', 21, 24, { about: 'متخصصون في التأسيسات الكهربائية وأنظمة الطاقة.', specs: ['تأسيس كهرباء', 'أنظمة إنذار', 'كاميرات مراقبة'], rating: 4, years: 14, workers: 45, engineers: 12, done: 200, completed: 190 }),
                     makeCompany('النور للكهرباء', 23, 28, { about: 'حلول كهربائية متكاملة للمنازل والمنشآت التجارية.', rating: 5, years: 20, workers: 70, engineers: 20, done: 300, completed: 280 }),
@@ -342,7 +348,7 @@
                 ]
             },
             {
-                name: 'سباكة', icon: 'plumbing', cover: img(20),
+                name: 'سباكة', icon: 'plumbing', images: makeCatImages(20),
                 companies: [
                     makeCompany('شركة السباكة المحترفة', 27, 20, { about: 'خدمات سباكة متكاملة من التأسيس إلى الصيانة.', specs: ['تأسيس سباكة', 'تمديدات مياه', 'صرف صحي'], rating: 4, years: 9, workers: 35, engineers: 7, done: 180, completed: 170 }),
                     makeCompany('المياه الجوفية', 29, 6, { about: 'متخصصون في أنظمة المياه والسباكة السكنية والتجارية.' }),
@@ -350,7 +356,7 @@
                 ]
             },
             {
-                name: 'دهانات', icon: 'palette', cover: img(11),
+                name: 'دهانات', icon: 'palette', images: makeCatImages(11),
                 companies: [
                     makeCompany('شركة الألوان المتميزة', 2, 11, { about: 'دهانات داخلية وخارجية بأحدث التصاميم والألوان.', specs: ['دهانات داخلية', 'دهانات خارجية', 'دهانات ديكورية'], rating: 5, years: 7, workers: 30, engineers: 5, done: 100, completed: 95 }),
                     makeCompany('فن الدهان', 4, 5, { about: 'فنون الدهانات العصرية والكلاسيكية.', rating: 4 }),
@@ -376,8 +382,10 @@
                 var modalPullY = ref(0);
                 var modalClosing = ref(false);
                 var workSlide = ref(0);
-                var workTimer = null;
+                var coverSlide = ref(0);
                 var showAllProjects = ref(false);
+                var catTimers = {};
+                var coverTimer = null;
 
                 var visibleProjects = computed(function() {
                     if (!selectedCompany.value) return [];
@@ -425,6 +433,11 @@
                     selectedCompany.value = null;
                 }
 
+                function selectCompany(comp) {
+                    selectedCompany.value = comp;
+                    coverSlide.value = 0;
+                }
+
                 function openProject(proj) {
                     modalSlide.value = 0;
                     selectedProject.value = proj;
@@ -454,19 +467,39 @@
                 }
 
                 function closeViewer() { viewerOpen.value = false; }
-                function nextViewer() { if (viewerIndex.value < viewerImages.value.length - 1) viewerIndex.value++; }
-                function prevViewer() { if (viewerIndex.value > 0) viewerIndex.value--; }
 
-                function startWorkTimer() {
-                    stopWorkTimer();
-                    workTimer = setInterval(function() {
-                        if (selectedCompany.value && selectedCompany.value.workImages.length > 1) {
-                            workSlide.value = (workSlide.value + 1) % selectedCompany.value.workImages.length;
-                        }
-                    }, 3000);
+                function startCatTimers() {
+                    for (var i = 0; i < categories.value.length; i++) {
+                        (function(idx) {
+                            catTimers[idx] = setInterval(function() {
+                                var cat = categories.value[idx];
+                                if (cat && cat.images && cat.images.length > 1) {
+                                    cat.slide = ((cat.slide || 0) + 1) % cat.images.length;
+                                }
+                            }, 3000);
+                        })(i);
+                    }
                 }
-                function stopWorkTimer() {
-                    if (workTimer) { clearInterval(workTimer); workTimer = null; }
+
+                function stopCatTimers() {
+                    for (var k in catTimers) {
+                        clearInterval(catTimers[k]);
+                        delete catTimers[k];
+                    }
+                }
+
+                function startCoverTimer() {
+                    stopCoverTimer();
+                    if (!selectedCompany.value) return;
+                    var len = selectedCompany.value.workImages.length;
+                    if (len < 2) return;
+                    coverTimer = setInterval(function() {
+                        coverSlide.value = (coverSlide.value + 1) % len;
+                    }, 3500);
+                }
+
+                function stopCoverTimer() {
+                    if (coverTimer) { clearInterval(coverTimer); coverTimer = null; }
                 }
 
                 function handlePopState() {
@@ -477,19 +510,23 @@
                 }
 
                 onMounted(function() {
+                    startCatTimers();
                     window.addEventListener('popstate', handlePopState);
                 });
+
                 onUnmounted(function() {
+                    stopCatTimers();
+                    stopCoverTimer();
                     window.removeEventListener('popstate', handlePopState);
-                    stopWorkTimer();
                 });
 
                 return {
                     categories, activeCategory, selectedCompany, selectedProject, modalSlide,
-                    selectCategory, openProject, closeModal,
-                    viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer, nextViewer, prevViewer,
+                    selectCategory, selectCompany, openProject, closeModal,
+                    viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
-                    workSlide, visibleProjects, openProjectGallery, showAllProjects
+                    workSlide, coverSlide, visibleProjects, openProjectGallery, showAllProjects,
+                    startCoverTimer, stopCoverTimer
                 };
             }
         }).mount('#app');
