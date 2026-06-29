@@ -311,9 +311,10 @@
                                     {{ proj.company }}
                                 </div>
                                 <div class="idea-project-meta">
-                                    <span><span class="material-symbols-outlined">straighten</span> {{ proj.area }} م²</span>
-                                    <span><span class="material-symbols-outlined">payments</span> {{ proj.price }}</span>
-                                </div>
+                                     <span><span class="material-symbols-outlined">payments</span> {{ proj.price }}</span>
+                                     <span class="idea-meta-divider">|</span>
+                                     <span><span class="material-symbols-outlined">straighten</span> {{ proj.area }} م²</span>
+                                 </div>
                             </div>
                         </div>
                     </div>
@@ -395,6 +396,7 @@
         function img(n) { return 'images/img' + n + '.jpg'; }
 
         function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+        function fmtM(n) { return (n / 1000000) + ' مليون'; }
 
         function parseNum(s) { return parseInt(s.replace(/,/g, ''), 10) || 0; }
 
@@ -418,7 +420,7 @@
                     areaNum: areas[i % 8],
                     area: areas[i % 8],
                     priceNum: priceVals[i % 8],
-                    price: fmt(priceVals[i % 8]) + ' د.ع',
+                    price: fmtM(priceVals[i % 8]),
                     images: images,
                     details: prefix + ' من إنجاز شركة ' + (opts.company || 'البناء الحديث') + ' بمساحة ' + areas[i % 8] + ' م² في محافظة ' + govs[i % 8] + '.',
                     meta: [
