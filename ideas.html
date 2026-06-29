@@ -79,31 +79,37 @@
                             <button class="filter-panel-close" @click="filterPanelOpen = false"><span class="material-symbols-outlined">close</span></button>
                         </div>
 
-                        <label class="filter-panel-label">القسم</label>
-                        <div class="filter-select" @click="catOpen = !catOpen">
-                            <span :class="{ placeholder: !filters.cat }">{{ filters.cat || 'اختر القسم' }}</span>
-                            <span class="material-symbols-outlined">expand_more</span>
-                        </div>
-                        <div v-if="catOpen" class="filter-options">
-                            <div v-for="c in catNames" :key="c" class="filter-option" :class="{ selected: filters.cat === c }" @click="filters.cat = c; catOpen = false">{{ c }}</div>
-                        </div>
-
-                        <label class="filter-panel-label">المحافظة</label>
-                        <div class="filter-select" @click="govOpen = !govOpen">
-                            <span :class="{ placeholder: !filters.gov }">{{ filters.gov || 'اختر المحافظة' }}</span>
-                            <span class="material-symbols-outlined">expand_more</span>
-                        </div>
-                        <div v-if="govOpen" class="filter-options">
-                            <div v-for="g in governorates" :key="g" class="filter-option" :class="{ selected: filters.gov === g }" @click="filters.gov = g; govOpen = false">{{ g }}</div>
+                        <div class="filter-group">
+                            <label class="filter-panel-label">القسم</label>
+                            <div class="filter-select" @click="catOpen = !catOpen; govOpen = false; styleOpen = false">
+                                <span :class="{ placeholder: !filters.cat }">{{ filters.cat || 'اختر القسم' }}</span>
+                                <span class="material-symbols-outlined" :class="{ rotated: catOpen }">expand_more</span>
+                            </div>
+                            <div v-if="catOpen" class="filter-options">
+                                <div v-for="c in catNames" :key="c" class="filter-option" :class="{ selected: filters.cat === c }" @click="filters.cat = c; catOpen = false">{{ c }}</div>
+                            </div>
                         </div>
 
-                        <label class="filter-panel-label">النمط</label>
-                        <div class="filter-select" @click="styleOpen = !styleOpen">
-                            <span :class="{ placeholder: !filters.style }">{{ filters.style || 'اختر النمط' }}</span>
-                            <span class="material-symbols-outlined">expand_more</span>
+                        <div class="filter-group">
+                            <label class="filter-panel-label">المحافظة</label>
+                            <div class="filter-select" @click="govOpen = !govOpen; catOpen = false; styleOpen = false">
+                                <span :class="{ placeholder: !filters.gov }">{{ filters.gov || 'اختر المحافظة' }}</span>
+                                <span class="material-symbols-outlined" :class="{ rotated: govOpen }">expand_more</span>
+                            </div>
+                            <div v-if="govOpen" class="filter-options">
+                                <div v-for="g in governorates" :key="g" class="filter-option" :class="{ selected: filters.gov === g }" @click="filters.gov = g; govOpen = false">{{ g }}</div>
+                            </div>
                         </div>
-                        <div v-if="styleOpen" class="filter-options">
-                            <div v-for="s in styles" :key="s" class="filter-option" :class="{ selected: filters.style === s }" @click="filters.style = s; styleOpen = false">{{ s }}</div>
+
+                        <div class="filter-group">
+                            <label class="filter-panel-label">النمط</label>
+                            <div class="filter-select" @click="styleOpen = !styleOpen; catOpen = false; govOpen = false">
+                                <span :class="{ placeholder: !filters.style }">{{ filters.style || 'اختر النمط' }}</span>
+                                <span class="material-symbols-outlined" :class="{ rotated: styleOpen }">expand_more</span>
+                            </div>
+                            <div v-if="styleOpen" class="filter-options">
+                                <div v-for="s in styles" :key="s" class="filter-option" :class="{ selected: filters.style === s }" @click="filters.style = s; styleOpen = false">{{ s }}</div>
+                            </div>
                         </div>
 
                         <label class="filter-panel-label">الميزانية (د.ع)</label>

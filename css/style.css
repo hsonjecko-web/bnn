@@ -2357,76 +2357,123 @@ html.light-mode .project-modal .modal-close {
   }
   .filter-select {
     font-size: 12px;
-    padding: 8px 12px;
+    padding: 10px 12px;
   }
   .filter-option {
     font-size: 12px;
-    padding: 8px 12px;
+    padding: 10px 12px;
   }
   .filter-range input {
     font-size: 12px;
-    padding: 6px 8px;
-  }
-  .filter-select {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: var(--bg-card-light);
-    border: 1px solid var(--border-input);
-    border-radius: 12px;
-    color: var(--text-white);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .filter-select:active {
-    opacity: 0.7;
-  }
-  .filter-select .placeholder {
-    color: var(--text-muted);
-  }
-  .filter-select .material-symbols-outlined {
-    font-size: 18px;
-    color: var(--text-muted);
-  }
-  .filter-options {
-    border: 1px solid var(--border-input);
-    border-radius: 12px;
-    margin-top: 4px;
-    overflow: hidden;
-    background: var(--bg-card-light);
-  }
-  .filter-option {
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--text-light);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    border-bottom: 1px solid var(--border-input);
-  }
-  .filter-option:last-child {
-    border-bottom: none;
-  }
-  .filter-option:active {
-    background: var(--bg-input);
-  }
-  .filter-option.selected {
-    color: var(--accent-gold);
-    font-weight: 600;
-    background: rgba(201, 162, 67, 0.1);
-  }
-  .light-mode .filter-select {
-    background: rgba(0, 0, 0, 0.04);
-  }
-  .light-mode .filter-options {
-    background: rgba(255, 255, 255, 0.95);
-  }
-  .light-mode .filter-option {
-    border-color: rgba(0, 0, 0, 0.08);
+    padding: 8px 8px;
   }
 }
-/* ===== Exit Toast ===== */
+.filter-group {
+  margin-bottom: 6px;
+}
+
+.filter-panel-label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 14px 0 5px 4px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.filter-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg-card-light);
+  border: 1px solid var(--border-input);
+  border-radius: 12px;
+  color: var(--text-white);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.filter-select:active {
+  border-color: var(--accent-gold);
+}
+
+.filter-select .placeholder {
+  color: var(--text-muted);
+}
+
+.filter-select .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--text-muted);
+  transition: transform 0.25s ease;
+}
+
+.filter-select .material-symbols-outlined.rotated {
+  transform: rotate(180deg);
+}
+
+.filter-options {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  margin-top: 5px;
+  overflow: hidden;
+  background: var(--bg-input);
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.filter-option:last-child {
+  border-bottom: none;
+}
+
+.filter-option:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.filter-option.selected {
+  color: var(--accent-gold);
+  font-weight: 600;
+  background: rgba(201, 162, 67, 0.1);
+}
+
+.filter-option.selected::before {
+  content: "check";
+  font-family: "Material Symbols Outlined";
+  font-size: 16px;
+  margin-left: 8px;
+  color: var(--accent-gold);
+}
+
+/* Light mode overrides */
+.light-mode .filter-select {
+  background: var(--bg-input);
+}
+
+.light-mode .filter-options {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.light-mode .filter-option {
+  color: var(--primary-dark);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.light-mode .filter-option:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
 .exit-toast {
   position: fixed;
   bottom: 100px;
@@ -2686,14 +2733,6 @@ html.light-mode .exit-toast {
   font-size: 18px;
 }
 
-.filter-panel-label {
-  display: block;
-  font-size: 13px;
-  color: var(--text-light);
-  margin: 12px 0 6px;
-  font-weight: 600;
-}
-
 .filter-range {
   display: flex;
   align-items: center;
@@ -2702,15 +2741,21 @@ html.light-mode .exit-toast {
 
 .filter-range input {
   flex: 1;
-  padding: 8px 10px;
+  padding: 10px 10px;
   background: var(--bg-card-light);
   border: 1px solid var(--border-input);
-  border-radius: 10px;
+  border-radius: 12px;
   color: var(--text-white);
   font-size: 13px;
   font-family: "Cairo", sans-serif;
   text-align: center;
   direction: ltr;
+  transition: border-color 0.2s ease;
+}
+
+.filter-range input:focus {
+  border-color: var(--accent-gold);
+  outline: none;
 }
 
 .filter-range input::placeholder {
@@ -2724,8 +2769,8 @@ html.light-mode .exit-toast {
 
 .filter-panel-search {
   width: 100%;
-  padding: 12px;
-  margin-top: 16px;
+  padding: 13px;
+  margin-top: 20px;
   background: var(--accent-gold);
   color: var(--text-on-accent);
   border: none;
@@ -2743,7 +2788,7 @@ html.light-mode .exit-toast {
 
 .filter-panel-clear {
   width: 100%;
-  padding: 10px;
+  padding: 11px;
   margin-top: 8px;
   background: transparent;
   color: var(--text-muted);
@@ -2760,8 +2805,8 @@ html.light-mode .exit-toast {
   background: var(--bg-card-light);
 }
 
-.light-mode .filter-panel-content {
-  background: rgba(255, 255, 255, 0.95);
+.light-mode .filter-range input {
+  background: var(--bg-input);
 }
 
 /* ===== Ideas Page ===== */
