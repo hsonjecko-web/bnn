@@ -167,7 +167,7 @@
                     <div class="exec-section">
                         <div class="exec-section-header">
                             <h3 class="exec-section-title">معرض المشاريع</h3>
-                            <button class="exec-section-link" @click="openProjectGallery">عرض الكل</button>
+                            <button class="exec-section-link" @click="openProjectGallery">{{ showAllProjects ? 'عرض أقل' : 'عرض الكل' }}</button>
                         </div>
                         <div class="exec-projects-grid">
                             <div v-for="(proj, i) in visibleProjects" :key="i" class="exec-project-card" @click="openProject(proj)">
@@ -184,7 +184,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button v-if="selectedCompany.projects.length > 4" class="exec-show-all" @click="openProjectGallery">عرض الكل ({{ selectedCompany.projects.length }})</button>
+                        <button v-if="!showAllProjects && selectedCompany.projects.length > 4" class="exec-show-all" @click="openProjectGallery">عرض الكل ({{ selectedCompany.projects.length }})</button>
+                        <button v-if="showAllProjects" class="exec-show-all" @click="openProjectGallery">عرض أقل</button>
                     </div>
                 </div>
 
@@ -376,9 +377,11 @@
                 var modalClosing = ref(false);
                 var workSlide = ref(0);
                 var workTimer = null;
+                var showAllProjects = ref(false);
 
                 var visibleProjects = computed(function() {
                     if (!selectedCompany.value) return [];
+                    if (showAllProjects.value) return selectedCompany.value.projects;
                     return selectedCompany.value.projects.slice(0, 4);
                 });
 
@@ -439,8 +442,7 @@
                 }
 
                 function openProjectGallery() {
-                    selectedCompany.value = null;
-                    activeCategory.value = null;
+                    showAllProjects.value = !showAllProjects.value;
                 }
 
                 function openViewer(index) {
@@ -487,7 +489,7 @@
                     selectCategory, openProject, closeModal,
                     viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer, nextViewer, prevViewer,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
-                    workSlide, visibleProjects, openProjectGallery
+                    workSlide, visibleProjects, openProjectGallery, showAllProjects
                 };
             }
         }).mount('#app');
