@@ -3875,23 +3875,26 @@ html.light-mode .ideas-projects-header h2 {
 .mkt-cat:active { transform: scale(0.95); }
 
 .mkt-cat-circle {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(58,106,149,0.12);
-  border: 2px solid #3a6a95;
-  color: #3a6a95;
+  background: var(--bg-card-light);
+  border: 1px solid var(--border-input);
   transition: all 0.3s ease;
 }
-.mkt-cat-circle .material-symbols-outlined { font-size: 24px; }
-
+.mkt-cat-circle .material-symbols-outlined {
+  font-size: 26px;
+  color: var(--accent-gold);
+}
 .mkt-cat:active .mkt-cat-circle {
-  background: #3a6a95;
-  color: #fff;
-  border-color: #3a6a95;
+  background: var(--accent-gold);
+  border-color: var(--accent-gold);
+}
+.mkt-cat:active .mkt-cat-circle .material-symbols-outlined {
+  color: var(--primary-dark);
 }
 
 .mkt-cat-name {
@@ -3900,6 +3903,7 @@ html.light-mode .ideas-projects-header h2 {
   text-align: center;
   font-weight: 600;
   white-space: nowrap;
+  line-height: 1.2;
 }
 
 /* --- سلايدر السوق --- */
