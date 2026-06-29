@@ -2935,21 +2935,11 @@ html.light-mode .ideas-projects-header h2 {
   backdrop-filter: blur(4px);
 }
 .exec-cover-back .material-symbols-outlined { font-size: 20px; }
-.exec-cover-slider {
+.exec-cover-img {
   position: absolute;
   inset: 0;
-  overflow: hidden;
 }
-.exec-cover-track {
-  display: flex;
-  height: 100%;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.exec-cover-slide {
-  min-width: 100%;
-  height: 100%;
-}
-.exec-cover-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.exec-cover-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .exec-cover-overlay {
   position: absolute;
   inset: 0;
