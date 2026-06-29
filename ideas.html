@@ -76,13 +76,21 @@
                         </div>
 
                         <label class="filter-panel-label">المحافظة</label>
-                        <div class="filter-scroll-x" ref="govScroll">
-                            <span v-for="g in governorates" :key="g" class="filter-opt" :class="{ selected: filters.gov === g }" @click="filters.gov = (filters.gov === g ? '' : g); smoothScroll($event, 'gov')">{{ g }}</span>
+                        <div class="filter-select" @click="govOpen = !govOpen">
+                            <span :class="{ placeholder: !filters.gov }">{{ filters.gov || 'اختر المحافظة' }}</span>
+                            <span class="material-symbols-outlined">expand_more</span>
+                        </div>
+                        <div v-if="govOpen" class="filter-options">
+                            <div v-for="g in governorates" :key="g" class="filter-option" :class="{ selected: filters.gov === g }" @click="filters.gov = g; govOpen = false">{{ g }}</div>
                         </div>
 
                         <label class="filter-panel-label">النمط</label>
-                        <div class="filter-scroll-x" ref="styleScroll">
-                            <span v-for="s in styles" :key="s" class="filter-opt" :class="{ selected: filters.style === s }" @click="filters.style = (filters.style === s ? '' : s); smoothScroll($event, 'style')">{{ s }}</span>
+                        <div class="filter-select" @click="styleOpen = !styleOpen">
+                            <span :class="{ placeholder: !filters.style }">{{ filters.style || 'اختر النمط' }}</span>
+                            <span class="material-symbols-outlined">expand_more</span>
+                        </div>
+                        <div v-if="styleOpen" class="filter-options">
+                            <div v-for="s in styles" :key="s" class="filter-option" :class="{ selected: filters.style === s }" @click="filters.style = s; styleOpen = false">{{ s }}</div>
                         </div>
 
                         <label class="filter-panel-label">الميزانية (د.ع)</label>
@@ -277,8 +285,8 @@
                 var searchQuery = ref('');
                 var activeCategory = ref(null);
                 var selectedProject = ref(null);
-                var govScroll = ref(null);
-                var styleScroll = ref(null);
+                var govOpen = ref(false);
+                var styleOpen = ref(false);
                 var modalSlide = ref(0);
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
@@ -468,14 +476,6 @@
                     searchActive.value = true;
                     history.replaceState({}, '', window.location.pathname);
                 }
-                function smoothScroll(e, type) {
-                    var el = e.currentTarget;
-                    var parent = type === 'gov' ? govScroll.value : styleScroll.value;
-                    if (parent) {
-                        var left = el.offsetLeft - parent.offsetWidth / 2 + el.offsetWidth / 2;
-                        parent.scrollTo({ left: left, behavior: 'smooth' });
-                    }
-                }
 
                 function selectCategory(cat) {
                     activeCategory.value = cat;
@@ -508,7 +508,7 @@
                     hasActiveFilters, budgetLabel, areaLabel, autoSearch, clearFilters,
                     filteredProjects, showCategories, showProjects, projectsTitle, searchActive,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
-                    govScroll, styleScroll, smoothScroll
+                    govOpen, styleOpen
                 };
             }
         }).mount('#app');
