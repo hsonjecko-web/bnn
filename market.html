@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b1a2e">
-    <title>بنيان - سوق البضائع</title>
+    <title>بنيان - سوق البناء</title>
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -31,84 +31,555 @@
             <div id="header"></div>
 
             <div class="page-content">
-                <!-- البحث -->
-                <div style="padding:12px 16px;">
-                    <div class="search-bar" style="margin:0;">
-                        <input type="text" v-model="searchQuery" placeholder="ابحث عن منتجات البناء...">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        </svg>
+
+                <!-- ===== أقسام دائرية ===== -->
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView" class="mkt-cats-scroll">
+                    <div v-for="(cat, i) in categories" :key="i" class="mkt-cat" @click="selectCat(i)">
+                        <div class="mkt-cat-circle">
+                            <span class="material-symbols-outlined">{{ cat.icon }}</span>
+                        </div>
+                        <span class="mkt-cat-name">{{ cat.name }}</span>
                     </div>
                 </div>
 
-                <!-- التصنيفات -->
-                <div class="market-categories">
-                    <div v-for="(cat, index) in categories" :key="index"
-                         class="market-cat-item"
-                         :class="{ active: activeCategory === index }"
-                         @click="activeCategory = index">
-                        <div class="cat-icon" v-html="cat.icon"></div>
-                        <span class="cat-label">{{ cat.name }}</span>
-                    </div>
-                </div>
-
-                <!-- إعلان مميز -->
-                <div class="banner" style="margin:16px;">
-                    <div class="banner-title">عروض نهاية الموسم</div>
-                    <div class="banner-desc">خصم يصل إلى 30% على جميع أنواع الدهانات</div>
-                    <button class="banner-btn">تسوق الآن</button>
-                </div>
-
-                <!-- المنتجات الأكثر مبيعاً -->
-                <div class="section-header">
-                    <span class="section-title">الأكثر مبيعاً</span>
-                    <span class="section-link">عرض الكل</span>
-                </div>
-                <div class="products-grid">
-                    <a v-for="(product, index) in products" :key="index"
-                       :href="product.link" class="product-card" style="text-decoration:none;">
-                        <div class="product-image" :style="{ background: product.bg }">
-                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="1.5">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                                </svg>
+                <!-- ===== سلايدر صور ===== -->
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView" class="mkt-slider"
+                     @touchstart.passive="sliderTouch.onTouchStart"
+                     @touchend="sliderTouch.onTouchEnd">
+                    <div class="mkt-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (mktSlide * 100) + '%)' }">
+                        <div v-for="(s, i) in sliderImages" :key="i" class="mkt-slider-slide">
+                            <img :src="s.img" alt="">
+                            <div class="mkt-slider-overlay"></div>
+                            <div class="mkt-slider-info" dir="rtl">
+                                <h3>{{ s.title }}</h3>
+                                <p>{{ s.desc }}</p>
                             </div>
                         </div>
-                        <div class="product-name">{{ product.name }}</div>
-                        <div class="product-price">{{ product.price }}</div>
-                        <button class="product-cart-btn" @click.prevent="addToCart(product)">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                        </button>
-                    </a>
+                    </div>
+                    <div class="mkt-slider-dots">
+                        <span v-for="(s, i) in sliderImages" :key="i" class="dot" :class="{ active: i === mktSlide }" @click="mktSlide = i; resetMktTimer()"></span>
+                    </div>
                 </div>
 
-                <!-- الموردون -->
-                <div class="section-header">
-                    <span class="section-title">موردون مميزون</span>
-                    <span class="section-link">عرض الكل</span>
+                <!-- ===== حاسبة مواد البناء ===== -->
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView" class="mkt-calc-compact">
+                    <div class="mkt-calc-compact-top">
+                        <div class="mkt-calc-compact-icon">
+                            <span class="material-symbols-outlined">calculate</span>
+                        </div>
+                        <div class="mkt-calc-compact-text">
+                            <h3>حاسبة مواد البناء</h3>
+                            <p>أدخل أبعاد مشروعك واحسب التكلفة</p>
+                        </div>
+                        <button class="mkt-calc-btn-sm" @click="goToCalc" :disabled="!selectedCalcType">
+                            <span class="material-symbols-outlined">calculate</span>
+                            احسب الآن
+                        </button>
+                    </div>
+                    <div class="mkt-calc-compact-items">
+                        <div class="mkt-calc-item-pill" :class="{ active: selectedCalcType === 'ceramic' }" @click="selectedCalcType = 'ceramic'">
+                            <span class="material-symbols-outlined">grid_view</span>
+                            <span>سيراميك</span>
+                        </div>
+                        <div class="mkt-calc-item-pill" :class="{ active: selectedCalcType === 'paint' }" @click="selectedCalcType = 'paint'">
+                            <span class="material-symbols-outlined">format_paint</span>
+                            <span>دهان</span>
+                        </div>
+                        <div class="mkt-calc-item-pill" :class="{ active: selectedCalcType === 'gypsum' }" @click="selectedCalcType = 'gypsum'">
+                            <span class="material-symbols-outlined">crop_square</span>
+                            <span>واح جبس</span>
+                        </div>
+                    </div>
                 </div>
-                <div style="padding:0 16px 16px;">
-                    <div v-for="(supplier, index) in suppliers" :key="index" class="offer-card">
-                        <div class="offer-header">
-                            <div class="offer-company">
-                                <div class="offer-logo">{{ supplier.initial }}</div>
-                                <div>
-                                    <div class="offer-name">{{ supplier.name }}</div>
-                                    <div class="offer-rating">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#c9a243" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                        {{ supplier.rating }}
-                                    </div>
+
+                <!-- ===== المنتجات الأكثر طلباً ===== -->
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView">
+                    <div class="section-header">
+                        <span class="section-title">المنتجات الأكثر طلباً</span>
+                        <span class="section-link" @click="showAllView = true">عرض الكل</span>
+                    </div>
+                    <div class="mkt-products-scroll">
+                        <div v-for="(p, i) in topProducts" :key="i" class="mkt-prod-card" @click="openProduct(p)">
+                            <div class="mkt-prod-img">
+                                <img :src="p.img" alt="">
+                            </div>
+                            <div class="mkt-prod-info">
+                                <div class="mkt-prod-name">{{ p.name }}</div>
+                                <div class="mkt-prod-price">{{ fmt(p.price) }} د.ع</div>
+                                <div class="mkt-prod-rating">
+                                    <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= p.rating }">star</span>
+                                </div>
+                            </div>
+                            <button class="mkt-add-cart" @click.stop="addToCart(p)">
+                                <span class="material-symbols-outlined">add_shopping_cart</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== صفحة عرض كل المنتجات ===== -->
+                <div v-if="showAllView && !cartView && !calculatorView && !checkoutView" class="mkt-cat-view">
+                    <div class="exec-header">
+                        <button class="exec-back" @click="showAllView = false">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <div>
+                            <h2>جميع المنتجات</h2>
+                            <p>{{ allProducts.length }} منتج</p>
+                        </div>
+                    </div>
+                    <div class="mkt-cat-products-grid">
+                        <div v-for="(p, i) in allProducts" :key="i" class="mkt-grid-prod" @click="openProduct(p)">
+                            <div class="mkt-grid-prod-img">
+                                <img :src="p.img" alt="">
+                            </div>
+                            <div class="mkt-grid-prod-info">
+                                <div class="mkt-grid-prod-name">{{ p.name }}</div>
+                                <div class="mkt-grid-prod-price">{{ fmt(p.price) }} د.ع</div>
+                                <div class="mkt-prod-rating">
+                                    <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= p.rating }">star</span>
+                                </div>
+                                <button class="mkt-grid-add-btn" @click.stop="addToCart(p)">
+                                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                                    أضف للسلة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== الموردون المعتمدون ===== -->
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView">
+                    <div class="section-header">
+                        <span class="section-title">الموردون المعتمدون</span>
+                        <span class="section-link">عرض الكل</span>
+                    </div>
+                    <div class="mkt-suppliers-scroll">
+                        <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card">
+                            <div class="mkt-supplier-logo">
+                                <img :src="s.logo" alt="">
+                            </div>
+                            <div class="mkt-supplier-info">
+                                <h4>{{ s.name }}</h4>
+                                <div class="mkt-supplier-rating">
+                                    <span class="material-symbols-outlined" style="color:#f59e0b;font-size:16px;">star</span>
+                                    <span>{{ s.rating }}</span>
+                                </div>
+                                <p>{{ s.desc }}</p>
+                            </div>
+                            <button class="mkt-supplier-btn">زيارة</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== عروض خاصة ===== -->
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView">
+                    <div class="section-header">
+                        <span class="section-title">عروض خاصة</span>
+                        <span class="section-link">عرض الكل</span>
+                    </div>
+                    <div class="mkt-offers-scroll">
+                        <div v-for="(o, i) in offers" :key="i" class="mkt-offer-card" @click="openProduct(o)">
+                            <div class="mkt-offer-img">
+                                <img :src="o.img" alt="">
+                                <span class="mkt-offer-badge">خصم {{ o.discount }}%</span>
+                            </div>
+                            <div class="mkt-offer-info">
+                                <div class="mkt-prod-name">{{ o.name }}</div>
+                                <div class="mkt-offer-prices">
+                                    <span class="mkt-old-price">{{ o.oldPrice }} د.ع</span>
+                                    <span class="mkt-new-price">{{ o.price }} د.ع</span>
+                                </div>
+                                <button class="mkt-add-cart" @click.stop="addToCart(o)">
+                                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== عرض منتجات القسم ===== -->
+                <div v-if="activeCatView && !cartView && !calculatorView && !checkoutView" class="mkt-cat-view">
+                    <div class="exec-header">
+                        <button class="exec-back" @click="activeCatView = null">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <div>
+                            <h2>{{ categories[activeCatView].name }}</h2>
+                            <p>{{ catProducts.length }} منتج</p>
+                        </div>
+                    </div>
+
+                    <!-- فلتر السعر -->
+                    <div class="mkt-price-filter">
+                        <div class="mkt-filter-inputs">
+                            <input type="text" inputmode="numeric" v-model="priceFrom" placeholder="السعر من">
+                            <span class="mkt-filter-sep">-</span>
+                            <input type="text" inputmode="numeric" v-model="priceTo" placeholder="السعر إلى">
+                        </div>
+                        <button class="mkt-filter-btn" @click="applyFilter">تطبيق</button>
+                    </div>
+
+                    <!-- أفقية -->
+                    <div class="mkt-cat-products-scroll">
+                        <div v-for="(p, i) in filteredCatProducts" :key="i" class="mkt-prod-card" @click="openProduct(p)">
+                            <div class="mkt-prod-img">
+                                <img :src="p.img" alt="">
+                            </div>
+                            <div class="mkt-prod-info">
+                                <div class="mkt-prod-name">{{ p.name }}</div>
+                                <div class="mkt-prod-price">{{ fmt(p.price) }} د.ع</div>
+                                <div class="mkt-prod-rating">
+                                    <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= p.rating }">star</span>
+                                </div>
+                            </div>
+                            <button class="mkt-add-cart" @click.stop="addToCart(p)">
+                                <span class="material-symbols-outlined">add_shopping_cart</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- عرض الكل -->
+                    <div class="mkt-cat-products-grid">
+                        <div v-for="(p, i) in filteredCatProducts" :key="i" class="mkt-grid-prod" @click="openProduct(p)">
+                            <div class="mkt-grid-prod-img">
+                                <img :src="p.img" alt="">
+                            </div>
+                            <div class="mkt-grid-prod-info">
+                                <div class="mkt-grid-prod-name">{{ p.name }}</div>
+                                <div class="mkt-grid-prod-price">{{ p.price }} د.ع</div>
+                                <div class="mkt-prod-rating">
+                                    <span v-for="s in 5" :key="s" class="star" :class="{ filled: s <= p.rating }">star</span>
+                                </div>
+                                <button class="mkt-grid-add-btn" @click.stop="addToCart(p)">
+                                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                                    أضف للسلة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== صفحة الحاسبة ===== -->
+                <div v-if="calculatorView && !checkoutView" class="mkt-calc-view">
+                    <div class="exec-header">
+                        <button class="exec-back" @click="calculatorView = false">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <div>
+                            <h2>حاسبة مواد البناء</h2>
+                            <p>أدخل أبعاد مشروعك</p>
+                        </div>
+                    </div>
+
+                    <!-- إدخال الأبعاد -->
+                    <div class="mkt-calc-inputs-card">
+                        <div class="mkt-calc-dim-row">
+                            <div class="mkt-calc-dim">
+                                <label>الطول (م)</label>
+                                <input type="text" inputmode="decimal" v-model="calcLength" placeholder="0">
+                            </div>
+                            <div class="mkt-calc-dim">
+                                <label>العرض (م)</label>
+                                <input type="text" inputmode="decimal" v-model="calcWidth" placeholder="0">
+                            </div>
+                            <div class="mkt-calc-dim">
+                                <label>الارتفاع (م)</label>
+                                <input type="text" inputmode="decimal" v-model="calcHeight" placeholder="0">
+                            </div>
+                        </div>
+                        <button class="mkt-calc-calc-btn" @click="doCalc">
+                            <span class="material-symbols-outlined">calculate</span>
+                            احسب الكمية
+                        </button>
+                    </div>
+
+                    <!-- النتائج -->
+                    <div v-if="calcDone">
+                        <div class="section-header">
+                            <span class="section-title">النتائج</span>
+                        </div>
+
+                        <!-- سيراميك -->
+                        <div v-if="selectedCalcType === 'all' || selectedCalcType === 'ceramic' || !selectedCalcType" class="mkt-calc-result-card">
+                            <div class="mkt-calc-result-header">
+                                <span class="material-symbols-outlined">grid_view</span>
+                                <h4>سيراميك</h4>
+                            </div>
+                            <div class="mkt-calc-result-body">
+                                <div class="mkt-calc-result-row">
+                                    <span>المساحة الإجمالية</span>
+                                    <span>{{ ceramicArea }} م²</span>
+                                </div>
+                                <div class="mkt-calc-result-row">
+                                    <span>عدد الصناديق (3 قطع/صندوق)</span>
+                                    <span>{{ ceramicBoxes }} صندوق</span>
+                                </div>
+                                <div class="mkt-calc-result-row total">
+                                    <span>التكلفة التقديرية</span>
+                                    <span>{{ ceramicCost }} د.ع</span>
                                 </div>
                             </div>
                         </div>
-                        <p style="font-size:13px;color:#8a9bb0;margin-bottom:12px;">{{ supplier.desc }}</p>
-                        <button class="btn-primary btn-small" style="width:auto;">عرض المنتجات</button>
+
+                        <!-- دهان -->
+                        <div v-if="selectedCalcType === 'all' || selectedCalcType === 'paint' || !selectedCalcType" class="mkt-calc-result-card">
+                            <div class="mkt-calc-result-header">
+                                <span class="material-symbols-outlined">format_paint</span>
+                                <h4>دهان</h4>
+                            </div>
+                            <div class="mkt-calc-result-body">
+                                <div class="mkt-calc-result-row">
+                                    <span>مساحة الدهان</span>
+                                    <span>{{ paintArea }} م²</span>
+                                </div>
+                                <div class="mkt-calc-result-row">
+                                    <span>عدد الدلاء (20 لتر/دلو)</span>
+                                    <span>{{ paintBuckets }} دلو</span>
+                                </div>
+                                <div class="mkt-calc-result-row total">
+                                    <span>التكلفة التقديرية</span>
+                                    <span>{{ paintCost }} د.ع</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- واح جبس -->
+                        <div v-if="selectedCalcType === 'all' || selectedCalcType === 'gypsum' || !selectedCalcType" class="mkt-calc-result-card">
+                            <div class="mkt-calc-result-header">
+                                <span class="material-symbols-outlined">crop_square</span>
+                                <h4>واح جبس</h4>
+                            </div>
+                            <div class="mkt-calc-result-body">
+                                <div class="mkt-calc-result-row">
+                                    <span>مساحة السقف</span>
+                                    <span>{{ gypsumArea }} م²</span>
+                                </div>
+                                <div class="mkt-calc-result-row">
+                                    <span>عدد الألواح (1.2×2.4 = 2.88 م²)</span>
+                                    <span>{{ gypsumSheets }} لوح</span>
+                                </div>
+                                <div class="mkt-calc-result-row total">
+                                    <span>التكلفة التقديرية</span>
+                                    <span>{{ gypsumCost }} د.ع</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- الإجمالي -->
+                        <div class="mkt-calc-total">
+                            <span>الإجمالي المقدر</span>
+                            <span class="mkt-calc-total-price">{{ calcTotal }} د.ع</span>
+                        </div>
+
+                        <button class="mkt-calc-buy-btn" @click="addCalcToCart">
+                            <span class="material-symbols-outlined">add_shopping_cart</span>
+                            أضف الكل للسلة
+                        </button>
                     </div>
                 </div>
+
+                <!-- ===== صفحة السلة ===== -->
+                <div v-if="cartView && !checkoutView" class="mkt-cart-view">
+                    <div class="exec-header">
+                        <button class="exec-back" @click="cartView = false">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <div>
+                            <h2>سلة المشتريات</h2>
+                            <p>{{ cart.length }} منتج</p>
+                        </div>
+                    </div>
+
+                    <div v-if="cart.length === 0" class="mkt-cart-empty">
+                        <span class="material-symbols-outlined" style="font-size:64px;color:var(--text-muted);">shopping_cart</span>
+                        <p>السلة فارغة</p>
+                    </div>
+
+                    <div v-else>
+                        <div v-for="(item, i) in cart" :key="i" class="mkt-cart-item">
+                            <div class="mkt-cart-item-img">
+                                <img :src="item.img" alt="">
+                            </div>
+                            <div class="mkt-cart-item-info">
+                                <h4>{{ item.name }}</h4>
+                                <div class="mkt-cart-item-price">{{ item.price }} د.ع</div>
+                                <div class="mkt-qty-control">
+                                    <button class="mkt-qty-btn" @click="item.qty = Math.max(1, item.qty - 1)">-</button>
+                                    <span class="mkt-qty-val">{{ item.qty }}</span>
+                                    <button class="mkt-qty-btn" @click="item.qty++">+</button>
+                                </div>
+                            </div>
+                            <button class="mkt-cart-remove" @click="cart.splice(i, 1)">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+
+                        <div class="mkt-cart-summary">
+                            <div class="mkt-cart-row">
+                                <span>المجموع الفرعي</span>
+                                <span>{{ cartSubtotal }} د.ع</span>
+                            </div>
+                            <div class="mkt-cart-row">
+                                <span>التوصيل</span>
+                                <span>15,000 د.ع</span>
+                            </div>
+                            <div class="mkt-cart-row total">
+                                <span>الإجمالي</span>
+                                <span>{{ cartTotal }} د.ع</span>
+                            </div>
+                        </div>
+
+                        <button class="mkt-checkout-btn" @click="checkoutView = true">إتمام الشراء</button>
+                    </div>
+                </div>
+
+                <!-- ===== صفحة تأكيد الطلب ===== -->
+                <div v-if="checkoutView" class="mkt-checkout-view">
+                    <div class="exec-header">
+                        <button class="exec-back" @click="checkoutView = false">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <div>
+                            <h2>تأكيد الطلب</h2>
+                        </div>
+                    </div>
+
+                    <div class="mkt-checkout-form">
+                        <div class="mkt-form-group">
+                            <label>الاسم الكامل</label>
+                            <input type="text" class="form-input" placeholder="أدخل اسمك الكامل">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label>رقم الهاتف</label>
+                            <input type="tel" class="form-input" placeholder="07XXXXXXXXX">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label>العنوان</label>
+                            <input type="text" class="form-input" placeholder="المدينة / المنطقة / الشارع">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label>ملاحظات</label>
+                            <textarea class="form-textarea" placeholder="أي ملاحظات إضافية..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mkt-cart-summary" style="margin:0 16px 16px;">
+                        <div class="mkt-cart-row">
+                            <span>عدد المنتجات</span>
+                            <span>{{ cart.length }} منتج</span>
+                        </div>
+                        <div class="mkt-cart-row">
+                            <span>المجموع الفرعي</span>
+                            <span>{{ cartSubtotal }} د.ع</span>
+                        </div>
+                        <div class="mkt-cart-row">
+                            <span>التوصيل</span>
+                            <span>15,000 د.ع</span>
+                        </div>
+                        <div class="mkt-cart-row total">
+                            <span>الإجمالي</span>
+                            <span>{{ cartTotal }} د.ع</span>
+                        </div>
+                    </div>
+
+                    <button class="mkt-confirm-btn" @click="confirmOrder">
+                        <span class="material-symbols-outlined">check_circle</span>
+                        تأكيد الطلب
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- ===== مودال المنتج ===== -->
+            <div v-if="selectedProduct" class="project-modal" @click.self="selectedProduct = null">
+                <div class="modal-content">
+                    <div class="modal-pull-bar"><span></span></div>
+                    <div style="position:relative;">
+                        <button class="modal-close" @click="selectedProduct = null">
+                            <span class="material-symbols-outlined close-icon">close</span>
+                            <span class="material-symbols-outlined arrow-icon">arrow_back</span>
+                        </button>
+                        <div class="modal-slider" @click="openViewer(modalSlide)">
+                            <div class="modal-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (modalSlide * 100) + '%)' }">
+                                <div v-for="(img, i) in selectedProduct.images" :key="i" class="modal-slide">
+                                    <div class="modal-slide-img"><img :src="img" alt=""></div>
+                                </div>
+                            </div>
+                            <div v-if="selectedProduct.images.length > 1" class="modal-slider-dots">
+                                <span v-for="(img, i) in selectedProduct.images" :key="i" class="dot" :class="{ active: i === modalSlide }" @click.stop="modalSlide = i"></span>
+                            </div>
+                        </div>
+                        <div v-if="selectedProduct.images.length > 1" class="modal-thumbs">
+                            <div v-for="(img, i) in selectedProduct.images" :key="i" class="modal-thumb" :class="{ active: i === modalSlide }" @click="modalSlide = i">
+                                <img :src="img" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-details">
+                        <h2>{{ selectedProduct.name }}</h2>
+                        <div class="mkt-modal-price">{{ fmt(selectedProduct.price) }} د.ع</div>
+
+                        <!-- الألوان -->
+                        <div v-if="selectedProduct.colors && selectedProduct.colors.length" class="mkt-modal-section">
+                            <h4>الألوان المتاحة</h4>
+                            <div class="mkt-modal-colors">
+                                <div v-for="(c, i) in selectedProduct.colors" :key="i" class="mkt-color-dot"
+                                     :class="{ active: selectedColor === i }"
+                                     :style="{ background: c.hex }"
+                                     @click="selectedColor = i">
+                                </div>
+                            </div>
+                            <div class="mkt-modal-sel-name">{{ selectedProduct.colors[selectedColor] ? selectedProduct.colors[selectedColor].name : '' }}</div>
+                        </div>
+
+                        <!-- المقاسات -->
+                        <div v-if="selectedProduct.sizes && selectedProduct.sizes.length" class="mkt-modal-section">
+                            <h4>المقاسات</h4>
+                            <div class="mkt-modal-sizes">
+                                <div v-for="(sz, i) in selectedProduct.sizes" :key="i" class="mkt-size-btn"
+                                     :class="{ active: selectedSize === i }"
+                                     @click="selectedSize = i">{{ sz }}</div>
+                            </div>
+                        </div>
+
+                        <!-- عدد الكراتين -->
+                        <div v-if="selectedProduct.boxes" class="mkt-modal-section">
+                            <h4>عدد الكراتين</h4>
+                            <div class="mkt-qty-control">
+                                <button class="mkt-qty-btn" @click="selectedQty = Math.max(1, selectedQty - 1)">-</button>
+                                <span class="mkt-qty-val">{{ selectedQty }}</span>
+                                <button class="mkt-qty-btn" @click="selectedQty++">+</button>
+                            </div>
+                            <div class="mkt-modal-box-info">{{ selectedProduct.boxes }}</div>
+                        </div>
+
+                        <!-- التفاصيل -->
+                        <p class="mkt-modal-desc">{{ selectedProduct.desc }}</p>
+
+                        <button class="mkt-modal-add-btn" @click="addToCartFromModal">
+                            <span class="material-symbols-outlined">add_shopping_cart</span>
+                            أضف للسلة
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== عارض الصور الممتلئ ===== -->
+            <div v-if="viewerOpen" class="image-viewer"
+                 @touchstart.passive="viewerTouch.onTouchStart"
+                 @touchend="viewerTouch.onTouchEnd">
+                <button class="viewer-close" @click="viewerOpen = false"><span class="material-symbols-outlined">close</span></button>
+                <button v-if="viewerImages.length > 1" class="viewer-nav viewer-prev" @click="prevViewer"><span class="material-symbols-outlined">chevron_right</span></button>
+                <div class="viewer-image-wrap"><img :src="viewerImages[viewerIndex]" class="viewer-image" alt="" @click="viewerOpen = false"></div>
+                <button v-if="viewerImages.length > 1" class="viewer-nav viewer-next" @click="nextViewer"><span class="material-symbols-outlined">chevron_left</span></button>
+                <div v-if="viewerImages.length > 1" class="viewer-counter">{{ viewerIndex + 1 }} / {{ viewerImages.length }}</div>
+            </div>
+
+            <!-- زر السلة العائم - يسار فوق حسابي -->
+            <div v-if="cart.length > 0 && !cartView && !checkoutView && !selectedProduct" class="mkt-floating-cart" @click="cartView = true">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                <span class="mkt-cart-badge">{{ cartCount }}</span>
             </div>
 
             <div id="bottomNav"></div>
@@ -117,55 +588,399 @@
 
     <script src="js/nav.js"></script>
     <script>
-        document.getElementById('header').innerHTML = renderHeader({ cartBadge: true });
+        document.getElementById('header').innerHTML = renderHeader();
         document.getElementById('bottomNav').innerHTML = renderNav('market');
 
-        const { createApp, ref, computed } = Vue;
+        var allImgs = [];
+        for (var n = 1; n <= 31; n++) allImgs.push('images/img' + n + '.jpg');
+        function rndImg(seed) { return allImgs[seed % 31]; }
+
+        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
 
         createApp({
             setup() {
                 initTheme();
-                const searchQuery = ref('');
-                const activeCategory = ref(0);
-                const cartCount = ref(2);
-                const cart = ref([]);
 
-                const categories = ref([
-                    { name: 'دهانات', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>' },
-                    { name: 'سيراميك', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>' },
-                    { name: 'جبس', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' },
-                    { name: 'إسمنت', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' },
-                    { name: 'أدوات', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>' },
-                    { name: 'أرضيات', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>' }
+                var activeCatView = ref(null);
+                var cartView = ref(false);
+                var calculatorView = ref(false);
+                var checkoutView = ref(false);
+                var searchQuery = ref('');
+                var cart = ref([]);
+                var priceFrom = ref('');
+                var priceTo = ref('');
+                var projTypeOpen = ref(false);
+                var selectedProjType = ref('');
+                var mktSlide = ref(0);
+                var mktTimer = null;
+                var showAllView = ref(false);
+
+                var selectedProduct = ref(null);
+                var selectedColor = ref(0);
+                var selectedSize = ref(0);
+                var selectedQty = ref(1);
+                var modalSlide = ref(0);
+
+                var viewerOpen = ref(false);
+                var viewerImages = ref([]);
+                var viewerIndex = ref(0);
+
+                var projTypes = ref(['فيلا سكنية', 'عمارة سكنية', 'محل تجاري', 'مكتب إداري', 'مستودع', 'مسجد']);
+
+                var categories = ref([
+                    { name: 'مواد انشائية', icon: 'foundation' },
+                    { name: 'اصباغ وديكور', icon: 'format_paint' },
+                    { name: 'صحيات', icon: 'plumbing' },
+                    { name: 'كهرباء', icon: 'bolt' },
+                    { name: 'أبواب ونوافذ', icon: 'door_front' },
+                    { name: 'تكييفات', icon: 'air' },
+                    { name: 'حدائق', icon: 'yard' },
+                    { name: 'أدوات ومعدات', icon: 'handyman' }
                 ]);
 
-                const products = ref([
-                    { name: 'دهان جوتن للجدران', price: '45,000 د.ع', bg: 'linear-gradient(135deg, #f5f5f5, #e0e0e0)', link: 'product.html' },
-                    { name: 'بلاط سيراميك 60x60', price: '12,000 د.ع', bg: 'linear-gradient(135deg, #f5f5f5, #e0e0e0)', link: 'product.html' },
-                    { name: 'إسمنت أخضر 50 كجم', price: '18,000 د.ع', bg: 'linear-gradient(135deg, #f5f5f5, #e0e0e0)', link: 'product.html' },
-                    { name: 'طقم أدوات كهربائية', price: '95,000 د.ع', bg: 'linear-gradient(135deg, #f5f5f5, #e0e0e0)', link: 'product.html' }
+                var sliderImages = ref([
+                    { img: 'images/img1.jpg', title: 'عروض مواد البناء', desc: 'خصومات تصل إلى 40% على جميع المنتجات' },
+                    { img: 'images/img6.jpg', title: 'سيراميك وبلاط', desc: 'تشكيلة واسعة من أجود أنواع السيراميك' },
+                    { img: 'images/img11.jpg', title: 'أدوات كهربائية', desc: 'جميع الأدوات الكهربائية من أفضل الماركات' },
+                    { img: 'images/img16.jpg', title: 'دهانات متميزة', desc: 'دهانات داخلية وخارجية بأحدث الألوان' }
                 ]);
 
-                const suppliers = ref([
-                    { name: 'مؤسسة البناء للأدوات', initial: 'م', rating: '4.6', desc: 'جميع أنواع مواد البناء والأدوات الكهربائية واليدوية' }
+                function makeProduct(name, price, catIdx, rating, prodIdx, opts) {
+                    opts = opts || {};
+                    var images = [];
+                    for (var j = 0; j < 5; j++) images.push(rndImg((prodIdx + j * 7) % 31));
+                    return {
+                        name: name, price: price, cat: catIdx, rating: rating,
+                        img: rndImg(prodIdx), images: images,
+                        colors: opts.colors || [], sizes: opts.sizes || [],
+                        boxes: opts.boxes || '', desc: opts.desc || name + ' من أجود المواد المتاحة في السوق العراقي.',
+                        oldPrice: 0, discount: 0
+                    };
+                }
+
+                var allProducts = ref([
+                    makeProduct('إسمنت أخضر 50 كجم', 18000, 0, 5, 1, { boxes: 'كيس واحد = 50 كجم', desc: 'إسمنت بورتلاندي أخضر عالي الجودة، مناسب لجميع الأعمال الإنشائية.' }),
+                    makeProduct('حديد تسليح 12 مم', 350000, 0, 5, 3, { sizes: ['12 مم', '14 مم', '16 مم'], boxes: 'حزمة = 12 قطعة', desc: 'حديد تسليح عالي المقاومة، مناسب للخرسانة المسلحة.' }),
+                    makeProduct('حصى ناعم 1 م³', 95000, 0, 4, 5, { boxes: '1 م³', desc: 'حصى ناعم مناسب للخرسانة والطابوق.' }),
+                    makeProduct('رمل ساخن 1 م³', 75000, 0, 4, 7, { boxes: '1 م³', desc: 'رمل ساخن نقي مناسب للبناء والطابوق.' }),
+                    makeProduct('طوب أحمر عادي', 45000, 0, 4, 9, { boxes: '1000 طوبة', desc: 'طوب أحمر عالي الجودة للأعمال الإنشائية.' }),
+                    makeProduct('بلاط بورسلان 60x60', 22000, 1, 5, 2, {
+                        colors: [{ name: 'أبيض', hex: '#f5f5f5' }, { name: 'رمادي', hex: '#9e9e9e' }, { name: 'بيج', hex: '#d4c5a9' }, { name: 'أسود', hex: '#212121' }],
+                        sizes: ['60x60', '80x80', '100x100'],
+                        boxes: '4 قطع / صندوق = 1.44 م²',
+                        desc: 'بلاط بورسلان عالي الجودة بلمعان طبيعي، مناسب للأرضيات.'
+                    }),
+                    makeProduct('دهان جوتن داخلي', 45000, 1, 5, 4, {
+                        colors: [{ name: 'أبيض', hex: '#ffffff' }, { name: 'كريمي', hex: '#f5e6cc' }, { name: 'رمادي فاتح', hex: '#e0e0e0' }, { name: 'أزرق فاتح', hex: '#bbdefb' }, { name: 'أخضر فاتح', hex: '#c8e6c9' }],
+                        boxes: 'دلو = 20 لتر يكفي 20 م²',
+                        desc: 'دهان جوتن داخلي مقاوم للرطوبة، ألوان متعددة.'
+                    }),
+                    makeProduct('جبس بورد 1.2x2.4', 12000, 1, 4, 6, {
+                        sizes: ['1.2x2.4', '1.2x3.0'],
+                        boxes: 'لوح واحد = 2.88 م²',
+                        desc: 'واح جبس بورد مناسب للأسقف المعلقة والجدران.'
+                    }),
+                    makeProduct('دهان نيبون ديكوري', 38000, 1, 5, 8, {
+                        colors: [{ name: 'ذهبي', hex: '#c9a243' }, { name: 'نحاسي', hex: '#b87333' }, { name: 'فضي', hex: '#c0c0c0' }, { name: 'أبيض لامع', hex: '#f8f8f8' }],
+                        boxes: 'دلو = 1 لتر',
+                        desc: 'دهان نيبون ديكوري بتأثيرات مetallic فاخرة.'
+                    }),
+                    makeProduct('سيراميك حمام 30x60', 15000, 1, 4, 10, {
+                        colors: [{ name: 'أبيض', hex: '#f5f5f5' }, { name: 'أزرق', hex: '#42a5f5' }, { name: 'أخضر', hex: '#66bb6a' }],
+                        sizes: ['30x60', '25x40'],
+                        boxes: '8 قطع / صندوق = 1.44 م²',
+                        desc: 'سيراميك مقاوم للماء مناسب للحمامات والمطابخ.'
+                    }),
+                    makeProduct('حوض استحمام كربيست', 350000, 2, 5, 12, {
+                        colors: [{ name: 'أبيض', hex: '#ffffff' }, { name: 'كريمي', hex: '#f5e6cc' }],
+                        boxes: 'حوض واحد',
+                        desc: 'حوض استحمام كربيست فاخر بتصميم عصري.'
+                    }),
+                    makeProduct('خزان مياه بلاستيك', 180000, 2, 4, 14, {
+                        sizes: ['500 لتر', '1000 لتر', '2000 لتر'],
+                        boxes: 'خزان واحد',
+                        desc: 'خزان مياه بلاستيك مقاوم للعوامل الجوية.'
+                    }),
+                    makeProduct('أنابيب PVC 4 بوصة', 8000, 2, 4, 16, { boxes: 'أنبوب = 6 م', desc: 'أنابيب PVC مناسبة للصرف الصحي.' }),
+                    makeProduct('مغسلة حوض', 250000, 2, 5, 18, {
+                        colors: [{ name: 'أبيض', hex: '#ffffff' }, { name: 'رمادي', hex: '#9e9e9e' }],
+                        boxes: 'حوض واحد',
+                        desc: 'مغسلة سيراميك فاخرة بتصميم عصري.'
+                    }),
+                    makeProduct('شطاف حمام', 95000, 2, 4, 20, { boxes: 'شطاف واحد', desc: 'شطاف حمام بجودة عالية.' }),
+                    makeProduct('كابل كهرباء 2.5 مم', 5000, 3, 4, 22, { sizes: ['2.5 مم', '4 مم', '6 مم'], boxes: 'لولب = 100 م', desc: 'كابل نحاسي عالي الجودة.' }),
+                    makeProduct('قاطع كهربائي 20 أمبير', 15000, 3, 5, 24, { sizes: ['10 أمبير', '16 أمبير', '20 أمبير', '32 أمبير'], boxes: 'قاطع واحد', desc: 'قاطع دائرة كهربائي أمان عالي.' }),
+                    makeProduct('لوحة توزيع 12 مصباح', 180000, 3, 4, 26, { boxes: 'لوحة واحدة', desc: 'لوحة توزيع كهربائي 12 مصباح.' }),
+                    makeProduct('مفتاح ربط لاسلكي', 25000, 3, 5, 28, { colors: [{ name: 'أبيض', hex: '#ffffff' }, { name: 'بيج', hex: '#d4c5a9' }], boxes: 'مفتاح واحد', desc: 'مفتاح ربط لاسلكي ذكي.' }),
+                    makeProduct('براقة LED 18 واط', 12000, 3, 5, 30, {
+                        colors: [{ name: 'أبيض بارد', hex: '#e3f2fd' }, { name: 'أبيض دافئ', hex: '#fff8e1' }],
+                        sizes: ['12 واط', '18 واط', '24 واط'],
+                        boxes: 'براقة واحدة',
+                        desc: 'براقة LED موفرة للطاقة.'
+                    }),
+                    makeProduct('باب خشب زان', 450000, 4, 5, 0, {
+                        colors: [{ name: 'بني غامق', hex: '#5d4037' }, { name: 'بني فاتح', hex: '#8d6e63' }, { name: 'أبيض', hex: '#ffffff' }],
+                        sizes: ['90x210', '100x210'],
+                        boxes: 'باب + إطار',
+                        desc: 'باب خشب زان طبيعي فاخر.'
+                    }),
+                    makeProduct('نافذة ألمنيوم', 280000, 4, 4, 2, {
+                        colors: [{ name: 'فضي', hex: '#c0c0c0' }, { name: 'أسود', hex: '#212121' }, { name: 'بني', hex: '#795548' }],
+                        sizes: ['120x120', '150x120'],
+                        boxes: 'نافذة كاملة',
+                        desc: 'نافذة ألمنيوم بزجاج مزدوج.'
+                    }),
+                    makeProduct('باب حديد مصفح', 550000, 4, 5, 4, {
+                        colors: [{ name: 'بني', hex: '#795548' }, { name: 'كحلي', hex: '#37474f' }, { name: 'أبيض', hex: '#ffffff' }],
+                        sizes: ['90x210', '100x210'],
+                        boxes: 'باب + إطار + مفصلات',
+                        desc: 'باب حديد مصفح مقاوم للسرقة.'
+                    }),
+                    makeProduct('ستارة ألمنيوم', 120000, 4, 4, 6, { sizes: ['1 م', '1.5 م', '2 م'], boxes: 'ستارة واحدة', desc: 'ستارة ألمنيوم للنوافذ.' }),
+                    makeProduct('مفصلة باب', 8000, 4, 4, 8, { colors: [{ name: 'فضي', hex: '#c0c0c0' }, { name: 'ذهبي', hex: '#c9a243' }], boxes: '2 مفصلة', desc: 'مفصلة باب حديدية متينة.' }),
+                    makeProduct('تكييف سبليت 1 طن', 850000, 5, 5, 10, { sizes: ['1 طن', '1.5 طن', '2 طن'], boxes: 'وحدة داخلية + خارجية', desc: 'تكييف سبليت موفر للطاقة.' }),
+                    makeProduct('مكيف شباك 18000 BTU', 650000, 5, 5, 12, { sizes: ['12000 BTU', '18000 BTU', '24000 BTU'], boxes: 'وحدة واحدة', desc: 'مكيف شباك قوي التبريد.' }),
+                    makeProduct('فريون R410A', 45000, 5, 4, 14, { boxes: 'سطل = 10 كجم', desc: 'فريون R410A صديق للبيئة.' }),
+                    makeProduct('أنابيب تكييف', 12000, 5, 4, 16, { sizes: ['1/4 بوصة', '3/8 بوصة', '1/2 بوصة'], boxes: 'لولب = 15 م', desc: 'أنابيب نحاسي للتكييف.' }),
+                    makeProduct('فلاشة تكييف', 25000, 5, 4, 18, { boxes: 'فلاشة واحدة', desc: 'فلاشة تكييف متعددة الاستخدامات.' }),
+                    makeProduct('شلال حدائق', 350000, 6, 5, 20, { boxes: 'شلال واحد', desc: 'شلال ديكوري للحدائق.' }),
+                    makeProduct('عشب صناعي 1 م²', 25000, 6, 4, 22, { sizes: ['1 م²', '2 م²', '5 م²'], boxes: '1 لفافة', desc: 'عشب صناعي عالي الجودة.' }),
+                    makeProduct('نافورة ديكورية', 180000, 6, 5, 24, { boxes: 'نافورة واحدة', desc: 'نافورة ديكورية متوهجة.' }),
+                    makeProduct('إضاءة حدائق LED', 35000, 6, 4, 26, { boxes: '5 مصابيح', desc: 'إضاءة LED مقاومة للماء.' }),
+                    makeProduct('خزان مياه زراعي', 95000, 6, 4, 28, { sizes: ['200 لتر', '500 لتر'], boxes: 'خزان واحد', desc: 'خزان مياه للري.' }),
+                    makeProduct('مثقف يدوي', 45000, 7, 5, 30, { boxes: 'مثقف واحد', desc: 'مثقف يدوي متعدد الاستخدامات.' }),
+                    makeProduct('مفتاح ربط كهربائي', 35000, 7, 4, 1, { sizes: ['30 أمبير', '60 أمبير'], boxes: 'مفتاح واحد', desc: 'مفتاح ربط كهربائي صناعي.' }),
+                    makeProduct('شريط قياس 5 متر', 12000, 7, 4, 3, { boxes: 'شريط واحد', desc: 'شريط قياس مرن ومتين.' }),
+                    makeProduct('مطرقة', 25000, 7, 5, 5, { boxes: 'مطرقة واحدة', desc: 'مطرقة يدوية متعددة الاستخدامات.' }),
+                    makeProduct('منشار يدوي', 35000, 7, 4, 7, { boxes: 'منشار واحد', desc: 'منشار يدوي لقطع الخشب والمعادن.' })
                 ]);
 
-                const addToCart = (product) => {
-                    cart.value.push(product);
-                    cartCount.value = cart.value.length;
-                    alert('تمت الإضافة للسلة!');
+                var topProducts = computed(function() {
+                    return allProducts.value.filter(function(p) { return p.rating === 5; }).slice(0, 8);
+                });
+
+                var catProducts = computed(function() {
+                    if (activeCatView.value === null) return [];
+                    return allProducts.value.filter(function(p) { return p.cat === activeCatView.value; });
+                });
+
+                var filteredCatProducts = computed(function() {
+                    var list = catProducts.value;
+                    var from = parseInt(priceFrom.value.replace(/,/g, '')) || 0;
+                    var to = parseInt(priceTo.value.replace(/,/g, '')) || Infinity;
+                    return list.filter(function(p) { return p.price >= from && p.price <= to; });
+                });
+
+                var suppliers = ref([
+                    { name: 'مؤسسة البناء الحديث', logo: rndImg(3), rating: '4.8', desc: 'جميع أنواع مواد البناء والإسمنت والحديد' },
+                    { name: 'شركة البصرة للمواد', logo: rndImg(7), rating: '4.6', desc: 'موردين معتمدين منذ 15 عاماً' },
+                    { name: 'دير الصناعة', logo: rndImg(11), rating: '4.9', desc: 'أدوات ومعدات بناء بأفضل الأسعار' }
+                ]);
+
+                var offers = ref([
+                    { name: 'دهان جوتن 20 لتر', price: 35000, oldPrice: 50000, discount: 30, rating: 5, img: rndImg(4), cat: 1 },
+                    { name: 'بلاط بورسلان 80x80', price: 28000, oldPrice: 40000, discount: 30, rating: 5, img: rndImg(10), cat: 1 },
+                    { name: 'تكييف سبليت 1.5 طن', price: 750000, oldPrice: 950000, discount: 21, rating: 5, img: rndImg(15), cat: 5 },
+                    { name: 'حوض استحمام فاخر', price: 280000, oldPrice: 400000, discount: 30, rating: 5, img: rndImg(20), cat: 2 }
+                ]);
+
+                function selectCat(i) {
+                    activeCatView.value = i;
+                    priceFrom.value = '';
+                    priceTo.value = '';
+                }
+
+                function applyFilter() {}
+
+                function openProduct(p) {
+                    selectedProduct.value = p;
+                    selectedColor.value = 0;
+                    selectedSize.value = 0;
+                    selectedQty.value = 1;
+                    modalSlide.value = 0;
+                }
+
+                function addToCartFromModal() {
+                    var p = selectedProduct.value;
+                    if (!p) return;
+                    var label = p.name;
+                    if (p.colors && p.colors.length) label += ' - ' + p.colors[selectedColor.value].name;
+                    if (p.sizes && p.sizes.length) label += ' (' + p.sizes[selectedSize.value] + ')';
+                    var exists = cart.value.find(function(c) { return c.name === label; });
+                    if (exists) { exists.qty += selectedQty.value; }
+                    else { cart.value.push({ name: label, price: p.price, img: p.img, qty: selectedQty.value }); }
+                    selectedProduct.value = null;
+                }
+
+                function addToCart(p) {
+                    var exists = cart.value.find(function(c) { return c.name === p.name; });
+                    if (exists) { exists.qty++; }
+                    else { cart.value.push({ name: p.name, price: p.price, img: p.img, qty: 1 }); }
+                }
+
+                var cartCount = computed(function() {
+                    var total = 0;
+                    cart.value.forEach(function(c) { total += c.qty; });
+                    return total;
+                });
+
+                var cartSubtotal = computed(function() {
+                    var total = 0;
+                    cart.value.forEach(function(c) { total += c.price * c.qty; });
+                    return total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                });
+
+                var cartTotal = computed(function() {
+                    var sub = 0;
+                    cart.value.forEach(function(c) { sub += c.price * c.qty; });
+                    sub += 15000;
+                    return sub.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                });
+
+                var calcLength = ref('');
+                var calcWidth = ref('');
+                var calcHeight = ref('');
+                var calcDone = ref(false);
+                var selectedCalcType = ref('');
+
+                function goToCalc() {
+                    if (!selectedCalcType.value) return;
+                    calculatorView.value = true;
+                }
+
+                var ceramicArea = ref(0);
+                var ceramicBoxes = ref(0);
+                var ceramicCost = ref('0');
+                var paintArea = ref(0);
+                var paintBuckets = ref(0);
+                var paintCost = ref('0');
+                var gypsumArea = ref(0);
+                var gypsumSheets = ref(0);
+                var gypsumCost = ref('0');
+                var calcTotal = ref('0');
+
+                function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+                function doCalc() {
+                    var l = parseFloat(calcLength.value) || 0;
+                    var w = parseFloat(calcWidth.value) || 0;
+                    var h = parseFloat(calcHeight.value) || 0;
+                    if (l <= 0 || w <= 0) { alert('أدخل الأبعاد بشكل صحيح'); return; }
+
+                    var floorArea = l * w;
+                    var wallArea = 2 * (l + w) * h;
+
+                    // سيراميك: مساحة الأرضية + 10% هالك
+                    var cArea = Math.ceil(floorArea * 1.1);
+                    var cBoxes = Math.ceil(cArea / 3);
+                    ceramicArea.value = cArea;
+                    ceramicBoxes.value = cBoxes;
+                    ceramicCost.value = fmt(cBoxes * 22000);
+
+                    // دهان: مساحة الجدران - 15% للنوافذ والأبواب، طبقة واحدة 1 م² ≈ 10 لتر، دلو 20 لتر
+                    var pArea = Math.ceil(wallArea * 0.85);
+                    var pBuckets = Math.ceil((pArea * 10) / 20);
+                    paintArea.value = pArea;
+                    paintBuckets.value = pBuckets;
+                    paintCost.value = fmt(pBuckets * 45000);
+
+                    // واح جبس: مساحة السقف، لوح واحد = 1.2 × 2.4 = 2.88 م²
+                    var gArea = Math.ceil(floorArea);
+                    var gSheets = Math.ceil(gArea / 2.88);
+                    gypsumArea.value = gArea;
+                    gypsumSheets.value = gSheets;
+                    gypsumCost.value = fmt(gSheets * 12000);
+
+                    var total = (cBoxes * 22000) + (pBuckets * 45000) + (gSheets * 12000);
+                    calcTotal.value = fmt(total);
+                    calcDone.value = true;
+                }
+
+                function addCalcToCart() {
+                    var t = selectedCalcType.value;
+                    if ((t === 'all' || t === 'ceramic' || !t) && ceramicBoxes.value > 0) cart.value.push({ name: 'سيراميك (بلاط)', price: 22000, img: rndImg(2), qty: ceramicBoxes.value });
+                    if ((t === 'all' || t === 'paint' || !t) && paintBuckets.value > 0) cart.value.push({ name: 'دهان داخلي', price: 45000, img: rndImg(4), qty: paintBuckets.value });
+                    if ((t === 'all' || t === 'gypsum' || !t) && gypsumSheets.value > 0) cart.value.push({ name: 'واح جبس بورد 1.2×2.4', price: 12000, img: rndImg(6), qty: gypsumSheets.value });
+                    calculatorView.value = false;
+                    cartView.value = true;
+                }
+
+                function openViewer(idx) {
+                    if (!selectedProduct.value) return;
+                    viewerImages.value = selectedProduct.value.images;
+                    viewerIndex.value = idx || 0;
+                    viewerOpen.value = true;
+                }
+                function nextViewer() { viewerIndex.value = (viewerIndex.value + 1) % viewerImages.value.length; }
+                function prevViewer() { viewerIndex.value = (viewerIndex.value - 1 + viewerImages.value.length) % viewerImages.value.length; }
+
+                var viewerTouch = (function() {
+                    var sx = 0;
+                    return {
+                        onTouchStart: function(e) { sx = e.touches[0].clientX; },
+                        onTouchEnd: function(e) {
+                            var dx = e.changedTouches[0].clientX - sx;
+                            if (Math.abs(dx) > 50) { dx < 0 ? nextViewer() : prevViewer(); }
+                        }
+                    };
+                })();
+
+                function confirmOrder() {
+                    alert('تم تأكيد طلبك بنجاح! سيتم التواصل معك قريباً.');
+                    cart.value = [];
+                    cartView.value = false;
+                    checkoutView.value = false;
+                }
+
+                /* Slider */
+                function resetMktTimer() {
+                    if (mktTimer) clearInterval(mktTimer);
+                    mktTimer = setInterval(function() { mktSlide.value = (mktSlide.value + 1) % sliderImages.value.length; }, 3000);
+                }
+
+                var sliderTouch = (function() {
+                    var sx = 0, sy = 0;
+                    return {
+                        onTouchStart: function(e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; },
+                        onTouchEnd: function(e) {
+                            var dx = e.changedTouches[0].clientX - sx;
+                            if (Math.abs(dx) > 40) {
+                                var len = sliderImages.value.length;
+                                mktSlide.value = (mktSlide.value + (dx < 0 ? 1 : -1) + len) % len;
+                                resetMktTimer();
+                            }
+                        }
+                    };
+                })();
+
+                onMounted(function() { resetMktTimer(); });
+                onUnmounted(function() { if (mktTimer) clearInterval(mktTimer); });
+
+                return {
+                    categories, searchQuery, activeCatView, cartView, calculatorView, checkoutView,
+                    sliderImages, mktSlide, sliderTouch, resetMktTimer,
+                    allProducts, topProducts, suppliers, offers, showAllView,
+                    catProducts, filteredCatProducts, selectCat, applyFilter, openProduct, addToCart,
+                    cart, cartCount, cartSubtotal, cartTotal,
+                    calcLength, calcWidth, calcHeight, calcDone, doCalc, selectedCalcType, goToCalc,
+                    ceramicArea, ceramicBoxes, ceramicCost,
+                    paintArea, paintBuckets, paintCost,
+                    gypsumArea, gypsumSheets, gypsumCost,
+                    calcTotal, addCalcToCart, confirmOrder,
+                    priceFrom, priceTo,
+                    selectedProduct, selectedColor, selectedSize, selectedQty, modalSlide,
+                    addToCartFromModal, openViewer, nextViewer, prevViewer,
+                    viewerOpen, viewerImages, viewerIndex, viewerTouch,
+                    fmt
                 };
-
-                return { searchQuery, activeCategory, cartCount, categories, products, suppliers, addToCart };
             }
         }).mount('#app');
     </script>
     <script>
-        // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('SW registered'))
-                .catch(err => console.log('SW registration failed'));
+                .then(function() { console.log('SW registered'); })
+                .catch(function() { console.log('SW registration failed'); });
         }
     </script>
 </body>

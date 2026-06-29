@@ -12,6 +12,193 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .ideas-cat-strip {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 14px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            flex-shrink: 0;
+            background: var(--bg-card, #0b1a2e);
+            direction: rtl;
+        }
+        .ideas-cat-strip::-webkit-scrollbar { display: none; }
+        .ideas-cat-square {
+            width: 90px;
+            height: 90px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .ideas-cat-square.active {
+            border-color: #c9a243;
+        }
+        .ideas-cat-square-img {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+        .ideas-cat-all-img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(201,162,67,0.15);
+        }
+        .ideas-cat-all-img .material-symbols-outlined {
+            font-size: 32px;
+            color: #c9a243;
+        }
+        html.light-mode .ideas-cat-all-img {
+            background: rgba(44,95,138,0.1);
+        }
+        html.light-mode .ideas-cat-all-img .material-symbols-outlined {
+            color: #2c5f8a;
+        }
+        .ideas-cat-square-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 6px 4px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        html.light-mode .ideas-cat-square.active {
+            border-color: #2c5f8a;
+        }
+        @media (max-width: 360px) {
+            .ideas-cat-strip { padding: 8px 10px; gap: 8px; }
+            .ideas-cat-square { width: 76px; height: 76px; }
+        }
+
+        /* ===== Filter Bar ===== */
+        .filter-bar {
+            display: flex;
+            gap: 5px;
+            padding: 0 14px;
+            margin-bottom: 4px;
+        }
+        .filter-bar-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 6px 2px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #b0c4d9;
+            font-size: 10px;
+            font-weight: 500;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: 0.2s;
+            min-height: 36px;
+        }
+        .filter-bar-btn .material-symbols-outlined { font-size: 16px; }
+        .filter-bar-btn.active {
+            background: rgba(201,162,67,0.15);
+            border-color: rgba(201,162,67,0.3);
+            color: #c9a243;
+        }
+        html.light-mode .filter-bar-btn {
+            background: rgba(26,58,92,0.05);
+            border-color: rgba(26,58,92,0.1);
+            color: #4a5a6a;
+        }
+        html.light-mode .filter-bar-btn.active {
+            background: rgba(44,95,138,0.1);
+            border-color: rgba(44,95,138,0.2);
+            color: #2c5f8a;
+        }
+
+        /* Floating dropdown backdrop */
+        .filter-dropdown-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 90;
+            background: rgba(0,0,0,0.3);
+        }
+        .filter-dropdown-wrap {
+            position: relative;
+            z-index: 91;
+        }
+        .filter-bar-dropdown {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            top: 0;
+            padding: 10px;
+            background: rgba(15,30,50,0.97);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 180px;
+            overflow-y: auto;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+        .filter-bar-option {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #b0c4d9;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .filter-bar-option.selected {
+            background: rgba(201,162,67,0.2);
+            color: #c9a243;
+        }
+        html.light-mode .filter-bar-dropdown {
+            background: rgba(255,255,255,0.97);
+            border-color: rgba(26,58,92,0.1);
+        }
+        html.light-mode .filter-bar-option {
+            background: rgba(26,58,92,0.06);
+            color: #4a5a6a;
+        }
+        html.light-mode .filter-bar-option.selected {
+            background: rgba(44,95,138,0.15);
+            color: #2c5f8a;
+        }
+
+        .filter-bar-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Cairo', sans-serif;
+            text-align: center;
+            direction: rtl;
+        }
+        .filter-bar-input::placeholder { color: #5a7088; }
+        html.light-mode .filter-bar-input {
+            background: rgba(26,58,92,0.05);
+            border-color: rgba(26,58,92,0.15);
+            color: #1a3a5c;
+        }
+        html.light-mode .filter-bar-input::placeholder { color: #8a9bb0; }
+    </style>
     <script>
         (function() {
             var saved = localStorage.getItem('bunean-theme');
@@ -30,131 +217,82 @@
         <div class="app-container">
             <div id="header"></div>
 
+            <!-- Hero -->
+            <div class="ideas-hero" style="padding:10px 14px 0;">
+                <h1 style="font-size:14px;font-weight:500;">اكتشف آلاف المشاريع والأفكار الملهمة</h1>
+            </div>
+
+            <!-- Horizontal scrollable categories strip -->
+            <div class="ideas-cat-strip">
+                <div class="ideas-cat-square" :class="{ active: !activeCategory }" @click="activeCategory = null">
+                    <div class="ideas-cat-square-img ideas-cat-all-img">
+                        <span class="material-symbols-outlined">grid_view</span>
+                    </div>
+                    <div class="ideas-cat-square-name">عرض الكل</div>
+                </div>
+                <div v-for="(cat, i) in categories" :key="i" class="ideas-cat-square" :class="{ active: activeCategory === cat }" @click="selectCategory(cat)">
+                    <div class="ideas-cat-square-img" :style="{ backgroundImage: 'url(' + cat.cover + ')' }"></div>
+                    <div class="ideas-cat-square-name">{{ cat.name }}</div>
+                </div>
+            </div>
+
             <div class="page-content">
 
-                <!-- Hero -->
-                <div class="ideas-hero">
-                    <h1 style="font-size:18px;">اكتشف آلاف المشاريع والأفكار الملهمة</h1>
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <button class="filter-bar-btn" :class="{ active: activeFilter === 'location' }" @click="toggleFilter('location')">
+                        <span class="material-symbols-outlined">location_on</span>
+                        <span>الموقع</span>
+                    </button>
+                    <button class="filter-bar-btn" :class="{ active: activeFilter === 'style' }" @click="toggleFilter('style')">
+                        <span class="material-symbols-outlined">palette</span>
+                        <span>النمط</span>
+                    </button>
+                    <button class="filter-bar-btn" :class="{ active: activeFilter === 'budget' }" @click="toggleFilter('budget')">
+                        <span class="material-symbols-outlined">payments</span>
+                        <span>الميزانية</span>
+                    </button>
+                    <button class="filter-bar-btn" :class="{ active: activeFilter === 'area' }" @click="toggleFilter('area')">
+                        <span class="material-symbols-outlined">straighten</span>
+                        <span>المساحة</span>
+                    </button>
+                    <button class="filter-bar-btn" :class="{ active: sortLatest }" @click="toggleLatest">
+                        <span class="material-symbols-outlined">schedule</span>
+                        <span>الأحدث</span>
+                    </button>
                 </div>
 
-                <!-- Search & Filter Button / Active Filters -->
-                <div class="ideas-actions">
-                    <button class="ideas-filter-btn" @click="filterPanelOpen = true">
-                        <span class="material-symbols-outlined">filter_list</span>
-                        <span>بحث وتصفية</span>
-                    </button>
-                    <button class="ideas-show-all-btn" @click="clearFilters">عرض الكل</button>
+                <!-- Floating Filter Dropdowns -->
+                <div v-if="activeFilter" class="filter-dropdown-backdrop" @click="activeFilter = null"></div>
+                <div class="filter-dropdown-wrap">
+                    <div v-if="activeFilter === 'location'" class="filter-bar-dropdown">
+                        <div v-for="g in governorates" :key="g" class="filter-bar-option" :class="{ selected: filters.gov === g }" @click="filters.gov = (filters.gov === g ? '' : g); activeFilter = null">{{ g }}</div>
+                    </div>
+                    <div v-if="activeFilter === 'style'" class="filter-bar-dropdown">
+                        <div v-for="s in styles" :key="s" class="filter-bar-option" :class="{ selected: filters.style === s }" @click="filters.style = (filters.style === s ? '' : s); activeFilter = null">{{ s }}</div>
+                    </div>
+                    <div v-if="activeFilter === 'budget'" class="filter-bar-dropdown">
+                        <input type="text" inputmode="numeric" :value="filters.budget" @input="filters.budget = formatInput($event.target.value)" placeholder="أدخل المبلغ" class="filter-bar-input">
+                    </div>
+                    <div v-if="activeFilter === 'area'" class="filter-bar-dropdown">
+                        <input type="text" inputmode="numeric" :value="filters.area" @input="filters.area = $event.target.value.replace(/[^0-9]/g,'')" placeholder="أدخل المساحة" class="filter-bar-input">
+                    </div>
                 </div>
 
                 <!-- Active Filter Tags -->
-                <div v-if="hasActiveFilters" class="active-filters">
-                    <span v-if="filters.cat" class="active-filter-tag">
-                        {{ filters.cat }}
-                        <span class="material-symbols-outlined" @click="filters.cat = ''; autoSearch()">close</span>
-                    </span>
-                    <span v-if="filters.gov" class="active-filter-tag">
-                        {{ filters.gov }}
-                        <span class="material-symbols-outlined" @click="filters.gov = ''; autoSearch()">close</span>
-                    </span>
-                    <span v-if="filters.style" class="active-filter-tag">
-                        {{ filters.style }}
-                        <span class="material-symbols-outlined" @click="filters.style = ''; autoSearch()">close</span>
-                    </span>
-                    <span v-if="filters.budgetFrom || filters.budgetTo" class="active-filter-tag">
-                        ميزانية{{ budgetLabel }}
-                        <span class="material-symbols-outlined" @click="filters.budgetFrom = ''; filters.budgetTo = ''; autoSearch()">close</span>
-                    </span>
-                    <span v-if="filters.areaFrom || filters.areaTo" class="active-filter-tag">
-                        مساحة{{ areaLabel }}
-                        <span class="material-symbols-outlined" @click="filters.areaFrom = ''; filters.areaTo = ''; autoSearch()">close</span>
-                    </span>
+                <div v-if="hasActiveFilters" class="active-filters" style="margin-top:8px;">
+                    <span v-if="filters.gov" class="active-filter-tag">{{ filters.gov }}<span class="material-symbols-outlined" @click="filters.gov = ''">close</span></span>
+                    <span v-if="filters.style" class="active-filter-tag">{{ filters.style }}<span class="material-symbols-outlined" @click="filters.style = ''">close</span></span>
+                    <span v-if="filters.budget" class="active-filter-tag">الميزانية: {{ filters.budget }}<span class="material-symbols-outlined" @click="filters.budget = ''">close</span></span>
+                    <span v-if="filters.area" class="active-filter-tag">المساحة: {{ filters.area }} م²<span class="material-symbols-outlined" @click="filters.area = ''">close</span></span>
                     <button class="active-filters-clear" @click="clearFilters">مسح الكل</button>
                 </div>
 
-                <!-- Filter Panel Overlay -->
-                <div v-if="filterPanelOpen" class="filter-panel" @click.self="filterPanelOpen = false">
-                    <div class="filter-panel-content">
-                        <div class="filter-panel-header">
-                            <h3>بحث وتصفية</h3>
-                            <button class="filter-panel-close" @click="filterPanelOpen = false"><span class="material-symbols-outlined">close</span></button>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-panel-label">القسم</label>
-                            <div class="filter-select" @click="catOpen = !catOpen; govOpen = false; styleOpen = false">
-                                <span :class="{ placeholder: !filters.cat }">{{ filters.cat || 'اختر القسم' }}</span>
-                                <span class="material-symbols-outlined" :class="{ rotated: catOpen }">expand_more</span>
-                            </div>
-                            <div v-if="catOpen" class="filter-options">
-                                <div v-for="c in catNames" :key="c" class="filter-option" :class="{ selected: filters.cat === c }" @click="filters.cat = c; catOpen = false">{{ c }}</div>
-                            </div>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-panel-label">المحافظة</label>
-                            <div class="filter-select" @click="govOpen = !govOpen; catOpen = false; styleOpen = false">
-                                <span :class="{ placeholder: !filters.gov }">{{ filters.gov || 'اختر المحافظة' }}</span>
-                                <span class="material-symbols-outlined" :class="{ rotated: govOpen }">expand_more</span>
-                            </div>
-                            <div v-if="govOpen" class="filter-options">
-                                <div v-for="g in governorates" :key="g" class="filter-option" :class="{ selected: filters.gov === g }" @click="filters.gov = g; govOpen = false">{{ g }}</div>
-                            </div>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-panel-label">النمط</label>
-                            <div class="filter-select" @click="styleOpen = !styleOpen; catOpen = false; govOpen = false">
-                                <span :class="{ placeholder: !filters.style }">{{ filters.style || 'اختر النمط' }}</span>
-                                <span class="material-symbols-outlined" :class="{ rotated: styleOpen }">expand_more</span>
-                            </div>
-                            <div v-if="styleOpen" class="filter-options">
-                                <div v-for="s in styles" :key="s" class="filter-option" :class="{ selected: filters.style === s }" @click="filters.style = s; styleOpen = false">{{ s }}</div>
-                            </div>
-                        </div>
-
-                        <label class="filter-panel-label">الميزانية (د.ع)</label>
-                        <div class="filter-range">
-                            <input type="text" inputmode="numeric" :value="filters.budgetFrom" @input="filters.budgetFrom = formatInput($event.target.value)" placeholder="من">
-                            <span class="filter-range-sep">-</span>
-                            <input type="text" inputmode="numeric" :value="filters.budgetTo" @input="filters.budgetTo = formatInput($event.target.value)" placeholder="إلى">
-                        </div>
-
-                        <label class="filter-panel-label">المساحة (م²)</label>
-                        <div class="filter-range">
-                            <input type="text" inputmode="numeric" :value="filters.areaFrom" @input="filters.areaFrom = formatInput($event.target.value)" placeholder="من">
-                            <span class="filter-range-sep">-</span>
-                            <input type="text" inputmode="numeric" :value="filters.areaTo" @input="filters.areaTo = formatInput($event.target.value)" placeholder="إلى">
-                        </div>
-
-                        <button class="filter-panel-search" @click="doSearch">ابحث</button>
-                        <button v-if="hasActiveFilters" class="filter-panel-clear" @click="clearFilters(); filterPanelOpen = false">إلغاء التصفية</button>
-                    </div>
-                </div>
-
-                <!-- Categories Grid -->
-                <div v-if="showCategories" class="ideas-categories">
-                    <div v-for="(cat, i) in categories" :key="i" class="idea-cat-card" @click="selectCategory(cat)">
-                        <div class="idea-cat-img">
-                            <img :src="cat.cover" alt="">
-                            <div class="idea-cat-overlay"></div>
-                        </div>
-                        <div class="idea-cat-info">
-                            <span class="material-symbols-outlined">{{ cat.icon }}</span>
-                            <span>{{ cat.name }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Projects View -->
-                <div v-if="showProjects" class="ideas-projects">
+                <!-- Projects View - مشاريع منجزة -->
+                <div class="ideas-projects">
                     <div class="ideas-projects-header">
-                        <button v-if="activeCategory || searchActive" class="ideas-back" @click="activeCategory = null; searchActive = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>{{ projectsTitle }}</h2>
-                            <p>{{ filteredProjects.length }} مشروع</p>
-                        </div>
+                        <h2>{{ projectsTitle }}</h2>
+                        <p>{{ filteredProjects.length }} مشروع</p>
                     </div>
                     <div v-if="filteredProjects.length === 0" style="text-align:center;padding:40px 0;color:var(--text-muted);">
                         <span class="material-symbols-outlined" style="font-size:48px;margin-bottom:12px;display:block;">search_off</span>
@@ -304,16 +442,13 @@
                 var searchQuery = ref('');
                 var activeCategory = ref(null);
                 var selectedProject = ref(null);
-                var govOpen = ref(false);
-                var styleOpen = ref(false);
-                var catOpen = ref(false);
+                var activeFilter = ref(null);
+                var sortLatest = ref(false);
                 var modalSlide = ref(0);
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
                 var viewerIndex = ref(0);
-                var filterPanelOpen = ref(false);
-                var searchActive = ref(false);
-                var filters = ref({ gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '', cat: '' });
+                var filters = ref({ gov: '', style: '', budget: '', area: '' });
                 var modalPullY = ref(0);
                 var modalClosing = ref(false);
 
@@ -331,24 +466,7 @@
 
                 var hasActiveFilters = computed(function() {
                     var f = filters.value;
-                    return f.gov || f.style || f.budgetFrom || f.budgetTo || f.areaFrom || f.areaTo || f.cat;
-                });
-                var catNames = computed(function() {
-                    return categories.value.map(function(c) { return c.name; });
-                });
-                var budgetLabel = computed(function() {
-                    var f = filters.value;
-                    if (f.budgetFrom && f.budgetTo) return ': ' + f.budgetFrom + ' - ' + f.budgetTo;
-                    if (f.budgetFrom) return ': من ' + f.budgetFrom;
-                    if (f.budgetTo) return ': حتى ' + f.budgetTo;
-                    return '';
-                });
-                var areaLabel = computed(function() {
-                    var f = filters.value;
-                    if (f.areaFrom && f.areaTo) return ': ' + f.areaFrom + ' - ' + f.areaTo;
-                    if (f.areaFrom) return ': من ' + f.areaFrom;
-                    if (f.areaTo) return ': حتى ' + f.areaTo;
-                    return '';
+                    return f.gov || f.style || f.budget || f.area;
                 });
 
                 var allProjects = computed(function() {
@@ -374,18 +492,19 @@
                     var f = filters.value;
 
                     if (q) list = list.filter(function(p) { return p.title.toLowerCase().includes(q) || p.company.toLowerCase().includes(q) || p.governorate.includes(q); });
-                    if (f.cat) list = list.filter(function(p) { return p._catName === f.cat; });
                     if (f.gov) list = list.filter(function(p) { return p.governorate === f.gov; });
                     if (f.style) list = list.filter(function(p) { return p.style === f.style; });
-                    if (f.budgetFrom || f.budgetTo) {
-                        var bf = f.budgetFrom ? parseNum(f.budgetFrom) : 0;
-                        var bt = f.budgetTo ? parseNum(f.budgetTo) : Infinity;
-                        list = list.filter(function(p) { return p.priceNum >= bf && p.priceNum <= bt; });
+                    if (f.budget) {
+                        var bv = parseNum(f.budget);
+                        if (bv) list = list.filter(function(p) { return p.priceNum <= bv; });
                     }
-                    if (f.areaFrom || f.areaTo) {
-                        var af = f.areaFrom ? parseNum(f.areaFrom) : 0;
-                        var atVal = f.areaTo ? parseNum(f.areaTo) : Infinity;
-                        list = list.filter(function(p) { return p.areaNum >= af && p.areaNum <= atVal; });
+                    if (f.area) {
+                        var av = parseInt(f.area, 10) || 0;
+                        if (av) list = list.filter(function(p) { return p.areaNum >= av; });
+                    }
+
+                    if (sortLatest.value) {
+                        list = list.slice().reverse();
                     }
 
                     return list;
@@ -434,13 +553,9 @@
                     return '';
                 });
 
-                var showCategories = computed(function() { return !activeCategory.value && !searchActive.value; });
-                var showProjects = computed(function() { return activeCategory.value || searchActive.value; });
-
                 var projectsTitle = computed(function() {
-                    if (searchActive.value) return 'نتائج البحث';
-                    if (activeCategory.value) return activeCategory.value.name;
-                    return '';
+                    if (activeCategory.value) return 'مشاريع منجزة - ' + activeCategory.value.name;
+                    return 'مشاريع منجزة';
                 });
 
                 /* ---- Back Button (History API) ---- */
@@ -487,23 +602,24 @@
                     return fmt(parseInt(num, 10));
                 }
 
-                function doSearch() {
-                    searchActive.value = true;
-                    activeCategory.value = null;
-                    filterPanelOpen.value = false;
-                }
-                function autoSearch() {
-                    if (!searchActive.value) return;
-                }
                 function clearFilters() {
-                    filters.value = { gov: '', style: '', budgetFrom: '', budgetTo: '', areaFrom: '', areaTo: '', cat: '' };
-                    searchActive.value = true;
+                    filters.value = { gov: '', style: '', budget: '', area: '' };
                     history.replaceState({}, '', window.location.pathname);
                 }
 
+                function toggleFilter(name) {
+                    activeFilter.value = activeFilter.value === name ? null : name;
+                }
+                function toggleLatest() {
+                    sortLatest.value = !sortLatest.value;
+                }
+
                 function selectCategory(cat) {
-                    activeCategory.value = cat;
-                    searchActive.value = false;
+                    if (activeCategory.value === cat) {
+                        activeCategory.value = null;
+                    } else {
+                        activeCategory.value = cat;
+                    }
                 }
 
                 function openProject(proj) { modalSlide.value = 0; selectedProject.value = proj; history.pushState({ action: 'modal' }, ''); }
@@ -528,11 +644,11 @@
                     searchQuery, activeCategory, categories, selectedProject, modalSlide,
                     selectCategory, openProject, closeModal,
                     viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer, nextViewer, prevViewer,
-                    governorates, styles, filters, formatInput, doSearch, filterPanelOpen,
-                    hasActiveFilters, budgetLabel, areaLabel, autoSearch, clearFilters,
-                    filteredProjects, showCategories, showProjects, projectsTitle, searchActive,
+                    governorates, styles, filters, formatInput,
+                    hasActiveFilters, clearFilters,
+                    filteredProjects, projectsTitle,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
-                    govOpen, styleOpen, catOpen, catNames
+                    activeFilter, toggleFilter, sortLatest, toggleLatest
                 };
             }
         }).mount('#app');

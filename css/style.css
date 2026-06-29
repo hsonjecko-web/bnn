@@ -2379,7 +2379,7 @@ html.light-mode .project-modal .modal-close {
     padding: 8px 8px;
   }
   .exec-categories {
-    grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   }
   .exec-cat-info span:last-child {
     font-size: 13px;
@@ -2979,8 +2979,8 @@ html.light-mode .ideas-projects-header h2 {
 
 .ideas-projects-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   padding: 0 16px;
 }
 

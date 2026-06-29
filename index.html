@@ -286,6 +286,26 @@
             flex-shrink: 0;
         }
 
+        /* Registration buttons in separate card */
+        .reg-buttons-row {
+            width: 100%;
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 14px 18px;
+            background: rgba(20, 45, 75, 0.6);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+        .reg-buttons-row .register-btn {
+            flex: 1;
+            padding: 12px 6px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
         /* Registration form elements */
         .register-section .reg-header {
             display: flex;
@@ -619,143 +639,89 @@
                 <div class="logo-subtitle"><span class="gold-line">—</span> نبني المستقبل <span class="gold-line">—</span></div>
             </div>
 
-            <!-- Login Card -->
+            <!-- Main Card: Login / Registration / OTP -->
             <div class="login-card animate-in animate-delay-2">
-                <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
-                <div v-if="successMsg" class="success-msg">{{ successMsg }}</div>
 
-                <!-- Username -->
-                <div class="input-group">
-                    <input
-                        type="text"
-                        class="input-field"
-                        placeholder="اسم المستخدم"
-                        v-model="username"
-                        @keyup.enter="focusPassword"
-                        ref="usernameInput"
-                    >
-                    <svg class="input-icon-right" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                </div>
+                <!-- ======= LOGIN VIEW ======= -->
+                <template v-if="view === 'login'">
+                    <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
+                    <div v-if="successMsg" class="success-msg">{{ successMsg }}</div>
 
-                <!-- Password -->
-                <div class="input-group">
-                    <input
-                        :type="showPassword ? 'text' : 'password'"
-                        class="input-field"
-                        placeholder="كلمة المرور"
-                        v-model="password"
-                        @keyup.enter="handleLogin"
-                        ref="passwordInput"
-                    >
-                    <svg class="input-icon-right" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-                    </svg>
-                    <div class="input-icon-left" @click="showPassword = !showPassword">
-                        <svg v-if="!showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                            <line x1="1" y1="1" x2="23" y2="23"/>
-                        </svg>
-                        <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
+                    <div class="input-group">
+                        <input type="text" class="input-field" placeholder="اسم المستخدم" v-model="username" @keyup.enter="focusPassword" ref="usernameInput">
+                        <svg class="input-icon-right" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                     </div>
-                </div>
+                    <div class="input-group">
+                        <input :type="showPassword ? 'text' : 'password'" class="input-field" placeholder="كلمة المرور" v-model="password" @keyup.enter="handleLogin" ref="passwordInput">
+                        <svg class="input-icon-right" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                        <div class="input-icon-left" @click="showPassword = !showPassword">
+                            <svg v-if="!showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                    </div>
+                    <div class="forgot-password"><a href="#" @click.prevent="showForgotModal = true">هل نسيت كلمة المرور؟</a></div>
+                    <button class="login-btn" :class="{ loading: isLoading }" @click="handleLogin" :disabled="isLoading">
+                        <span v-if="!isLoading">دخول</span>
+                        <span v-else class="loading-dots"><span></span><span></span><span></span></span>
+                    </button>
+                    <div class="divider" @click="handleGuest">
+                        <div class="divider-line"></div>
+                        <span class="divider-text">المتابعة كضيف</span>
+                        <div class="divider-line"></div>
+                    </div>
+                </template>
 
-                <!-- Forgot Password -->
-                <div class="forgot-password">
-                    <a href="#" @click.prevent="showForgotModal = true">هل نسيت كلمة المرور؟</a>
-                </div>
+                <!-- ======= USER REGISTER VIEW ======= -->
+                <template v-if="view === 'user-register'">
+                    <div class="register-section">
+                        <div class="reg-header"><span class="material-symbols-outlined reg-back" @click="view='login'">arrow_forward</span><span>إنشاء حساب مستخدم</span></div>
+                        <input type="text" class="reg-input" placeholder="الاسم الكامل" v-model="regFullName">
+                        <select class="reg-input" v-model="regGovernorate"><option value="" disabled>المحافظة</option><option v-for="g in governorates" :value="g">{{ g }}</option></select>
+                        <input type="text" class="reg-input" placeholder="العنوان" v-model="regAddress">
+                        <input type="tel" class="reg-input" placeholder="رقم الهاتف" v-model="regPhone">
+                        <div class="reg-pwd-wrap">
+                            <input :type="regShowPwd ? 'text' : 'password'" class="reg-input" placeholder="كلمة المرور" v-model="regPassword">
+                            <span class="reg-pwd-toggle" @click="regShowPwd = !regShowPwd"><span class="material-symbols-outlined">{{ regShowPwd ? 'visibility' : 'visibility_off' }}</span></span>
+                        </div>
+                        <button class="reg-submit" @click="submitRegistration('user')">إنشاء الحساب <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span></button>
+                    </div>
+                </template>
 
-                <!-- Login Button -->
-                <button
-                    class="login-btn"
-                    :class="{ loading: isLoading }"
-                    @click="handleLogin"
-                    :disabled="isLoading"
-                >
-                    <span v-if="!isLoading">دخول</span>
-                    <span v-else class="loading-dots">
-                        <span></span><span></span><span></span>
-                    </span>
-                </button>
+                <!-- ======= COMPANY REGISTER VIEW ======= -->
+                <template v-if="view === 'company-register'">
+                    <div class="register-section">
+                        <div class="reg-header"><span class="material-symbols-outlined reg-back" @click="view='login'">arrow_forward</span><span>تسجيل شركة</span></div>
+                        <input type="text" class="reg-input" placeholder="الاسم الكامل (صاحب الشركة)" v-model="regFullName">
+                        <input type="text" class="reg-input" placeholder="اسم الشركة" v-model="regCompanyName">
+                        <select class="reg-input" v-model="regGovernorate"><option value="" disabled>المحافظة</option><option v-for="g in governorates" :value="g">{{ g }}</option></select>
+                        <input type="text" class="reg-input" placeholder="العنوان" v-model="regAddress">
+                        <input type="tel" class="reg-input" placeholder="رقم الهاتف" v-model="regPhone">
+                        <div class="reg-pwd-wrap">
+                            <input :type="regShowPwd ? 'text' : 'password'" class="reg-input" placeholder="كلمة المرور" v-model="regPassword">
+                            <span class="reg-pwd-toggle" @click="regShowPwd = !regShowPwd"><span class="material-symbols-outlined">{{ regShowPwd ? 'visibility' : 'visibility_off' }}</span></span>
+                        </div>
+                        <button class="reg-submit" @click="submitRegistration('company')">تسجيل الشركة <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span></button>
+                    </div>
+                </template>
 
-                <!-- Divider (Guest Login) -->
-                <div class="divider" @click="handleGuest">
-                    <div class="divider-line"></div>
-                    <span class="divider-text">المتابعة كضيف</span>
-                    <div class="divider-line"></div>
-                </div>
+                <!-- ======= OTP VIEW ======= -->
+                <template v-if="view === 'otp-verify'">
+                    <div class="register-section">
+                        <div style="text-align:center;margin-bottom:12px;"><span class="material-symbols-outlined" style="font-size:48px;color:#c9a243;">verified</span></div>
+                        <div style="text-align:center;font-size:16px;font-weight:700;color:#fff;">التحقق من الرقم</div>
+                        <div style="text-align:center;font-size:13px;color:#b0c4d9;margin:4px 0 12px;">أدخل رمز التحقق المرسل إلى {{ regPhone }}</div>
+                        <input type="text" class="reg-input" placeholder="000000" v-model="otpCode" maxlength="6" style="text-align:center;font-size:24px;letter-spacing:8px;font-weight:700;">
+                        <button class="reg-submit" @click="verifyOtp" style="margin-top:8px;">تحقق <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span></button>
+                        <div style="text-align:center;margin-top:10px;"><span style="color:#b0c4d9;font-size:12px;cursor:pointer;" @click="view='login'">العودة لتسجيل الدخول</span></div>
+                    </div>
+                </template>
+
             </div>
 
-            <!-- Dynamic Register Section -->
-            <div class="register-section animate-in animate-delay-3">
-
-                <!-- View: Buttons -->
-                <template v-if="view === 'login'">
-                    <button class="register-btn" @click="openUserRegister">إنشاء حساب مستخدم</button>
-                    <button class="register-btn register-btn-company" @click="openCompanyRegister">تسجيل شركة</button>
-                </template>
-
-                <!-- View: User Registration -->
-                <template v-if="view === 'user-register'">
-                    <div class="reg-header">
-                        <span class="material-symbols-outlined reg-back" @click="view='login'">arrow_forward</span>
-                        <span>إنشاء حساب مستخدم</span>
-                    </div>
-                    <input type="text" class="reg-input" placeholder="الاسم الكامل" v-model="regFullName">
-                    <select class="reg-input" v-model="regGovernorate">
-                        <option value="" disabled>المحافظة</option>
-                        <option v-for="g in governorates" :value="g">{{ g }}</option>
-                    </select>
-                    <input type="text" class="reg-input" placeholder="العنوان" v-model="regAddress">
-                    <input type="tel" class="reg-input" placeholder="رقم الهاتف" v-model="regPhone">
-                    <div class="reg-pwd-wrap">
-                        <input :type="regShowPwd ? 'text' : 'password'" class="reg-input" placeholder="كلمة المرور" v-model="regPassword">
-                        <span class="reg-pwd-toggle" @click="regShowPwd = !regShowPwd">
-                            <span class="material-symbols-outlined">{{ regShowPwd ? 'visibility' : 'visibility_off' }}</span>
-                        </span>
-                    </div>
-                    <button class="reg-submit" @click="submitRegistration('user')">إنشاء الحساب</button>
-                </template>
-
-                <!-- View: Company Registration -->
-                <template v-if="view === 'company-register'">
-                    <div class="reg-header">
-                        <span class="material-symbols-outlined reg-back" @click="view='login'">arrow_forward</span>
-                        <span>تسجيل شركة</span>
-                    </div>
-                    <input type="text" class="reg-input" placeholder="الاسم الكامل (صاحب الشركة)" v-model="regFullName">
-                    <input type="text" class="reg-input" placeholder="اسم الشركة" v-model="regCompanyName">
-                    <select class="reg-input" v-model="regGovernorate">
-                        <option value="" disabled>المحافظة</option>
-                        <option v-for="g in governorates" :value="g">{{ g }}</option>
-                    </select>
-                    <input type="text" class="reg-input" placeholder="العنوان" v-model="regAddress">
-                    <input type="tel" class="reg-input" placeholder="رقم الهاتف" v-model="regPhone">
-                    <div class="reg-pwd-wrap">
-                        <input :type="regShowPwd ? 'text' : 'password'" class="reg-input" placeholder="كلمة المرور" v-model="regPassword">
-                        <span class="reg-pwd-toggle" @click="regShowPwd = !regShowPwd">
-                            <span class="material-symbols-outlined">{{ regShowPwd ? 'visibility' : 'visibility_off' }}</span>
-                        </span>
-                    </div>
-                    <button class="reg-submit" @click="submitRegistration('company')">تسجيل الشركة</button>
-                </template>
-
-                <!-- View: OTP -->
-                <template v-if="view === 'otp-verify'">
-                    <div class="reg-otp-icon">
-                        <span class="material-symbols-outlined" style="font-size:40px;color:#c9a243;">verified</span>
-                    </div>
-                    <div class="reg-otp-title">التحقق من الرقم</div>
-                    <div class="reg-otp-desc">أدخل رمز التحقق المرسل إلى {{ regPhone }}</div>
-                    <input type="text" class="reg-input reg-otp-input" placeholder="000000" v-model="otpCode" maxlength="6">
-                    <button class="reg-submit" @click="verifyOtp">تحقق</button>
-                    <div class="reg-back-link" @click="view='login'">العودة لتسجيل الدخول</div>
-                </template>
-
+            <!-- Register Buttons Separate Container -->
+            <div v-if="view === 'login'" class="reg-buttons-row animate-in animate-delay-3">
+                <button class="register-btn" @click="openUserRegister">إنشاء حساب مستخدم</button>
+                <button class="register-btn register-btn-company" @click="openCompanyRegister">تسجيل شركة</button>
             </div>
 
             <!-- Bottom Construction Scene -->
