@@ -4887,7 +4887,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
   .ad-card { min-width: 180px; }
   .ad-slider-img { height: 110px; }
   .banner::before { width: 100px; height: 100px; }
-  .register-section { gap: 16px; padding: 10px 14px; }
+  .register-section { gap: 8px; padding: 12px 14px; }
   .exec-slider { height: 160px; }
   .exec-cover { height: 220px; }
   .company-cover { height: 160px; }
