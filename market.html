@@ -33,7 +33,7 @@
             <div class="page-content">
 
                 <!-- ===== أقسام دائرية ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView" class="mkt-cats-scroll">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers" class="mkt-cats-scroll">
                     <div v-for="(cat, i) in categories" :key="i" class="mkt-cat" @click="selectCat(i)">
                         <div class="mkt-cat-circle">
                             <span class="material-symbols-outlined">{{ cat.icon }}</span>
@@ -43,7 +43,7 @@
                 </div>
 
                 <!-- ===== سلايدر صور ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView" class="mkt-slider"
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers" class="mkt-slider"
                      @touchstart.passive="sliderTouch.onTouchStart"
                      @touchend="sliderTouch.onTouchEnd">
                     <div class="mkt-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (mktSlide * 100) + '%)' }">
