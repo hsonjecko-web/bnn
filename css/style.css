@@ -1739,8 +1739,6 @@ html.light-mode .search-panel input {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  min-width: 60px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -1750,19 +1748,22 @@ html.light-mode .search-panel input {
 }
 
 .home-section-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 80px;
+  min-height: 72px;
+  border-radius: 16px;
   background: var(--bg-card-light);
   border: 1px solid var(--border-input);
   transition: all 0.3s ease;
+  padding: 10px 6px 8px;
+  gap: 4px;
 }
 
 .home-section-icon .material-symbols-outlined {
-  font-size: 28px;
+  font-size: 26px;
   color: var(--accent-gold);
 }
 
@@ -1775,12 +1776,17 @@ html.light-mode .search-panel input {
   color: var(--primary-dark);
 }
 
+.home-section-item:active .home-section-name {
+  color: var(--primary-dark);
+}
+
 .home-section-name {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-light);
   text-align: center;
   font-weight: 600;
   white-space: nowrap;
+  line-height: 1.2;
 }
 
 /* ===== Ads Section ===== */
@@ -2333,11 +2339,15 @@ html.light-mode .project-modal .modal-close {
     gap: 4px;
   }
   .home-section-icon {
-    width: 46px;
-    height: 46px;
+    width: 72px;
+    min-height: 64px;
+    padding: 8px 4px 6px;
   }
   .home-section-icon .material-symbols-outlined {
     font-size: 22px;
+  }
+  .home-section-name {
+    font-size: 10px;
   }
   .ad-card {
     min-width: 220px;
@@ -4869,9 +4879,9 @@ html.light-mode .mkt-modal-desc { color: #666; }
   .hero-slider { height: 160px; margin: 8px 12px 0; }
   .slide-content h2 { font-size: 16px; }
   .slide-content { padding: 14px; }
-  .home-section-item { min-width: 56px; }
-  .home-section-icon { width: 42px; height: 42px; }
-  .home-section-icon .material-symbols-outlined { font-size: 20px; }
+  .home-section-icon { width: 70px; min-height: 62px; padding: 8px 4px 6px; }
+  .home-section-icon .material-symbols-outlined { font-size: 22px; }
+  .home-section-name { font-size: 10px; }
   .project-card .card-image { height: 110px; }
   .project-card .card-title { font-size: 12px; }
   .ad-card { min-width: 180px; }
