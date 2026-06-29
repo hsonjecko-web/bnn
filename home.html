@@ -89,16 +89,38 @@
                 </div>
 
                 <!-- Latest Works -->
-                <div class="section-header">
+                <div v-if="!showAllWorks" class="section-header">
                     <span class="section-title">آخر الأعمال</span>
-                    <span class="section-link" @click="showAllWorks = !showAllWorks">{{ showAllWorks ? 'إخفاء' : 'عرض الكل' }}</span>
+                    <span class="section-link" @click="showAllWorks = true">عرض الكل</span>
                 </div>
-                <div class="works-grid">
-                    <div v-for="(work, i) in (showAllWorks ? latestWorks : latestWorks.slice(0, 4))" :key="i"
+                <div v-if="!showAllWorks" class="works-grid">
+                    <div v-for="(work, i) in latestWorks.slice(0, 4)" :key="i"
                          class="work-card" @click="openProject(work)">
                         <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
                         <div class="work-overlay">
                             <span class="work-title">{{ work.title }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== عرض كل الأعمال ===== -->
+                <div v-if="showAllWorks" class="mkt-cat-view">
+                    <div class="exec-header">
+                        <button class="exec-back" @click="showAllWorks = false">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <div>
+                            <h2>جميع الأعمال</h2>
+                            <p>{{ latestWorks.length }} مشروع</p>
+                        </div>
+                    </div>
+                    <div class="works-grid">
+                        <div v-for="(work, i) in latestWorks" :key="i"
+                             class="work-card" @click="openProject(work)">
+                            <img :src="work.bg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
+                            <div class="work-overlay">
+                                <span class="work-title">{{ work.title }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
