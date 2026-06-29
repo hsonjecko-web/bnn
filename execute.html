@@ -126,19 +126,19 @@
                     </div>
 
                     <!-- Stats -->
-                    <div class="exec-stats">
-                        <div class="exec-stat">
-                            <span class="exec-stat-icon material-symbols-outlined">groups</span>
-                            <span class="exec-stat-num">{{ selectedCompany.stats.workers }}</span>
-                            <span class="exec-stat-label">عدد العمال</span>
-                        </div>
-                        <div class="exec-stat">
-                            <span class="exec-stat-icon material-symbols-outlined">engineering</span>
-                            <span class="exec-stat-num">{{ selectedCompany.stats.engineers }}</span>
-                            <span class="exec-stat-label">عدد المهندسين</span>
-                        </div>
-                    </div>
                     <div class="exec-stat-bar">
+                        <div class="exec-stat-bar-item">
+                            <span class="material-symbols-outlined">groups</span>
+                            <span class="exec-stat-bar-num">{{ selectedCompany.stats.workers }}</span>
+                            <span class="exec-stat-bar-label">عدد العمال</span>
+                        </div>
+                        <div class="exec-stat-bar-divider"></div>
+                        <div class="exec-stat-bar-item">
+                            <span class="material-symbols-outlined">engineering</span>
+                            <span class="exec-stat-bar-num">{{ selectedCompany.stats.engineers }}</span>
+                            <span class="exec-stat-bar-label">عدد المهندسين</span>
+                        </div>
+                        <div class="exec-stat-bar-divider"></div>
                         <div class="exec-stat-bar-item">
                             <span class="material-symbols-outlined">calendar_month</span>
                             <span class="exec-stat-bar-num">{{ selectedCompany.years }}</span>

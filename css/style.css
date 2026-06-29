@@ -3481,42 +3481,7 @@ html.light-mode .ideas-projects-header h2 {
   color: var(--accent-gold);
 }
 
-.exec-stats {
-  display: flex;
-  gap: 6px;
-  padding: 0 16px 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.exec-stats::-webkit-scrollbar {
-  display: none;
-}
-
-.exec-stat {
-  min-width: 88px;
-  flex-shrink: 0;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 10px 6px;
-  text-align: center;
-}
-
-.exec-stat-num {
-  display: block;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--accent-gold);
-}
-
-.exec-stat-label {
-  display: block;
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
+/* ===== Exec Stats Bar ===== */
 .exec-stat-bar {
   display: flex;
   align-items: center;
