@@ -55,12 +55,10 @@
                 <!-- Categories Grid -->
                 <div v-if="!activeCategory && !selectedCompany" class="exec-categories">
                     <div v-for="(cat, i) in categories" :key="i" class="exec-cat-card" @click="selectCategory(cat)">
-                        <div class="exec-cat-img">
-                            <img :src="cat.cover" alt="">
-                            <div class="exec-cat-overlay"></div>
+                        <div class="exec-cat-icon-wrap">
+                            <span class="material-symbols-outlined exec-cat-icon">{{ cat.icon }}</span>
                         </div>
                         <div class="exec-cat-info">
-                            <span class="material-symbols-outlined">{{ cat.icon }}</span>
                             <span>{{ cat.name }}</span>
                         </div>
                     </div>

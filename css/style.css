@@ -3240,30 +3240,46 @@ html.light-mode .ideas-projects-header h2 {
   border-radius: 16px;
   overflow: hidden;
   position: relative;
-  aspect-ratio: 4/3;
   cursor: pointer;
+  background: var(--bg-card);
+  aspect-ratio: 1/1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
 }
 
 .exec-cat-card:active {
+  transform: scale(0.96);
   opacity: 0.85;
 }
 
-.exec-cat-img {
-  position: absolute;
-  inset: 0;
+.exec-cat-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(201,162,67,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.exec-cat-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.exec-cat-icon {
+  font-size: 32px !important;
+  color: var(--accent-gold);
 }
 
-.exec-cat-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.15) 60%);
+.exec-cat-info {
+  text-align: center;
+}
+
+.exec-cat-info span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-white);
 }
 
 .exec-cat-info {
