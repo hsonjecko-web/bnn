@@ -570,7 +570,7 @@
 
                     <!-- ===== الخيارات: صفوف (تسمية يمين / تحكم يسار) ===== -->
                     <div class="prod-options">
-                        <div v-if="selectedProduct.colors && selectedProduct.colors.length" class="prod-opt-row">
+                        <div class="prod-opt-row">
                             <div class="prod-opt-value">
                                 <div class="prod-colors">
                                     <div v-for="(c, i) in selectedProduct.colors" :key="i" class="prod-color-dot"
@@ -582,11 +582,11 @@
                                         <span class="material-symbols-outlined">expand_more</span>
                                     </span>
                                 </div>
-                                <span class="prod-opt-sel">{{ selectedProduct.colors[selectedColor].name }}</span>
+                                <span class="prod-opt-sel">{{ (selectedProduct.colors[selectedColor] || { name: 'قياسي' }).name }}</span>
                             </div>
                             <span class="prod-opt-label"><span class="material-symbols-outlined">palette</span> اختر اللون</span>
                         </div>
-                        <div v-if="selectedProduct.finishTypes && selectedProduct.finishTypes.length" class="prod-opt-row">
+                        <div class="prod-opt-row">
                             <div class="prod-opt-value">
                                 <div class="prod-opt-btns">
                                     <button v-for="(ft, i) in selectedProduct.finishTypes" :key="i"
@@ -597,7 +597,7 @@
                             </div>
                             <span class="prod-opt-label"><span class="material-symbols-outlined">spa</span> نوع التشطيب</span>
                         </div>
-                        <div v-if="selectedProduct.sizes && selectedProduct.sizes.length" class="prod-opt-row">
+                        <div class="prod-opt-row">
                             <div class="prod-opt-value">
                                 <div class="prod-opt-btns">
                                     <button v-for="(sz, i) in selectedProduct.sizes" :key="i"
