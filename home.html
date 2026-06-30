@@ -58,13 +58,13 @@
 
                 <!-- Home Sections -->
                 <div class="home-sections">
-                    <div v-for="(sec, i) in sections" :key="i"
+                    <a v-for="(sec, i) in sections" :key="i" :href="sec.link"
                          class="home-section-item">
                         <div class="home-section-icon">
                             <span class="material-symbols-outlined">{{ sec.icon }}</span>
                             <span class="home-section-name">{{ sec.name }}</span>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Ads -->
@@ -380,11 +380,11 @@
                 ]);
 
                 const sections = ref([
-                    { name: 'بناء منزل', icon: 'home' },
-                    { name: 'تصميم داخلي', icon: 'chair' },
-                    { name: 'تشطيب', icon: 'format_paint' },
-                    { name: 'شراء مواد', icon: 'storefront' },
-                    { name: 'استشارات', icon: 'engineering' }
+                    { name: 'بناء منزل', icon: 'home', link: 'execute.html?cat=بناء%20وإنشاء' },
+                    { name: 'تصميم داخلي', icon: 'chair', link: 'execute.html?cat=تشطيبات%20داخلية' },
+                    { name: 'تشطيب', icon: 'format_paint', link: 'execute.html?cat=تشطيبات%20داخلية' },
+                    { name: 'شراء مواد', icon: 'storefront', link: 'market.html' },
+                    { name: 'استشارات', icon: 'engineering', link: 'quotes.html' }
                 ]);
 
                 const ads = ref([

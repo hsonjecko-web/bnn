@@ -582,6 +582,15 @@
                             resetWorkTimer();
                         }
                     }
+                    var catName = params.get('cat');
+                    if (catName) {
+                        for (var ci = 0; ci < categoriesData.length; ci++) {
+                            if (categoriesData[ci].name === catName) {
+                                activeCategory.value = categoriesData[ci];
+                                break;
+                            }
+                        }
+                    }
                     resetExecTimer();
                 });
 
