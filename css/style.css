@@ -5068,9 +5068,14 @@ html.light-mode .mkt-modal-desc { color: #666; }
   width: 100%;
   height: 240px;
   overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   background: var(--bg-card);
   position: relative;
   border-radius: 12px;
+}
+.prod-hero-gallery .prod-gallery::-webkit-scrollbar {
+  display: none;
 }
 .prod-hero-gallery .prod-gallery-track {
   display: flex;
