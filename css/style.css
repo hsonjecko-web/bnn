@@ -261,7 +261,7 @@ input, textarea, select {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(105px + env(safe-area-inset-bottom, 0px));
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -5061,7 +5061,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
   .banner::before { width: 80px; height: 80px; }
   .banner { padding: 14px; }
   .banner-title { font-size: 15px; }
-  .page-content { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+  .page-content { padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ===== منع hover على أجهزة اللمس ===== */
@@ -5083,7 +5083,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
 
 /* --- صفحة تفاصيل المنتج (تصميم جوتن) --- */
 .prod-detail-page {
-  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
 }
 .prod-detail-page > div {
   background: var(--bg-card);
