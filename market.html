@@ -532,7 +532,7 @@
                     <!-- ===== الهيرو: معلومات (يمين) + صور (يسار) ===== -->
                     <div class="prod-hero">
                         <div class="prod-hero-info">
-                            <div class="prod-brand-pill">{{ selectedProduct.brand }}</div>
+                            <div class="prod-brand-pill" v-if="selectedProduct.brand">{{ selectedProduct.brand }}</div>
                             <h1 class="prod-title">{{ selectedProduct.name }}</h1>
                             <span class="prod-cat-tag">{{ categories[selectedProduct.cat].name }}</span>
                             <div class="prod-supplier-row">
@@ -562,9 +562,6 @@
                                     <span v-for="(img, i) in selectedProduct.images" :key="i" class="dot" :class="{ active: i === modalSlide }" @click.stop="modalSlide = i"></span>
                                 </div>
                             </div>
-                            <button class="prod-fav-btn">
-                                <span class="material-symbols-outlined">favorite</span>
-                            </button>
                         </div>
                     </div>
 
@@ -862,7 +859,7 @@
                         finishTypes: opts.finishTypes || ['مطفي', 'نصف لامع', 'لامع'],
                         boxes: opts.boxes || '', desc: opts.desc || name + ' من أجود المواد المتاحة في السوق العراقي.',
                         oldPrice: 0, discount: 0,
-                        brand: opts.brand || 'بنيان',
+                        brand: opts.brand || '',
                         supplierName: opts.supplierName || 'متجر بنيان',
                         stock: opts.stock !== undefined ? opts.stock : true,
                         reviewsCount: opts.reviewsCount || 0

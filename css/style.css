@@ -5101,24 +5101,6 @@ html.light-mode .mkt-modal-desc { color: #666; }
   width: 18px;
   border-radius: 3px;
 }
-.prod-fav-btn {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.9);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-.prod-fav-btn .material-symbols-outlined {
-  font-size: 18px;
-  color: #94a3b8;
-}
 /* --- معلومات المنتج (العمود اليمين) --- */
 .prod-hero-info {
   flex: 1;
