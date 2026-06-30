@@ -2385,12 +2385,9 @@ html.light-mode .project-modal .modal-close {
   .exec-cat-card {
     padding: 12px 6px;
   }
-  .exec-cat-icon-wrap {
+  .exec-cat-svg {
     width: 48px;
     height: 48px;
-  }
-  .exec-cat-icon {
-    font-size: 26px !important;
   }
   .exec-cat-info span {
     font-size: 11px;
@@ -3279,19 +3276,17 @@ html.light-mode .ideas-projects-header h2 {
   opacity: 0.85;
 }
 
-.exec-cat-icon-wrap {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(201,162,67,0.1);
+.exec-cat-svg {
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.exec-cat-icon {
-  font-size: 30px !important;
-  color: var(--accent-gold);
+.exec-cat-svg svg {
+  width: 100%;
+  height: 100%;
 }
 
 .exec-cat-info {
