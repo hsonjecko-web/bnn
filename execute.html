@@ -32,6 +32,20 @@
 
             <div class="page-content">
 
+                <!-- Hero Slider -->
+                <div v-if="!activeCategory && !selectedCompany" class="exec-slider"
+                     @touchstart.passive="execSwipe.onTouchStart"
+                     @touchend="execSwipe.onTouchEnd">
+                    <div class="exec-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (execSlide * 100) + '%)' }">
+                        <div v-for="(s, i) in execSlides" :key="i" class="exec-slider-slide">
+                            <img :src="s.img" alt="">
+                        </div>
+                    </div>
+                    <div v-if="execSlides.length > 1" class="exec-slider-dots">
+                        <span v-for="(s, i) in execSlides" :key="i" class="dot" :class="{ active: i === execSlide }" @click="execSlide = i; resetExecTimer()"></span>
+                    </div>
+                </div>
+
                 <!-- Hero -->
                 <div class="exec-hero" v-if="!activeCategory && !selectedCompany">
                     <h1>خدمات التنفيذ</h1>
@@ -387,6 +401,39 @@
                 var showAllProjects = ref(false);
                 var workSlide = ref(0);
                 var workTimer = null;
+                var execSlide = ref(0);
+                var execTimer = null;
+                var execSlides = ref([
+                    { img: 'images/img16.jpg' },
+                    { img: 'images/img17.jpg' },
+                    { img: 'images/img18.jpg' },
+                    { img: 'images/img19.jpg' },
+                    { img: 'images/img20.jpg' }
+                ]);
+
+                function resetExecTimer() {
+                    if (execTimer) clearInterval(execTimer);
+                    var len = execSlides.value.length;
+                    if (len < 2) return;
+                    execTimer = setInterval(function() {
+                        execSlide.value = (execSlide.value + 1) % len;
+                    }, 3000);
+                }
+
+                var execSwipe = (function() {
+                    var sx = 0;
+                    return {
+                        onTouchStart: function(e) { sx = e.touches[0].clientX; },
+                        onTouchEnd: function(e) {
+                            var dx = e.changedTouches[0].clientX - sx;
+                            if (Math.abs(dx) > 40) {
+                                var len = execSlides.value.length;
+                                var next = execSlide.value + (dx < 0 ? 1 : -1);
+                                if (next >= 0 && next < len) { execSlide.value = next; resetExecTimer(); }
+                            }
+                        }
+                    };
+                })();
 
                 function resetWorkTimer() {
                     if (workTimer) clearInterval(workTimer);
@@ -508,10 +555,12 @@
                             resetWorkTimer();
                         }
                     }
+                    resetExecTimer();
                 });
 
                 onUnmounted(function() {
                     if (workTimer) clearInterval(workTimer);
+                    if (execTimer) clearInterval(execTimer);
                     window.removeEventListener('popstate', handlePopState);
                 });
 
@@ -521,7 +570,8 @@
                     viewerOpen, viewerImages, viewerIndex, openViewer, closeViewer,
                     modalTouch, viewerTouch, pullTransform, modalPullY, modalClosing,
                     visibleProjects, openProjectGallery, showAllProjects,
-                    workSlide, resetWorkTimer
+                    workSlide, resetWorkTimer,
+                    execSlide, execSlides, execSwipe, resetExecTimer
                 };
             }
         }).mount('#app');
