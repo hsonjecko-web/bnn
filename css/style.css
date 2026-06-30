@@ -5408,64 +5408,11 @@ html.light-mode .mkt-modal-desc { color: #666; }
 .prod-delivery-time .material-symbols-outlined {
   font-size: 18px;
 }
-/* --- بطاقة ملخص الطلب (مقسومة) --- */
+/* --- بطاقة ملخص الطلب --- */
 .prod-summary-card {
-  display: flex;
   border-bottom: 1px solid var(--border-light);
-  min-height: 200px;
-}
-.prod-summary-discount {
-  width: 35%;
-  background: linear-gradient(135deg, var(--accent-gold), #d4a843);
-  padding: 16px 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.prod-discount-icon .material-symbols-outlined {
-  font-size: 36px;
-  color: rgba(255,255,255,0.3);
-}
-.prod-discount-pct {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-}
-.prod-pct-num {
-  font-size: 36px;
-  font-weight: 900;
-  color: #fff;
-  line-height: 1;
-}
-.prod-pct-label {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.1;
-}
-.prod-pct-label span:first-child {
-  font-size: 14px;
-  font-weight: 800;
-  color: #fff;
-}
-.prod-pct-label span:last-child {
-  font-size: 10px;
-  font-weight: 700;
-  color: #fff;
-}
-.prod-discount-text {
-  font-size: 10px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-  text-align: center;
-  margin: 0;
-  line-height: 1.4;
 }
 .prod-summary-details {
-  flex: 1;
   padding: 14px;
   display: flex;
   flex-direction: column;
@@ -5557,8 +5504,6 @@ html.light-mode .mkt-modal-desc { color: #666; }
   .prod-hero-gallery .prod-gallery { height: 180px; }
   .prod-hero-info .prod-title { font-size: 14px; }
   .prod-delivery-grid { grid-template-columns: 1fr; }
-  .prod-summary-card { flex-direction: column; }
-  .prod-summary-discount { width: 100%; padding: 12px; flex-direction: row; }
   .prod-trust { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 }
 /*# sourceMappingURL=style.css.map */
