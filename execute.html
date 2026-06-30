@@ -47,9 +47,9 @@
                     </div>
                 </div>
 
-                <!-- Hero -->
-                <div class="exec-hero" v-if="!activeCategory && !selectedCompany">
-                    <h1>خدمات التنفيذ</h1>
+                <!-- Title -->
+                <div v-if="!activeCategory && !selectedCompany" class="exec-title">
+                    <h2>أنواع التنفيذ</h2>
                 </div>
 
                 <!-- Categories Grid -->
@@ -336,74 +336,67 @@
 
         var categoriesData = [
             {
-                name: 'بناء وإنشاء', icon: 'foundation', cover: img(16),
+                name: 'بناء وإنشاء', icon: 'construction',
                 companies: [
-                    makeCompany('شركة البناء الحديث', 3, 16, { about: 'شركة رائدة في مجال البناء السكني والتجاري، تأسست عام 2005، متخصصة في بناء الفلل والمجمعات السكنية.', specs: ['بناء سكني وتجاري', 'خرسانة مسلحة', 'هياكل حديدية'], rating: 5, years: 18, workers: 200, engineers: 35, done: 120, completed: 100 }),
-                    makeCompany('مقاولون العرب', 5, 11, { about: 'من كبرى شركات المقاولات في العراق، نقدم خدمات البناء والتشييد بأعلى المواصفات.', specs: ['بناء عام', 'هندسة مدنية', 'بنية تحتية'], rating: 4, years: 25, workers: 350, engineers: 50, done: 200, completed: 180 }),
-                    makeCompany('شركة الأساس المتين', 7, 21, { about: 'متخصصون في بناء الأساسات والأعمدة والهياكل الخرسانية المسلحة.', specs: ['خرسانة مسلحة', 'أساسات عميقة', 'هياكل خرسانية'], rating: 4, years: 12, workers: 80, engineers: 15, done: 45, completed: 40 }),
-                    makeCompany('بناء الوطنية', 9, 8, { about: 'شركة وطنية متخصصة في تشييد المباني السكنية والتجارية.' }),
-                    makeCompany('العمران الحديث', 11, 3, { about: 'نقدم حلولاً عصرية في البناء باستخدام أحدث التقنيات والمواد.', rating: 5 }),
-                    makeCompany('شركة الإنشاءات الوطنية', 13, 8, { about: 'شركة وطنية رائدة في تشييد المباني السكنية والتجارية والمشاريع الضخمة.', specs: ['بناء سكني', 'مشاريع تجارية', 'بنية تحتية'], rating: 5, years: 22, workers: 280, engineers: 45, done: 160, completed: 145 })
+                    makeCompany('شركة البناء الحديث', 3, 16, { about: 'شركة رائدة في مجال البناء السكني والتجاري، تأسست عام 2005.', specs: ['بناء سكني وتجاري', 'خرسانة مسلحة', 'هياكل حديدية'], rating: 5, years: 18, workers: 200, engineers: 35, done: 120, completed: 100 }),
+                    makeCompany('مقاولون العرب', 5, 11, { about: 'من كبرى شركات المقاولات في العراق.', specs: ['بناء عام', 'هندسة مدنية', 'بنية تحتية'], rating: 4, years: 25, workers: 350, engineers: 50, done: 200, completed: 180 }),
+                    makeCompany('شركة الأساس المتين', 7, 21, { about: 'متخصصون في بناء الأساسات والأعمدة والهياكل الخرسانية المسلحة.' })
                 ]
             },
             {
-                name: 'تشطيبات داخلية', icon: 'format_paint', cover: img(1),
+                name: 'تشطيبات داخلية', icon: 'chair',
                 companies: [
                     makeCompany('شركة التشطيب الذهبي', 13, 1, { about: 'متخصصون في التشطيبات الداخلية والخارجية بأعلى جودة.', specs: ['تشطيبات داخلية', 'تشطيبات خارجية', 'ديكور'], rating: 5, years: 10, workers: 60, engineers: 10, done: 150, completed: 140 }),
-                    makeCompany('لمسة الجمال', 15, 23, { about: 'شركة متخصصة في التشطيبات الفاخرة والتصميم الداخلي.', specs: ['جبس بورد', 'سيراميك', 'باركيه'], rating: 4, years: 8, workers: 40, engineers: 8, done: 90, completed: 85 }),
-                    makeCompany('الديكور العصري', 17, 18, { about: 'تصاميم عصرية للتشطيبات بأيدي فنانين مهرة.', rating: 4 }),
-                    makeCompany('بيوت الخليج', 19, 14, { about: 'تشطيبات سكنية وتجارية بمواد عالية الجودة.' })
+                    makeCompany('لمسة الجمال', 15, 23, { about: 'تشطيبات فاخرة وتصميم داخلي.', specs: ['جبس بورد', 'سيراميك', 'باركيه'], rating: 4, years: 8, workers: 40, engineers: 8, done: 90, completed: 85 })
                 ]
             },
             {
-                name: 'حدائق ولاندسكيب', icon: 'grass', cover: img(11),
+                name: 'حدائق ولاندسكيب', icon: 'park',
                 companies: [
-                    makeCompany('شركة الحدائق الخضراء', 2, 11, { about: 'تصميم وتنفيذ الحدائق واللاندسكيب بأحدث التصاميم.', specs: ['تصميم حدائق', 'ري ذكي', 'مناظر طبيعية'], rating: 5, years: 8, workers: 25, engineers: 5, done: 80, completed: 75 }),
-                    makeCompany('طبيعة الحياة', 4, 5, { about: 'حلول حدائق متكاملة للمباني السكنية والتجارية.', rating: 4 })
+                    makeCompany('حدائق الخضراء', 10, 10, { about: 'تصميم وتنفيذ الحدائق واللاندسكيب.', specs: ['تصميم حدائق', 'ري آلي', 'إنارة حدائق'], rating: 5, years: 12, workers: 25, engineers: 5, done: 80, completed: 75 }),
+                    makeCompany('طبيعة للتنسيق', 12, 14, { about: 'تنسيق حدائق عامة وخاصة.' })
                 ]
             },
             {
-                name: 'مسابح', icon: 'pool', cover: img(20),
+                name: 'مسابح', icon: 'pool',
                 companies: [
-                    makeCompany('شركة المسابح الحديثة', 27, 20, { about: 'تصميم وتنفيذ وصيانة المسابح بأعلى معايير الجودة.', specs: ['تصميم مسابح', 'صيانة دورية', 'أنظمة ترشيح'], rating: 4, years: 9, workers: 35, engineers: 7, done: 80, completed: 70 }),
-                    makeCompany('واحة الماء', 29, 6, { about: 'متخصصون في المسابح السكنية والتجارية.', rating: 5 })
+                    makeCompany('مسابح الأمل', 18, 8, { about: 'تصميم وتنفيذ وصيانة المسابح.', specs: ['مسابح خرسانية', 'مسابح فيبر', 'صيانة'], rating: 4, years: 10, workers: 20, engineers: 4, done: 60, completed: 55 }),
+                    makeCompany('مياه رائعة', 20, 2, { about: 'مسابح سكنية وتجارية بتصاميم عصرية.' })
                 ]
             },
             {
-                name: 'أعمال كهربائية', icon: 'electrical_services', cover: img(24),
+                name: 'أعمال كهربائية', icon: 'bolt',
                 companies: [
                     makeCompany('شركة الكهرباء الحديثة', 21, 24, { about: 'متخصصون في التأسيسات الكهربائية وأنظمة الطاقة.', specs: ['تأسيس كهرباء', 'أنظمة إنذار', 'كاميرات مراقبة'], rating: 4, years: 14, workers: 45, engineers: 12, done: 200, completed: 190 }),
-                    makeCompany('النور للكهرباء', 23, 28, { about: 'حلول كهربائية متكاملة للمنازل والمنشآت التجارية.', rating: 5, years: 20, workers: 70, engineers: 20, done: 300, completed: 280 }),
-                    makeCompany('تقنيات الإضاءة', 25, 7, { about: 'متخصصون في أنظمة الإضاءة الذكية وتوفير الطاقة.' })
+                    makeCompany('النور للكهرباء', 23, 28, { about: 'حلول كهربائية متكاملة للمنازل والمنشآت التجارية.', rating: 5, years: 20, workers: 70, engineers: 20, done: 300, completed: 280 })
                 ]
             },
             {
-                name: 'أعمال سباكة', icon: 'plumbing', cover: img(20),
+                name: 'أعمال سباكة', icon: 'plumbing',
                 companies: [
                     makeCompany('شركة السباكة المحترفة', 27, 20, { about: 'خدمات سباكة متكاملة من التأسيس إلى الصيانة.', specs: ['تأسيس سباكة', 'تمديدات مياه', 'صرف صحي'], rating: 4, years: 9, workers: 35, engineers: 7, done: 180, completed: 170 }),
-                    makeCompany('المياه الجوفية', 29, 6, { about: 'متخصصون في أنظمة المياه والسباكة السكنية والتجارية.' }),
-                    makeCompany('صحي بغداد', 31, 27, { about: 'خدمات صحية متكاملة بأفضل الأسعار.', rating: 4 })
+                    makeCompany('المياه الجوفية', 29, 6, { about: 'متخصصون في أنظمة المياه والسباكة.' })
                 ]
             },
             {
-                name: 'تركيب وتتويجه', icon: 'ac_unit', cover: img(15),
+                name: 'تكييف وتوفية', icon: 'ac_unit',
                 companies: [
-                    makeCompany('شركة التكييف المركزي', 21, 24, { about: 'تركيب وصيانة أنظمة التكييف المركزي والسبليت.', specs: ['تكييف مركزي', 'سبليت', 'صيانة دورية'], rating: 4, years: 10, workers: 40, engineers: 8, done: 150, completed: 140 }),
-                    makeCompany('أطلس للتكييفات', 23, 28, { about: 'حلول تكييف متكاملة بأفضل الأسعار.', rating: 5 })
+                    makeCompany('تكييفات بغداد', 2, 14, { about: 'تركيب وصيانة أنظمة التكييف والتبريد.', specs: ['تكييف مركزي', 'سبليت', 'صيانة دورية'], rating: 5, years: 12, workers: 30, engineers: 8, done: 250, completed: 240 }),
+                    makeCompany('kılimatech', 4, 8, { about: 'حلول تكييف متكاملة بأفضل الأسعار.' })
                 ]
             },
             {
-                name: 'واجهات ومنموم', icon: 'apartment', cover: img(18),
+                name: 'واجهات والمنيوم', icon: 'door_sliding',
                 companies: [
-                    makeCompany('شركة الواجهات الحديثة', 2, 11, { about: 'تصميم وتنفيذ واجهات المباني بمواد عالية الجودة.', specs: ['واجهات حجرية', 'واجهات زجاجية', 'ألمنيوم'], rating: 5, years: 12, workers: 50, engineers: 10, done: 120, completed: 110 }),
-                    makeCompany('تصميم الواجهات', 4, 5, { about: 'تصاميم عصرية للواجهات الخارجية والداخلية.', rating: 4 })
+                    makeCompany('واجهات الحديثة', 6, 18, { about: 'تصميم وتنفيذ واجهات زجاجية وألمنيوم.', specs: ['واجهات زجاج', 'ألمنيوم', 'كرتونيد'], rating: 4, years: 15, workers: 50, engineers: 10, done: 120, completed: 110 }),
+                    makeCompany('زجاج و-metal', 8, 12, { about: 'واجهات عصرية بأحدث التصاميم.' })
                 ]
             },
             {
-                name: 'أعمال طرق والترصيف', icon: 'construction', cover: img(3),
+                name: 'أعمال طرق والترصيف', icon: 'road',
                 companies: [
-                    makeCompany('شركة الطرق الحديثة', 5, 11, { about: 'تنفيذ طرق وترصيف بمواد عالية الجودة.', specs: ['ترصيف أسفلت', 'أعمال طرق', 'صيانة'], rating: 4, years: 15, workers: 80, engineers: 15, done: 100, completed: 95 }),
-                    makeCompany('المقاولون للطرق', 7, 21, { about: 'مشاريع طرق وبنية تحتية.', rating: 5 })
+                    makeCompany('طرق العراق', 9, 15, { about: 'بناء وترميم الطرق والترصيف.', specs: ['أعمال ترصيف', 'أسفلت', 'جبس'], rating: 4, years: 20, workers: 100, engineers: 15, done: 90, completed: 85 }),
+                    makeCompany('البنية التحتية', 11, 5, { about: 'مشاريع البنية التحتية والطرق العامه.' })
                 ]
             }
         ];
