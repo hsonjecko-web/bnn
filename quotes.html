@@ -37,23 +37,49 @@
                 </div>
 
                 <div style="padding: 0 16px 20px;">
-                    <div class="form-group">
-                        <label class="form-label">
-                            <span class="material-symbols-outlined">person</span>
-                            الاسم
-                        </label>
-                        <input type="text" class="form-input" v-model="form.name" placeholder="الاسم الكامل">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="material-symbols-outlined">person</span>
+                                الاسم
+                            </label>
+                            <input type="text" class="form-input" v-model="form.name" placeholder="الاسم">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="material-symbols-outlined">call</span>
+                                الهاتف
+                            </label>
+                            <input type="tel" class="form-input" v-model="form.phone" placeholder="07XX XXX XXXX" dir="ltr" style="text-align: left;">
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">
-                            <span class="material-symbols-outlined">location_city</span>
-                            المحافظة
-                        </label>
-                        <select class="form-select" v-model="form.gov">
-                            <option value="">اختر المحافظة</option>
-                            <option v-for="g in governorates" :key="g" :value="g">{{ g }}</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="material-symbols-outlined">location_city</span>
+                                المحافظة
+                            </label>
+                            <select class="form-select" v-model="form.gov">
+                                <option value="">اختر</option>
+                                <option v-for="g in governorates" :key="g" :value="g">{{ g }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span class="material-symbols-outlined">category</span>
+                                نوع الاستشارة
+                            </label>
+                            <select class="form-select" v-model="form.type">
+                                <option value="">اختر</option>
+                                <option value="هندسية">هندسية</option>
+                                <option value="تصميم داخلي">تصميم داخلي</option>
+                                <option value="تشطيبات">تشطيبات</option>
+                                <option value="مواد بناء">مواد بناء</option>
+                                <option value="قانونية">قانونية</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -66,34 +92,10 @@
 
                     <div class="form-group">
                         <label class="form-label">
-                            <span class="material-symbols-outlined">call</span>
-                            رقم الهاتف
-                        </label>
-                        <input type="tel" class="form-input" v-model="form.phone" placeholder="07XX XXX XXXX" dir="ltr" style="text-align: left;">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <span class="material-symbols-outlined">category</span>
-                            نوع الاستشارة
-                        </label>
-                        <select class="form-select" v-model="form.type">
-                            <option value="">اختر نوع الاستشارة</option>
-                            <option value="هندسية">استشارة هندسية</option>
-                            <option value="تصميم داخلي">استشارة تصميم داخلي</option>
-                            <option value="تشطيبات">استشارة تشطيبات</option>
-                            <option value="مواد بناء">استشارة مواد بناء</option>
-                            <option value="قانونية">استشارة قانونية</option>
-                            <option value="أخرى">أخرى</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
                             <span class="material-symbols-outlined">description</span>
                             تفاصيل الاستشارة
                         </label>
-                        <textarea class="form-textarea" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..." style="min-height: 140px;"></textarea>
+                        <textarea class="form-textarea compact" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..."></textarea>
                     </div>
 
                     <button class="btn-primary" @click="submitForm" style="margin-top: 8px;">

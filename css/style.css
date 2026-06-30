@@ -884,7 +884,7 @@ html.light-mode .search-panel input {
 
 /* ===== حقول الإدخال ===== */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .form-label {
@@ -892,10 +892,10 @@ html.light-mode .search-panel input {
   align-items: center;
   justify-content: flex-end;
   gap: 6px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-white);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .form-label svg {
@@ -906,7 +906,7 @@ html.light-mode .search-panel input {
 
 .form-input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 10px 12px;
   background: var(--bg-input);
   border: 1px solid var(--border-input);
   border-radius: 12px;
@@ -928,7 +928,7 @@ html.light-mode .search-panel input {
 
 .form-select {
   width: 100%;
-  padding: 14px 16px;
+  padding: 10px 12px;
   background: var(--bg-input);
   border: 1px solid var(--border-input);
   border-radius: 12px;
@@ -940,7 +940,7 @@ html.light-mode .search-panel input {
 
 .form-textarea {
   width: 100%;
-  padding: 14px 16px;
+  padding: 10px 12px;
   background: var(--bg-input);
   border: 1px solid var(--border-input);
   border-radius: 12px;
@@ -953,6 +953,33 @@ html.light-mode .search-panel input {
 
 .form-textarea::placeholder {
   color: var(--text-muted);
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 12px;
+}
+
+.form-row .form-label {
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.form-row .form-input,
+.form-row .form-select {
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.form-textarea.compact {
+  min-height: 120px;
+  padding: 10px 12px;
+  font-size: 13px;
 }
 
 /* ===== تتبع الطلب ===== */
