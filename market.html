@@ -568,6 +568,7 @@
                     <!-- ===== الخيارات: صفوف (تسمية يمين / تحكم يسار) ===== -->
                     <div class="prod-options">
                         <div class="prod-opt-row">
+                            <span class="prod-opt-label"><span class="material-symbols-outlined">palette</span> اختر اللون</span>
                             <div class="prod-opt-value">
                                 <div class="prod-colors">
                                     <div v-for="(c, i) in selectedProduct.colors" :key="i" class="prod-color-dot"
@@ -581,9 +582,9 @@
                                 </div>
                                 <span class="prod-opt-sel">{{ (selectedProduct.colors[selectedColor] || { name: 'قياسي' }).name }}</span>
                             </div>
-                            <span class="prod-opt-label"><span class="material-symbols-outlined">palette</span> اختر اللون</span>
                         </div>
                         <div class="prod-opt-row">
+                            <span class="prod-opt-label"><span class="material-symbols-outlined">spa</span> نوع التشطيب</span>
                             <div class="prod-opt-value">
                                 <div class="prod-opt-btns">
                                     <button v-for="(ft, i) in selectedProduct.finishTypes" :key="i"
@@ -592,9 +593,9 @@
                                             @click="selectedFinish = i">{{ ft }}</button>
                                 </div>
                             </div>
-                            <span class="prod-opt-label"><span class="material-symbols-outlined">spa</span> نوع التشطيب</span>
                         </div>
                         <div class="prod-opt-row">
+                            <span class="prod-opt-label"><span class="material-symbols-outlined">inventory_2</span> حجم العبوة</span>
                             <div class="prod-opt-value">
                                 <div class="prod-opt-btns">
                                     <button v-for="(sz, i) in selectedProduct.sizes" :key="i"
@@ -603,9 +604,9 @@
                                             @click="selectedSize = i">{{ sz }}</button>
                                 </div>
                             </div>
-                            <span class="prod-opt-label"><span class="material-symbols-outlined">inventory_2</span> حجم العبوة</span>
                         </div>
                         <div class="prod-opt-row">
+                            <span class="prod-opt-label"><span class="material-symbols-outlined">qty</span> الكمية</span>
                             <div class="prod-opt-value">
                                 <div class="prod-qty-box">
                                     <button class="prod-qty-btn" @click="selectedQty++">+</button>
@@ -613,7 +614,6 @@
                                     <button class="prod-qty-btn" @click="selectedQty = Math.max(1, selectedQty - 1)">-</button>
                                 </div>
                             </div>
-                            <span class="prod-opt-label"><span class="material-symbols-outlined">qty</span> الكمية</span>
                         </div>
                     </div>
 

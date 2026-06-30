@@ -5059,6 +5059,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
   overflow: hidden;
   background: var(--bg-card);
   position: relative;
+  border-radius: 12px;
 }
 .prod-hero-gallery .prod-gallery-track {
   display: flex;
