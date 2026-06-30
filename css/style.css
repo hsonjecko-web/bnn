@@ -3291,8 +3291,8 @@ html.light-mode .exec-cat-card {
 }
 
 .exec-cat-icon-wrap {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3321,7 +3321,7 @@ html.light-mode .exec-cat-card {
 }
 
 html.light-mode .exec-cat-name {
-  color: #1a237e;
+  color: var(--text-light);
 }
 
 .exec-cat-divider {
