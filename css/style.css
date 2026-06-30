@@ -5034,8 +5034,17 @@ html.light-mode .mkt-modal-desc { color: #666; }
 .prod-detail-page {
   padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
 }
-.prod-detail-page > div:not(:last-child) {
-  margin-bottom: 10px;
+.prod-detail-page > div {
+  background: var(--bg-card);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 12px;
+  margin: 0 12px 12px;
+}
+.prod-detail-page > div:first-of-type {
+  margin-top: 0;
+  border-radius: 0;
+  border: none;
+  background: transparent;
 }
 /* --- الهيدر --- */
 .prod-detail-page .exec-header {
@@ -5049,7 +5058,6 @@ html.light-mode .mkt-modal-desc { color: #666; }
 /* --- الهيرو: صف بعمودين --- */
 .prod-hero {
   display: flex;
-  border-bottom: 1px solid var(--border-light);
 }
 .prod-hero-gallery {
   width: 50%;
@@ -5059,7 +5067,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
 .prod-hero-gallery .prod-gallery {
   width: 100%;
   height: 240px;
-  overflow: hidden;
+  overflow: auto;
   background: var(--bg-card);
   position: relative;
   border-radius: 12px;
@@ -5080,7 +5088,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 8px 8px 0 16px;
+  padding: 4px 8px 12px 16px;
   box-sizing: border-box;
 }
 .prod-hero-gallery .prod-gallery-dots {
@@ -5210,7 +5218,6 @@ html.light-mode .mkt-modal-desc { color: #666; }
 /* --- الخيارات (صفوف) --- */
 .prod-options {
   padding: 16px 16px;
-  border-bottom: 1px solid var(--border-light);
 }
 .prod-opt-row {
   display: flex;
@@ -5332,7 +5339,6 @@ html.light-mode .mkt-modal-desc { color: #666; }
 /* --- التوصيل (شبكة 3 أعمدة) --- */
 .prod-delivery {
   padding: 16px;
-  border-bottom: 1px solid var(--border-light);
 }
 .prod-delivery-header {
   display: flex;
@@ -5398,8 +5404,6 @@ html.light-mode .mkt-modal-desc { color: #666; }
 }
 /* --- بطاقة ملخص الطلب --- */
 .prod-summary-card {
-  border-bottom: 1px solid var(--border-light);
-}
 .prod-summary-details {
   padding: 14px;
   display: flex;
@@ -5482,8 +5486,8 @@ html.light-mode .mkt-modal-desc { color: #666; }
   border: 2px solid rgba(201,162,67,0.3);
 }
 .prod-order-now {
-  background: var(--accent-gold);
-  color: #0b1a2e;
+  background: #f97316;
+  color: #fff;
   font-size: 16px;
 }
 .prod-action-btn .material-symbols-outlined {
