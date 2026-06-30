@@ -976,6 +976,29 @@ html.light-mode .search-panel input {
   font-size: 13px;
 }
 
+.consult-submit {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent-gold);
+  border: none;
+  border-radius: 12px;
+  color: var(--text-on-accent);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+html.light-mode .consult-submit {
+  background: #4a8bc2;
+  color: #fff;
+}
+
 /* ===== تتبع الطلب ===== */
 .order-timeline {
   display: flex;
