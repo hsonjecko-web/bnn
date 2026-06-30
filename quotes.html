@@ -28,15 +28,18 @@
 <body>
     <div id="app">
         <div class="app-container">
-            <div id="header"></div>
+            <div class="top-nav" style="justify-content: center; position: relative;">
+                <a href="home.html" class="nav-back" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%);">
+                    <span class="material-symbols-outlined" style="font-size: 24px;">arrow_forward</span>
+                </a>
+                <div style="text-align: center;">
+                    <div class="nav-title" style="font-size: 18px;">طلب استشارة</div>
+                    <div style="font-size: 11px; color: var(--text-light); margin-top: 1px;">املأ البيانات وسيتواصل معك المختصون</div>
+                </div>
+            </div>
 
             <div class="page-content">
-                <div style="padding: 20px 16px;">
-                    <h1 style="font-size: 22px; font-weight: 800; color: var(--text-white); margin-bottom: 4px;">طلب استشارة</h1>
-                    <p style="font-size: 13px; color: var(--text-light);">املأ البيانات وسيتواصل معك المختصون</p>
-                </div>
-
-                <div style="padding: 0 16px 20px;">
+                <div style="padding: 0 16px 20px; margin-top: 12px;">
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">
@@ -111,7 +114,7 @@
 
     <script src="js/nav.js"></script>
     <script>
-        document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
+        initTheme();
         document.getElementById('bottomNav').innerHTML = renderNav('home');
 
         const { createApp, ref } = Vue;
