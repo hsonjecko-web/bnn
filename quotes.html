@@ -30,18 +30,18 @@
         <div class="app-container">
             <div id="header"></div>
 
-            <div class="back-below-header">
-                <a href="home.html" class="nav-back">
-                    <span class="material-symbols-outlined">arrow_forward</span>
+            <div style="display: flex; align-items: center; padding: 8px 16px; gap: 10px;">
+                <a href="home.html" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--text-white); text-decoration: none;">
+                    <span class="material-symbols-outlined" style="font-size: 24px;">arrow_forward</span>
                 </a>
+                <div style="flex: 1; text-align: center;">
+                    <div style="font-size: 18px; font-weight: 700; color: var(--text-white);">طلب استشارة</div>
+                    <div style="font-size: 12px; color: var(--text-light);">املأ البيانات وسيتواصل معك المختصون</div>
+                </div>
+                <div style="width: 44px;"></div>
             </div>
 
             <div class="page-content">
-                <div style="padding: 20px 16px; text-align: center;">
-                    <h1 style="font-size: 22px; font-weight: 800; color: var(--text-white); margin-bottom: 4px;">طلب استشارة</h1>
-                    <p style="font-size: 13px; color: var(--text-light);">املأ البيانات وسيتواصل معك المختصون</p>
-                </div>
-
                 <div style="padding: 0 16px 20px;">
                     <div class="form-row">
                         <div class="form-group">
@@ -101,10 +101,10 @@
                             <span class="material-symbols-outlined">description</span>
                             تفاصيل الاستشارة
                         </label>
-                        <textarea class="form-textarea" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..." style="min-height: 110px;"></textarea>
+                        <textarea class="form-textarea" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..."></textarea>
                     </div>
 
-                    <button class="btn-primary" @click="submitForm" style="margin-top: 12px; background: var(--accent-gold);">
+                    <button class="btn-primary" @click="submitForm" style="margin-top: 12px; background: var(--accent-gold); color: var(--text-on-accent);">
                         <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 20px; margin-left: 6px;">send</span>
                         إرسال الاستشارة
                     </button>

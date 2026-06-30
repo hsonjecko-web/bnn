@@ -945,7 +945,7 @@ html.light-mode .search-panel input {
   border: 1px solid var(--border-input);
   border-radius: 12px;
   color: var(--text-white);
-  font-size: 14px;
+  font-size: 13px;
   direction: rtl;
   min-height: 100px;
   resize: vertical;
@@ -977,28 +977,6 @@ html.light-mode .search-panel input {
 }
 
 /* ===== تتبع الطلب ===== */
-.back-below-header {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-}
-
-.back-below-header .nav-back {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  color: var(--text-white);
-  text-decoration: none;
-}
-
-.back-below-header .nav-back .material-symbols-outlined {
-  font-size: 24px;
-}
-
 .order-timeline {
   display: flex;
   align-items: center;
