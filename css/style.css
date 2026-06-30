@@ -5466,44 +5466,9 @@ html.light-mode .mkt-modal-desc { color: #666; }
   font-weight: 800;
   color: var(--accent-gold);
 }
-/* --- شارات الثقة --- */
-.prod-trust {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  padding: 0 16px 16px;
-}
-.prod-trust-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-.prod-trust-icon {
-  width: 40px;
-  height: 40px;
-  background: rgba(201,162,67,0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.prod-trust-icon .material-symbols-outlined {
-  font-size: 20px;
-  color: var(--accent-gold);
-}
-.prod-trust-item span:last-child {
-  font-size: 8px;
-  font-weight: 600;
-  color: var(--text-light);
-  text-align: center;
-  line-height: 1.2;
-}
-
 @media (max-width: 380px) {
   .prod-hero-gallery .prod-gallery { height: 180px; }
   .prod-hero-info .prod-title { font-size: 14px; }
   .prod-delivery-grid { grid-template-columns: 1fr; }
-  .prod-trust { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 }
 /*# sourceMappingURL=style.css.map */
