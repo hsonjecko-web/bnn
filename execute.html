@@ -336,7 +336,7 @@
 
         var categoriesData = [
             {
-                name: 'بناء', icon: 'foundation', cover: img(16),
+                name: 'بناء وإنشاء', icon: 'foundation', cover: img(16),
                 companies: [
                     makeCompany('شركة البناء الحديث', 3, 16, { about: 'شركة رائدة في مجال البناء السكني والتجاري، تأسست عام 2005، متخصصة في بناء الفلل والمجمعات السكنية.', specs: ['بناء سكني وتجاري', 'خرسانة مسلحة', 'هياكل حديدية'], rating: 5, years: 18, workers: 200, engineers: 35, done: 120, completed: 100 }),
                     makeCompany('مقاولون العرب', 5, 11, { about: 'من كبرى شركات المقاولات في العراق، نقدم خدمات البناء والتشييد بأعلى المواصفات.', specs: ['بناء عام', 'هندسة مدنية', 'بنية تحتية'], rating: 4, years: 25, workers: 350, engineers: 50, done: 200, completed: 180 }),
@@ -347,7 +347,7 @@
                 ]
             },
             {
-                name: 'تشطيبات', icon: 'format_paint', cover: img(1),
+                name: 'تشطيبات داخلية', icon: 'format_paint', cover: img(1),
                 companies: [
                     makeCompany('شركة التشطيب الذهبي', 13, 1, { about: 'متخصصون في التشطيبات الداخلية والخارجية بأعلى جودة.', specs: ['تشطيبات داخلية', 'تشطيبات خارجية', 'ديكور'], rating: 5, years: 10, workers: 60, engineers: 10, done: 150, completed: 140 }),
                     makeCompany('لمسة الجمال', 15, 23, { about: 'شركة متخصصة في التشطيبات الفاخرة والتصميم الداخلي.', specs: ['جبس بورد', 'سيراميك', 'باركيه'], rating: 4, years: 8, workers: 40, engineers: 8, done: 90, completed: 85 }),
@@ -356,7 +356,21 @@
                 ]
             },
             {
-                name: 'كهرباء', icon: 'bolt', cover: img(24),
+                name: 'حدائق ولاندسكيب', icon: 'grass', cover: img(11),
+                companies: [
+                    makeCompany('شركة الحدائق الخضراء', 2, 11, { about: 'تصميم وتنفيذ الحدائق واللاندسكيب بأحدث التصاميم.', specs: ['تصميم حدائق', 'ري ذكي', 'مناظر طبيعية'], rating: 5, years: 8, workers: 25, engineers: 5, done: 80, completed: 75 }),
+                    makeCompany('طبيعة الحياة', 4, 5, { about: 'حلول حدائق متكاملة للمباني السكنية والتجارية.', rating: 4 })
+                ]
+            },
+            {
+                name: 'مسابح', icon: 'pool', cover: img(20),
+                companies: [
+                    makeCompany('شركة المسابح الحديثة', 27, 20, { about: 'تصميم وتنفيذ وصيانة المسابح بأعلى معايير الجودة.', specs: ['تصميم مسابح', 'صيانة دورية', 'أنظمة ترشيح'], rating: 4, years: 9, workers: 35, engineers: 7, done: 80, completed: 70 }),
+                    makeCompany('واحة الماء', 29, 6, { about: 'متخصصون في المسابح السكنية والتجارية.', rating: 5 })
+                ]
+            },
+            {
+                name: 'أعمال كهربائية', icon: 'electrical_services', cover: img(24),
                 companies: [
                     makeCompany('شركة الكهرباء الحديثة', 21, 24, { about: 'متخصصون في التأسيسات الكهربائية وأنظمة الطاقة.', specs: ['تأسيس كهرباء', 'أنظمة إنذار', 'كاميرات مراقبة'], rating: 4, years: 14, workers: 45, engineers: 12, done: 200, completed: 190 }),
                     makeCompany('النور للكهرباء', 23, 28, { about: 'حلول كهربائية متكاملة للمنازل والمنشآت التجارية.', rating: 5, years: 20, workers: 70, engineers: 20, done: 300, completed: 280 }),
@@ -364,7 +378,7 @@
                 ]
             },
             {
-                name: 'سباكة', icon: 'plumbing', cover: img(20),
+                name: 'أعمال سباكة', icon: 'plumbing', cover: img(20),
                 companies: [
                     makeCompany('شركة السباكة المحترفة', 27, 20, { about: 'خدمات سباكة متكاملة من التأسيس إلى الصيانة.', specs: ['تأسيس سباكة', 'تمديدات مياه', 'صرف صحي'], rating: 4, years: 9, workers: 35, engineers: 7, done: 180, completed: 170 }),
                     makeCompany('المياه الجوفية', 29, 6, { about: 'متخصصون في أنظمة المياه والسباكة السكنية والتجارية.' }),
@@ -372,11 +386,24 @@
                 ]
             },
             {
-                name: 'دهانات', icon: 'palette', cover: img(11),
+                name: 'تركيب وتتويجه', icon: 'ac_unit', cover: img(15),
                 companies: [
-                    makeCompany('شركة الألوان المتميزة', 2, 11, { about: 'دهانات داخلية وخارجية بأحدث التصاميم والألوان.', specs: ['دهانات داخلية', 'دهانات خارجية', 'دهانات ديكورية'], rating: 5, years: 7, workers: 30, engineers: 5, done: 100, completed: 95 }),
-                    makeCompany('فن الدهان', 4, 5, { about: 'فنون الدهانات العصرية والكلاسيكية.', rating: 4 }),
-                    makeCompany('الجدار الجميل', 6, 2, { about: 'دهانات عالية الجودة بأسعار تنافسية.' })
+                    makeCompany('شركة التكييف المركزي', 21, 24, { about: 'تركيب وصيانة أنظمة التكييف المركزي والسبليت.', specs: ['تكييف مركزي', 'سبليت', 'صيانة دورية'], rating: 4, years: 10, workers: 40, engineers: 8, done: 150, completed: 140 }),
+                    makeCompany('أطلس للتكييفات', 23, 28, { about: 'حلول تكييف متكاملة بأفضل الأسعار.', rating: 5 })
+                ]
+            },
+            {
+                name: 'واجهات ومنموم', icon: 'apartment', cover: img(18),
+                companies: [
+                    makeCompany('شركة الواجهات الحديثة', 2, 11, { about: 'تصميم وتنفيذ واجهات المباني بمواد عالية الجودة.', specs: ['واجهات حجرية', 'واجهات زجاجية', 'ألمنيوم'], rating: 5, years: 12, workers: 50, engineers: 10, done: 120, completed: 110 }),
+                    makeCompany('تصميم الواجهات', 4, 5, { about: 'تصاميم عصرية للواجهات الخارجية والداخلية.', rating: 4 })
+                ]
+            },
+            {
+                name: 'أعمال طرق والترصيف', icon: 'construction', cover: img(3),
+                companies: [
+                    makeCompany('شركة الطرق الحديثة', 5, 11, { about: 'تنفيذ طرق وترصيف بمواد عالية الجودة.', specs: ['ترصيف أسفلت', 'أعمال طرق', 'صيانة'], rating: 4, years: 15, workers: 80, engineers: 15, done: 100, completed: 95 }),
+                    makeCompany('المقاولون للطرق', 7, 21, { about: 'مشاريع طرق وبنية تحتية.', rating: 5 })
                 ]
             }
         ];

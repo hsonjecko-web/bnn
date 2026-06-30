@@ -3252,6 +3252,17 @@ html.light-mode .ideas-projects-header h2 {
   transition: all 0.2s ease;
 }
 
+.exec-cat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 3px;
+  background: var(--accent-gold);
+  border-radius: 3px 3px 0 0;
+}
+
 .exec-cat-card:active {
   transform: scale(0.96);
   opacity: 0.85;
