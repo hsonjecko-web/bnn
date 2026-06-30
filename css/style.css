@@ -5034,6 +5034,9 @@ html.light-mode .mkt-modal-desc { color: #666; }
 .prod-detail-page {
   padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
 }
+.prod-detail-page > div:not(:last-child) {
+  margin-bottom: 10px;
+}
 /* --- الهيدر --- */
 .prod-detail-page .exec-header {
   padding: 12px 16px;
@@ -5206,7 +5209,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
 .rounded-full { border-radius: 50%; }
 /* --- الخيارات (صفوف) --- */
 .prod-options {
-  padding: 12px 16px;
+  padding: 16px 16px;
   border-bottom: 1px solid var(--border-light);
 }
 .prod-opt-row {
