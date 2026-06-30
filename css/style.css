@@ -3330,7 +3330,7 @@ html.light-mode .exec-cat-name {
   height: 3px;
   background: #ff9800;
   border-radius: 2px;
-  margin: 2px auto 0;
+  margin: 6px auto 0;
 }
 
 @media (hover: hover) {
