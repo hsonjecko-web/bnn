@@ -239,19 +239,9 @@
                         </div>
                     </div>
 
-                    <!-- فلتر السعر -->
-                    <div class="mkt-price-filter">
-                        <div class="mkt-filter-inputs">
-                            <input type="text" inputmode="numeric" v-model="priceFrom" placeholder="السعر من">
-                            <span class="mkt-filter-sep">-</span>
-                            <input type="text" inputmode="numeric" v-model="priceTo" placeholder="السعر إلى">
-                        </div>
-                        <button class="mkt-filter-btn" @click="applyFilter">تطبيق</button>
-                    </div>
-
                     <!-- أفقية -->
                     <div class="mkt-cat-products-scroll">
-                        <div v-for="(p, i) in filteredCatProducts" :key="i" class="mkt-prod-card" @click="openProduct(p)">
+                        <div v-for="(p, i) in catProducts" :key="i" class="mkt-prod-card" @click="openProduct(p)">
                             <div class="mkt-prod-img">
                                 <img :src="p.img" alt="">
                             </div>
@@ -793,8 +783,6 @@
                 var checkoutView = ref(false);
                 var searchQuery = ref('');
                 var cart = ref([]);
-                var priceFrom = ref('');
-                var priceTo = ref('');
                 var projTypeOpen = ref(false);
                 var selectedProjType = ref('');
                 var mktSlide = ref(0);
@@ -976,13 +964,6 @@
                     return allProducts.value.filter(function(p) { return p.cat === activeCatView.value; });
                 });
 
-                var filteredCatProducts = computed(function() {
-                    var list = catProducts.value;
-                    var from = parseInt(priceFrom.value.replace(/,/g, '')) || 0;
-                    var to = parseInt(priceTo.value.replace(/,/g, '')) || Infinity;
-                    return list.filter(function(p) { return p.price >= from && p.price <= to; });
-                });
-
                 var showAllOffers = ref(false);
                 var selectedSupplier = ref(null);
                 var suppliers = ref([
@@ -1000,11 +981,7 @@
 
                 function selectCat(i) {
                     activeCatView.value = i;
-                    priceFrom.value = '';
-                    priceTo.value = '';
                 }
-
-                function applyFilter() {}
 
                 function openProduct(p) {
                     selectedProduct.value = p;
@@ -1234,14 +1211,13 @@
                     categories, searchQuery, activeCatView, cartView, calculatorView, checkoutView,
                     sliderImages, mktSlide, sliderTouch, resetMktTimer,
                     allProducts, topProducts, allTopProducts, suppliers, offers, showAllView, showAllOffers,
-                    catProducts, filteredCatProducts, selectCat, applyFilter, openProduct, addToCart,
+                    catProducts, selectCat, openProduct, addToCart,
                     cart, cartCount, cartSubtotal, cartTotal,
                     calcLength, calcWidth, calcHeight, calcDone, doCalc, selectedCalcType, goToCalc,
                     ceramicArea, ceramicBoxes, ceramicCost,
                     paintArea, paintBuckets, paintCost,
                     gypsumArea, gypsumSheets, gypsumCost,
                     calcTotal, addCalcToCart, confirmOrder,
-                    priceFrom, priceTo,
                     selectedProduct, selectedColor, selectedSize, selectedFinish, selectedQty, modalSlide,
                     addToCartFromModal, openViewer, nextViewer, prevViewer,
                     viewerOpen, viewerImages, viewerIndex, viewerTouch,

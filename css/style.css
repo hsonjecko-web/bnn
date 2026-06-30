@@ -4853,44 +4853,8 @@ html.light-mode .mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
 .mkt-old-price { font-size: 11px; color: var(--text-muted); text-decoration: line-through; }
 .mkt-new-price { font-size: 13px; font-weight: 700; color: var(--accent-gold); }
 
+
 /* --- صفحة القسم --- */
-.mkt-price-filter {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 16px 12px;
-}
-.mkt-filter-inputs {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  gap: 6px;
-}
-.mkt-filter-inputs input {
-  flex: 1;
-  padding: 10px 12px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-input);
-  border-radius: 10px;
-  color: var(--text-white);
-  font-size: 13px;
-  font-family: 'Cairo', sans-serif;
-  text-align: center;
-}
-.mkt-filter-inputs input::placeholder { color: var(--text-muted); }
-.mkt-filter-sep { color: var(--text-muted); font-size: 14px; }
-.mkt-filter-btn {
-  padding: 10px 16px;
-  background: #3a6a95;
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  font-family: 'Cairo', sans-serif;
-  cursor: pointer;
-  white-space: nowrap;
-}
 
 .mkt-cat-products-scroll {
   display: flex;
