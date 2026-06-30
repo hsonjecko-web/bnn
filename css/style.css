@@ -3332,6 +3332,10 @@ html.light-mode .exec-cat-name {
   margin: 14px auto 0;
 }
 
+html:not(.light-mode) .exec-cat-divider {
+  background: var(--accent-gold);
+}
+
 @media (hover: hover) {
   .exec-cat-card:hover {
     transform: scale(0.97);
