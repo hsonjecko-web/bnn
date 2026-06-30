@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b1a2e">
-    <title>بنيان - عروض الأسعار</title>
+    <title>بنيان - استشارات</title>
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -24,7 +24,6 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="js/header.js"></script>
     <script src="js/bottom-nav.js"></script>
-    <script src="js/router.js"></script>
 </head>
 <body>
     <div id="app">
@@ -32,67 +31,75 @@
             <div id="header"></div>
 
             <div class="page-content">
-                <!-- رأس الصفحة -->
-                <div style="padding:16px;">
-                    <h1 style="font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;">عروض الأسعار</h1>
-                    <p style="font-size:13px;color:#8a9bb0;">المشروع: فيلا سكنية - حي النرجس</p>
+                <div style="padding: 20px 16px;">
+                    <h1 style="font-size: 22px; font-weight: 800; color: var(--text-white); margin-bottom: 4px;">طلب استشارة</h1>
+                    <p style="font-size: 13px; color: var(--text-light);">املأ البيانات وسيتواصل معك المختصون</p>
                 </div>
 
-                <!-- إحصائيات -->
-                <div class="stats-row">
-                    <div class="stat-box">
-                        <div class="stat-number">5</div>
-                        <div class="stat-label">عروض واردة</div>
+                <div style="padding: 0 16px 20px;">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="material-symbols-outlined">person</span>
+                            الاسم
+                        </label>
+                        <input type="text" class="form-input" v-model="form.name" placeholder="الاسم الكامل">
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">مقاولين</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">4.5</div>
-                        <div class="stat-label">متوسط التقييم</div>
-                    </div>
-                </div>
 
-                <!-- أزرار التصفية -->
-                <div class="filters-row">
-                    <button v-for="(filter, index) in filters" :key="index"
-                            class="filter-btn"
-                            :class="{ active: activeFilter === index }"
-                            @click="activeFilter = index">
-                        {{ filter }}
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="material-symbols-outlined">location_city</span>
+                            المحافظة
+                        </label>
+                        <select class="form-select" v-model="form.gov">
+                            <option value="">اختر المحافظة</option>
+                            <option v-for="g in governorates" :key="g" :value="g">{{ g }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="material-symbols-outlined">map</span>
+                            العنوان
+                        </label>
+                        <input type="text" class="form-input" v-model="form.address" placeholder="العنوان بالتفصيل">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="material-symbols-outlined">call</span>
+                            رقم الهاتف
+                        </label>
+                        <input type="tel" class="form-input" v-model="form.phone" placeholder="07XX XXX XXXX" dir="ltr" style="text-align: left;">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="material-symbols-outlined">category</span>
+                            نوع الاستشارة
+                        </label>
+                        <select class="form-select" v-model="form.type">
+                            <option value="">اختر نوع الاستشارة</option>
+                            <option value="هندسية">استشارة هندسية</option>
+                            <option value="تصميم داخلي">استشارة تصميم داخلي</option>
+                            <option value="تشطيبات">استشارة تشطيبات</option>
+                            <option value="مواد بناء">استشارة مواد بناء</option>
+                            <option value="قانونية">استشارة قانونية</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="material-symbols-outlined">description</span>
+                            تفاصيل الاستشارة
+                        </label>
+                        <textarea class="form-textarea" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..." style="min-height: 140px;"></textarea>
+                    </div>
+
+                    <button class="btn-primary" @click="submitForm" style="margin-top: 8px;">
+                        <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 20px; margin-left: 6px;">send</span>
+                        إرسال الاستشارة
                     </button>
-                </div>
-
-                <!-- عروض الأسعار -->
-                <div class="offers-list">
-                    <div v-for="(offer, index) in sortedOffers" :key="index" class="offer-card">
-                        <div class="offer-header">
-                            <div class="offer-company">
-                                <div class="offer-logo">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="offer-name">{{ offer.company }}</div>
-                                    <div class="offer-rating">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#c9a243" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                        {{ offer.rating }} ({{ offer.reviews }} تقييم)
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                            <div class="offer-price">{{ offer.price }} د.ع</div>
-                            <div class="offer-duration">مدة التنفيذ: {{ offer.duration }}</div>
-                        </div>
-                        <p style="font-size:13px;color:#8a9bb0;margin-bottom:12px;">{{ offer.desc }}</p>
-                        <div class="offer-actions">
-                            <button class="btn-primary btn-small" style="flex:1;" @click="acceptOffer(offer)">قبول العرض</button>
-                            <a href="company.html" class="btn-outline btn-small" style="text-decoration:none;flex:1;">عرض الملف</a>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -105,76 +112,43 @@
         document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
         document.getElementById('bottomNav').innerHTML = renderNav('home');
 
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref } = Vue;
 
         createApp({
             setup() {
                 initTheme();
-                const activeFilter = ref(0);
-                const filters = ref(['الكل', 'الأقل سعراً', 'الأعلى تقييماً', 'الأسرع']);
 
-                const offers = ref([
-                    {
-                        company: 'شركة البناء الحديث',
-                        rating: 4.8,
-                        reviews: 120,
-                        price: '82,000,000',
-                        priceNum: 82000000,
-                        duration: '3 شهور',
-                        desc: 'نقدم خدمة متكاملة لبناء فيلا سكنية فاخرة مع استخدام أفضل المواد والخامات',
-                        ratingNum: 4.8,
-                        durationMonths: 3
-                    },
-                    {
-                        company: 'مقاولون العرب',
-                        rating: 4.5,
-                        reviews: 85,
-                        price: '78,000,000',
-                        priceNum: 78000000,
-                        duration: '4 شهور',
-                        desc: 'فريق عمل محترف مع خبرة واسعة في بناء الفلل السكنية والمباني التجارية',
-                        ratingNum: 4.5,
-                        durationMonths: 4
-                    },
-                    {
-                        company: 'بناء المستقبل',
-                        rating: 4.2,
-                        reviews: 60,
-                        price: '75,000,000',
-                        priceNum: 75000000,
-                        duration: '5 شهور',
-                        desc: 'خبرة تزيد عن 15 عاماً في مجال البناء والمقاولات العامة',
-                        ratingNum: 4.2,
-                        durationMonths: 5
-                    }
-                ]);
+                var governorates = ref(['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية']);
 
-                const sortedOffers = computed(() => {
-                    const sorted = [...offers.value];
-                    switch (activeFilter.value) {
-                        case 1: return sorted.sort((a, b) => a.priceNum - b.priceNum);
-                        case 2: return sorted.sort((a, b) => b.ratingNum - a.ratingNum);
-                        case 3: return sorted.sort((a, b) => a.durationMonths - b.durationMonths);
-                        default: return sorted;
-                    }
+                var form = ref({
+                    name: '',
+                    gov: '',
+                    address: '',
+                    phone: '',
+                    type: '',
+                    desc: ''
                 });
 
-                const acceptOffer = (offer) => {
-                    alert('تم قبول عرض ' + offer.company + ' بنجاح!');
-                };
+                function submitForm() {
+                    if (!form.value.name.trim()) { alert('يرجى إدخال الاسم'); return; }
+                    if (!form.value.gov) { alert('يرجى اختيار المحافظة'); return; }
+                    if (!form.value.phone.trim()) { alert('يرجى إدخال رقم الهاتف'); return; }
+                    if (!form.value.type) { alert('يرجى اختيار نوع الاستشارة'); return; }
+                    if (!form.value.desc.trim()) { alert('يرجى كتابة تفاصيل الاستشارة'); return; }
 
-                return { activeFilter, filters, sortedOffers, acceptOffer };
+                    alert('تم ارسال الاستشارة\nانتظر الرد من المختصين');
+                    form.value = { name: '', gov: '', address: '', phone: '', type: '', desc: '' };
+                }
+
+                return { form, governorates, submitForm };
             }
         }).mount('#app');
-    </script>
-    <script>
-        // Register Service Worker for PWA
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('SW registered'))
-                .catch(err => console.log('SW registration failed'));
+                .then(function() { console.log('SW registered'); })
+                .catch(function(err) { console.log('SW registration failed'); });
         }
     </script>
 </body>
 </html>
-
