@@ -30,6 +30,12 @@
         <div class="app-container">
             <div id="header"></div>
 
+            <div class="back-below-header">
+                <a href="home.html" class="nav-back">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
+
             <div class="page-content">
                 <div style="padding: 20px 16px; text-align: center;">
                     <h1 style="font-size: 22px; font-weight: 800; color: var(--text-white); margin-bottom: 4px;">طلب استشارة</h1>
@@ -98,7 +104,7 @@
                         <textarea class="form-textarea" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..." style="min-height: 110px;"></textarea>
                     </div>
 
-                    <button class="btn-primary" @click="submitForm" style="margin-top: 12px;">
+                    <button class="btn-primary" @click="submitForm" style="margin-top: 12px; background: var(--accent-gold);">
                         <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 20px; margin-left: 6px;">send</span>
                         إرسال الاستشارة
                     </button>
@@ -112,7 +118,7 @@
     <script src="js/nav.js"></script>
     <script>
         initTheme();
-        document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
+        document.getElementById('header').innerHTML = renderHeader({});
         document.getElementById('bottomNav').innerHTML = renderNav('home');
 
         const { createApp, ref } = Vue;

@@ -890,7 +890,7 @@ html.light-mode .search-panel input {
 .form-label {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
@@ -977,6 +977,28 @@ html.light-mode .search-panel input {
 }
 
 /* ===== تتبع الطلب ===== */
+.back-below-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+}
+
+.back-below-header .nav-back {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-white);
+  text-decoration: none;
+}
+
+.back-below-header .nav-back .material-symbols-outlined {
+  font-size: 24px;
+}
+
 .order-timeline {
   display: flex;
   align-items: center;
