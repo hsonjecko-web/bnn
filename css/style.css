@@ -894,7 +894,7 @@ html.light-mode .search-panel input {
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-white);
+  color: var(--text-light);
   margin-bottom: 6px;
 }
 
