@@ -699,23 +699,6 @@
                         </div>
                     </div>
 
-                    <!-- ===== بطاقة العرض عند الكميات الكبيرة ===== -->
-                    <div class="prod-offer-banner" v-if="selectedQty >= 3">
-                        <div class="prod-offer-badge">عرض خاص</div>
-                        <span>خصم 10% عند شراء {{ selectedQty }} قطع أو أكثر!</span>
-                    </div>
-
-                    <!-- ===== الأزرار ===== -->
-                    <div class="prod-actions">
-                        <button class="prod-action-btn prod-add-cart" @click="addToCartFromDetail">
-                            <span class="material-symbols-outlined">add_shopping_cart</span>
-                            أضف إلى السلة
-                        </button>
-                        <button class="prod-action-btn prod-order-now" @click="confirmOrderFromDetail">
-                            اطلب الآن
-                        </button>
-                    </div>
-
                     <!-- ===== شارات الثقة ===== -->
                     <div class="prod-trust">
                         <div class="prod-trust-item">
