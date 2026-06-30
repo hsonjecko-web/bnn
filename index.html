@@ -856,31 +856,31 @@
                 };
 
                 const submitRegistration = (type) => {
-                    if (!regFullName.value.trim()) { alert('أدخل الاسم الكامل'); return; }
-                    if (type === 'company' && !regCompanyName.value.trim()) { alert('أدخل اسم الشركة'); return; }
-                    if (!regGovernorate.value) { alert('اختر المحافظة'); return; }
-                    if (!regAddress.value.trim()) { alert('أدخل العنوان'); return; }
-                    if (!regPhone.value.trim()) { alert('أدخل رقم الهاتف'); return; }
-                    if (!regPassword.value.trim()) { alert('أدخل كلمة المرور'); return; }
+                    if (!regFullName.value.trim()) { showBrandAlert('أدخل الاسم الكامل'); return; }
+                    if (type === 'company' && !regCompanyName.value.trim()) { showBrandAlert('أدخل اسم الشركة'); return; }
+                    if (!regGovernorate.value) { showBrandAlert('اختر المحافظة'); return; }
+                    if (!regAddress.value.trim()) { showBrandAlert('أدخل العنوان'); return; }
+                    if (!regPhone.value.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
+                    if (!regPassword.value.trim()) { showBrandAlert('أدخل كلمة المرور'); return; }
                     view.value = 'otp-verify';
                 };
 
                 const verifyOtp = () => {
                     if (otpCode.value === '123456') {
-                        alert('تم إنشاء الحساب بنجاح!');
+                        showBrandAlert('تم إنشاء الحساب بنجاح!');
                         resetRegForm();
                         view.value = 'login';
                     } else {
-                        alert('رمز التحقق غير صحيح');
+                        showBrandAlert('رمز التحقق غير صحيح');
                     }
                 };
 
                 const handleResetPassword = () => {
                     if (!resetEmail.value.trim()) {
-                        alert('أدخل بريدك الإلكتروني');
+                        showBrandAlert('أدخل بريدك الإلكتروني');
                         return;
                     }
-                    alert('تم إرسال رابط استعادة كلمة المرور');
+                    showBrandAlert('تم إرسال رابط استعادة كلمة المرور');
                     showForgotModal.value = false;
                     resetEmail.value = '';
                 };

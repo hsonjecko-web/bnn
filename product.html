@@ -188,11 +188,11 @@
 
                 const addToCart = () => {
                     cartCount.value++;
-                    alert('تمت الإضافة للسلة!');
+                    showBrandAlert('تمت الإضافة للسلة!');
                 };
 
                 const orderNow = () => {
-                    alert('تم إرسال طلب المنتج بنجاح!');
+                    showBrandAlert('تم إرسال طلب المنتج بنجاح!');
                 };
 
                 return { cartCount, quantity, selectedColorIndex, selectedSize, colors, sizes, selectedColor, total, addToCart, orderNow };

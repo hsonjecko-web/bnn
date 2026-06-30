@@ -153,11 +153,11 @@
                 var showSuccess = ref(false);
 
                 function submitForm() {
-                    if (!form.value.name.trim()) { alert('يرجى إدخال الاسم'); return; }
-                    if (!form.value.gov) { alert('يرجى اختيار المحافظة'); return; }
-                    if (!form.value.phone.trim()) { alert('يرجى إدخال رقم الهاتف'); return; }
-                    if (!form.value.type) { alert('يرجى اختيار نوع الاستشارة'); return; }
-                    if (!form.value.desc.trim()) { alert('يرجى كتابة تفاصيل الاستشارة'); return; }
+                    if (!form.value.name.trim()) { showBrandAlert('يرجى إدخال الاسم'); return; }
+                    if (!form.value.gov) { showBrandAlert('يرجى اختيار المحافظة'); return; }
+                    if (!form.value.phone.trim()) { showBrandAlert('يرجى إدخال رقم الهاتف'); return; }
+                    if (!form.value.type) { showBrandAlert('يرجى اختيار نوع الاستشارة'); return; }
+                    if (!form.value.desc.trim()) { showBrandAlert('يرجى كتابة تفاصيل الاستشارة'); return; }
 
                     form.value = { name: '', gov: '', address: '', phone: '', type: '', desc: '' };
                     showSuccess.value = true;

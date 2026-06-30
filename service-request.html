@@ -180,7 +180,7 @@
                     isSubmitting.value = true;
                     setTimeout(() => {
                         isSubmitting.value = false;
-                        alert('تم إرسال طلب الخدمة بنجاح!');
+                        showBrandAlert('تم إرسال طلب الخدمة بنجاح!');
                         form.value = { serviceType: '', projectTitle: '', projectDesc: '', city: '', budget: '', images: [] };
                     }, 1500);
                 };

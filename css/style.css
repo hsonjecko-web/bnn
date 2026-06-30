@@ -1098,6 +1098,94 @@ html.light-mode .success-btn {
   color: #fff;
 }
 
+.brand-alert-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.25s ease;
+}
+
+.brand-alert-modal {
+  background: var(--primary-blue);
+  border-radius: 20px;
+  padding: 28px 24px 22px;
+  width: calc(100% - 48px);
+  max-width: 300px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.brand-alert-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(201, 162, 67, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.brand-alert-icon {
+  font-size: 34px;
+  color: var(--accent-gold);
+}
+
+.brand-alert-text {
+  font-size: 14px;
+  color: var(--text-light);
+  line-height: 1.7;
+  margin: 0 0 18px;
+}
+
+.brand-alert-btn {
+  padding: 11px 40px;
+  background: var(--accent-gold);
+  border: none;
+  border-radius: 12px;
+  color: var(--text-on-accent);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Cairo", sans-serif;
+  min-width: 120px;
+}
+
+.brand-alert-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(201, 162, 67, 0.35);
+}
+
+html.light-mode .brand-alert-modal {
+  background: #fff;
+  border-color: rgba(26, 58, 92, 0.1);
+}
+
+html.light-mode .brand-alert-icon-wrap {
+  background: rgba(44, 95, 138, 0.12);
+}
+
+html.light-mode .brand-alert-icon {
+  color: #2c5f8a;
+}
+
+html.light-mode .brand-alert-text {
+  color: #4a6a8a;
+}
+
+html.light-mode .brand-alert-btn {
+  background: #2c5f8a;
+  color: #fff;
+}
+
 /* ===== تتبع الطلب ===== */
 .order-timeline {
   display: flex;

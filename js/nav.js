@@ -39,3 +39,36 @@ function getThemeIcon() {
 function getUserName() {
     return localStorage.getItem('bunean-user') || 'مستخدم';
 }
+
+// ===== رسالة تنبيه موحدة =====
+function showBrandAlert(message) {
+    var existing = document.querySelector('.brand-alert-overlay');
+    if (existing) existing.remove();
+
+    var overlay = document.createElement('div');
+    overlay.className = 'brand-alert-overlay';
+    overlay.setAttribute('onclick', 'this.remove()');
+
+    var modal = document.createElement('div');
+    modal.className = 'brand-alert-modal';
+    modal.setAttribute('onclick', 'event.stopPropagation()');
+
+    var icon = document.createElement('div');
+    icon.className = 'brand-alert-icon-wrap';
+    icon.innerHTML = '<span class="material-symbols-outlined brand-alert-icon">info</span>';
+
+    var text = document.createElement('p');
+    text.className = 'brand-alert-text';
+    text.textContent = message;
+
+    var btn = document.createElement('button');
+    btn.className = 'brand-alert-btn';
+    btn.textContent = 'حسناً';
+    btn.setAttribute('onclick', 'this.closest(\'.brand-alert-overlay\').remove()');
+
+    modal.appendChild(icon);
+    modal.appendChild(text);
+    modal.appendChild(btn);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+}

@@ -1063,7 +1063,7 @@
                     var p = selectedProduct.value;
                     if (!p) return;
                     if (!deliveryName.value || !deliveryPhone.value || !deliveryGov.value || !deliveryCity.value || !deliveryAddress.value) {
-                        alert('يرجى إكمال معلومات التوصيل');
+                        showBrandAlert('يرجى إكمال معلومات التوصيل');
                         return;
                     }
                     var label = p.name;
@@ -1139,7 +1139,7 @@
                     var l = parseFloat(calcLength.value) || 0;
                     var w = parseFloat(calcWidth.value) || 0;
                     var h = parseFloat(calcHeight.value) || 0;
-                    if (l <= 0 || w <= 0) { alert('أدخل الأبعاد بشكل صحيح'); return; }
+                    if (l <= 0 || w <= 0) { showBrandAlert('أدخل الأبعاد بشكل صحيح'); return; }
 
                     var floorArea = l * w;
                     var wallArea = 2 * (l + w) * h;
@@ -1200,7 +1200,7 @@
                 })();
 
                 function confirmOrder() {
-                    alert('تم تأكيد طلبك بنجاح! سيتم التواصل معك قريباً.');
+                    showBrandAlert('تم تأكيد طلبك بنجاح! سيتم التواصل معك قريباً.');
                     cart.value = [];
                     cartView.value = false;
                     checkoutView.value = false;
