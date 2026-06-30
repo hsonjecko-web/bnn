@@ -999,6 +999,105 @@ html.light-mode .consult-submit {
   color: #fff;
 }
 
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-modal {
+  background: var(--primary-blue);
+  border-radius: 20px;
+  padding: 32px 24px 24px;
+  width: calc(100% - 48px);
+  max-width: 320px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.success-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(201, 162, 67, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.success-icon {
+  font-size: 44px;
+  color: var(--accent-gold);
+}
+
+.success-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-white);
+  margin-bottom: 8px;
+}
+
+.success-desc {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.success-btn {
+  padding: 12px 40px;
+  background: var(--accent-gold);
+  border: none;
+  border-radius: 12px;
+  color: var(--text-on-accent);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Cairo", sans-serif;
+}
+
+.success-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(201, 162, 67, 0.35);
+}
+
+html.light-mode .success-modal {
+  background: #fff;
+  border-color: rgba(26, 58, 92, 0.1);
+}
+
+html.light-mode .success-icon-wrap {
+  background: rgba(44, 95, 138, 0.1);
+}
+
+html.light-mode .success-icon {
+  color: #2c5f8a;
+}
+
+html.light-mode .success-title {
+  color: #1a2a3a;
+}
+
+html.light-mode .success-btn {
+  background: #2c5f8a;
+  color: #fff;
+}
+
 /* ===== تتبع الطلب ===== */
 .order-timeline {
   display: flex;

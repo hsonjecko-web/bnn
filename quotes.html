@@ -113,6 +113,18 @@
 
             <div id="bottomNav"></div>
         </div>
+
+        <!-- Success Modal -->
+        <div v-if="showSuccess" class="success-overlay" @click="showSuccess = false">
+            <div class="success-modal" @click.stop>
+                <div class="success-icon-wrap">
+                    <span class="material-symbols-outlined success-icon">check_circle</span>
+                </div>
+                <h2 class="success-title">تم الإرسال بنجاح</h2>
+                <p class="success-desc">تم استلام استشارتك بنجاح<br>سيتم التواصل معك من قبل المختصين قريباً</p>
+                <button class="success-btn" @click="showSuccess = false">حسناً</button>
+            </div>
+        </div>
     </div>
 
     <script src="js/nav.js"></script>
@@ -138,6 +150,8 @@
                     desc: ''
                 });
 
+                var showSuccess = ref(false);
+
                 function submitForm() {
                     if (!form.value.name.trim()) { alert('يرجى إدخال الاسم'); return; }
                     if (!form.value.gov) { alert('يرجى اختيار المحافظة'); return; }
@@ -145,11 +159,11 @@
                     if (!form.value.type) { alert('يرجى اختيار نوع الاستشارة'); return; }
                     if (!form.value.desc.trim()) { alert('يرجى كتابة تفاصيل الاستشارة'); return; }
 
-                    alert('تم ارسال الاستشارة\nانتظر الرد من المختصين');
                     form.value = { name: '', gov: '', address: '', phone: '', type: '', desc: '' };
+                    showSuccess.value = true;
                 }
 
-                return { form, governorates, submitForm };
+                return { form, governorates, submitForm, showSuccess };
             }
         }).mount('#app');
 
