@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bunnan-v4';
+const CACHE_NAME = 'bunnan-v5';
 const urlsToCache = [
     '/bnn/',
     '/bnn/index.html',
