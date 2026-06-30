@@ -55,10 +55,11 @@
                 <!-- Categories Grid -->
                 <div v-if="!activeCategory && !selectedCompany" class="exec-categories">
                     <div v-for="(cat, i) in categories" :key="i" class="exec-cat-card" @click="selectCategory(cat)">
-                        <div class="exec-cat-svg" v-html="cat.svg"></div>
-                        <div class="exec-cat-info">
-                            <span>{{ cat.name }}</span>
+                        <div class="exec-cat-icon-wrap">
+                            <div class="exec-cat-svg" v-html="cat.svg"></div>
                         </div>
+                        <span class="exec-cat-name">{{ cat.name }}</span>
+                        <div class="exec-cat-divider"></div>
                     </div>
                 </div>
 
