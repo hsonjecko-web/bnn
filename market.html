@@ -657,28 +657,28 @@
                                 <span>ملخص الطلب</span>
                             </div>
                             <div class="prod-summary-row">
+                                <span class="prod-summary-label">المنتج</span>
                                 <div class="prod-summary-product">
                                     <img :src="selectedProduct.images[0]" alt="" class="prod-summary-thumb">
                                     <span>{{ selectedProduct.name }}</span>
                                 </div>
-                                <span class="prod-summary-label">المنتج</span>
                             </div>
                             <div class="prod-summary-row">
-                                <span>{{ selectedQty }} <span v-if="selectedProduct.sizes.length">× {{ selectedProduct.sizes[selectedSize] }}</span></span>
                                 <span class="prod-summary-label">الكمية</span>
+                                <span>{{ selectedQty }} <span v-if="selectedProduct.sizes.length">× {{ selectedProduct.sizes[selectedSize] }}</span></span>
                             </div>
                             <div class="prod-summary-row">
-                                <span>{{ fmt(selectedProduct.price * selectedQty) }} د.ع</span>
                                 <span class="prod-summary-label">السعر</span>
+                                <span>{{ fmt(selectedProduct.price * selectedQty) }} د.ع</span>
                             </div>
                             <div class="prod-summary-row">
-                                <span>5,000 د.ع</span>
                                 <span class="prod-summary-label">أجور التوصيل</span>
+                                <span>5,000 د.ع</span>
                             </div>
                             <div class="prod-summary-divider"></div>
                             <div class="prod-summary-row prod-summary-total">
-                                <span class="prod-total-price">{{ fmt(selectedProduct.price * selectedQty + 5000) }} د.ع</span>
                                 <span class="prod-summary-label">الإجمالي</span>
+                                <span class="prod-total-price">{{ fmt(selectedProduct.price * selectedQty + 5000) }} د.ع</span>
                             </div>
                         </div>
                     </div>
