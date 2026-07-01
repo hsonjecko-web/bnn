@@ -72,10 +72,6 @@
                             <input type="tel" class="form-input" v-model="newQR.phone" placeholder="رقم الهاتف" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
                         </div>
                         <div class="mkt-form-group">
-                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">assignment</span> اسم المشروع</label>
-                            <input type="text" class="form-input" v-model="newQR.projectName" placeholder="اسم المشروع" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
-                        </div>
-                        <div class="mkt-form-group">
                             <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">location_on</span> الموقع</label>
                             <input type="text" class="form-input" v-model="newQR.location" placeholder="الموقع" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
                         </div>
@@ -97,6 +93,22 @@
                         <div class="mkt-form-group">
                             <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">description</span> التفاصيل</label>
                             <textarea class="form-input" v-model="newQR.details" placeholder="وصف المشروع والمواصفات المطلوبة..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;min-height:80px;font-family:Cairo,sans-serif;"></textarea>
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">image</span> صور المشروع <span style="color:var(--text-muted);font-size:10px;">(اختياري)</span></label>
+                            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                                <div v-for="(img, idx) in newQR.images" :key="idx" style="width:72px;height:72px;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--border-light);">
+                                    <img :src="img" style="width:100%;height:100%;object-fit:cover;">
+                                    <button type="button" @click="newQR.images.splice(idx,1)" style="position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,0.6);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:Cairo,sans-serif;">
+                                        <span class="material-symbols-outlined" style="font-size:12px;">close</span>
+                                    </button>
+                                </div>
+                                <label style="width:72px;height:72px;border-radius:10px;border:1px dashed var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:10px;gap:2px;">
+                                    <span class="material-symbols-outlined" style="font-size:20px;">add_photo_alternate</span>
+                                    إضافة
+                                    <input type="file" accept="image/*" style="display:none;" @change="addQuoteImage">
+                                </label>
+                            </div>
                         </div>
                         <button @click="submitNewQuoteRequest" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
                             <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">send</span> إرسال طلب عرض السعر
@@ -139,6 +151,22 @@
                         <div class="mkt-form-group">
                             <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">description</span> تفاصيل الاستشارة</label>
                             <textarea class="form-input" v-model="newConsult.desc" placeholder="اكتب تفاصيل استشارتك هنا..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;min-height:80px;font-family:Cairo,sans-serif;"></textarea>
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">image</span> صور <span style="color:var(--text-muted);font-size:10px;">(اختياري)</span></label>
+                            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                                <div v-for="(img, idx) in newConsult.images" :key="idx" style="width:72px;height:72px;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--border-light);">
+                                    <img :src="img" style="width:100%;height:100%;object-fit:cover;">
+                                    <button type="button" @click="newConsult.images.splice(idx,1)" style="position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,0.6);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:Cairo,sans-serif;">
+                                        <span class="material-symbols-outlined" style="font-size:12px;">close</span>
+                                    </button>
+                                </div>
+                                <label style="width:72px;height:72px;border-radius:10px;border:1px dashed var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:10px;gap:2px;">
+                                    <span class="material-symbols-outlined" style="font-size:20px;">add_photo_alternate</span>
+                                    إضافة
+                                    <input type="file" accept="image/*" style="display:none;" @change="addConsultImage">
+                                </label>
+                            </div>
                         </div>
                         <button @click="submitNewConsult" style="width:100%;padding:12px;border:none;border-radius:12px;background:#4fc3f7;color:#0b1a2e;font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
                             <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">send</span> إرسال الاستشارة
@@ -184,11 +212,18 @@
                 var categories = ['بناء سكني', 'بناء تجاري', 'تشطيبات', 'خرسانة', 'أعمال صحية', 'أعمال كهربائية', 'دهانات', 'أرضيات', 'واجهات', 'حدائق', 'أخرى'];
 
                 // New Quote Request
-                var newQR = ref({ name: '', phone: '', projectName: '', location: '', size: '', budget: '', category: '', details: '' });
+                var newQR = ref({ name: '', phone: '', location: '', size: '', budget: '', category: '', details: '', images: [] });
+                function addQuoteImage(e) {
+                    var file = e.target.files[0];
+                    if (!file) return;
+                    var reader = new FileReader();
+                    reader.onload = function(ev) { newQR.value.images.push(ev.target.result); };
+                    reader.readAsDataURL(file);
+                    e.target.value = '';
+                }
                 function submitNewQuoteRequest() {
                     if (!newQR.value.name.trim()) { showBrandAlert('أدخل الاسم'); return; }
                     if (!newQR.value.phone.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
-                    if (!newQR.value.projectName.trim()) { showBrandAlert('أدخل اسم المشروع'); return; }
                     if (!newQR.value.location.trim()) { showBrandAlert('أدخل الموقع'); return; }
                     if (!newQR.value.category) { showBrandAlert('اختر التصنيف'); return; }
                     if (!newQR.value.details.trim()) { showBrandAlert('أدخل تفاصيل المشروع'); return; }
@@ -197,24 +232,32 @@
                         id: Date.now(),
                         name: newQR.value.name.trim(),
                         phone: newQR.value.phone.trim(),
-                        projectName: newQR.value.projectName.trim(),
                         location: newQR.value.location.trim(),
                         size: newQR.value.size.trim(),
                         budget: newQR.value.budget.trim(),
                         category: newQR.value.category,
                         details: newQR.value.details.trim(),
+                        images: newQR.value.images,
                         replied: false,
                         replyMessage: '',
                         createdAt: new Date().toISOString()
                     });
                     localStorage.setItem('bunean-quote-requests', JSON.stringify(reqs));
-                    newQR.value = { name: '', phone: '', projectName: '', location: '', size: '', budget: '', category: '', details: '' };
+                    newQR.value = { name: '', phone: '', location: '', size: '', budget: '', category: '', details: '', images: [] };
                     lastSubmitType.value = 'quote';
                     showSuccess.value = true;
                 }
 
                 // New Consultation
-                var newConsult = ref({ name: '', phone: '', gov: '', type: '', desc: '' });
+                var newConsult = ref({ name: '', phone: '', gov: '', type: '', desc: '', images: [] });
+                function addConsultImage(e) {
+                    var file = e.target.files[0];
+                    if (!file) return;
+                    var reader = new FileReader();
+                    reader.onload = function(ev) { newConsult.value.images.push(ev.target.result); };
+                    reader.readAsDataURL(file);
+                    e.target.value = '';
+                }
                 function submitNewConsult() {
                     if (!newConsult.value.name.trim()) { showBrandAlert('أدخل الاسم'); return; }
                     if (!newConsult.value.phone.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
@@ -230,12 +273,13 @@
                         gov: newConsult.value.gov,
                         consultType: newConsult.value.type,
                         desc: newConsult.value.desc.trim(),
+                        images: newConsult.value.images,
                         status: 'قيد المراجعة',
                         reply: '',
                         createdAt: new Date().toISOString()
                     });
                     localStorage.setItem('bunean-service-requests', JSON.stringify(reqs));
-                    newConsult.value = { name: '', phone: '', gov: '', type: '', desc: '' };
+                    newConsult.value = { name: '', phone: '', gov: '', type: '', desc: '', images: [] };
                     lastSubmitType.value = 'consult';
                     showSuccess.value = true;
                 }
@@ -243,8 +287,8 @@
                 return {
                     activeForm, showSuccess, lastSubmitType,
                     governorates, categories,
-                    newQR, submitNewQuoteRequest,
-                    newConsult, submitNewConsult
+                    newQR, submitNewQuoteRequest, addQuoteImage,
+                    newConsult, submitNewConsult, addConsultImage
                 };
             }
         }).mount('#app');
