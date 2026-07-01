@@ -809,6 +809,7 @@
                 var checkoutView = ref(false);
                 var searchQuery = ref('');
                 var cart = ref([]);
+                loadCart();
                 var projTypeOpen = ref(false);
                 var selectedProjType = ref('');
                 var mktSlide = ref(0);
@@ -999,8 +1000,11 @@
                 ]);
 
                 function saveCart() {
-                    cart.value = cart.value.filter(function(c) { return c && c.qty > 0; });
-                    var saveData = cart.value.map(function(item) {
+                    var filtered = cart.value.filter(function(c) { return c && c.qty > 0; });
+                    if (filtered.length !== cart.value.length) {
+                        cart.value = filtered;
+                    }
+                    var saveData = filtered.map(function(item) {
                         return {
                             name: item.name,
                             baseName: item.baseName,
@@ -1324,7 +1328,6 @@
                 })();
 
                 onMounted(function() {
-                    loadCart();
                     resetMktTimer();
                     window.addEventListener('mkt-toggle-cart', function() {
                         if (cartView.value) {
@@ -1346,7 +1349,7 @@
                     } else if (el) {
                         el.style.display = '';
                     }
-                });
+                }, { immediate: true });
 
                 return {
                     categories, searchQuery, activeCatView, cartView, calculatorView, checkoutView,
