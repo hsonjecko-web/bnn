@@ -1305,6 +1305,8 @@
                     cartView.value = false;
                     checkoutView.value = false;
                     saveCart();
+                    var fc = document.querySelector('.mkt-floating-cart');
+                    if (fc) fc.remove();
                 }
 
                 function resetMktTimer() {
