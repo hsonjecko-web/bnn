@@ -1,5 +1,17 @@
 // ===== ملف مشترك - التنقل والوظائف المشتركة =====
 
+// ===== ضبط ارتفاع الشاشة لمختلف الأجهزة (حل مشكلة 100vh في الموبايل) =====
+(function() {
+    function setHeight() {
+        var vh = window.innerHeight;
+        document.documentElement.style.setProperty('--app-height', vh + 'px');
+    }
+    setHeight();
+    window.addEventListener('resize', setHeight);
+    // إعادة الضبط عند تغيير الاتجاه أو ظهور لوحة المفاتيح
+    window.addEventListener('orientationchange', function() { setTimeout(setHeight, 200); });
+})();
+
 // ===== أدوات مساعدة =====
 function loadFromStorage(key, def) {
     try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e) { return def; }
