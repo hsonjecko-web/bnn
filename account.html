@@ -243,6 +243,34 @@
                         </div>
                     </template>
 
+                    <!-- ===== قسم الدعم الفني ===== -->
+                    <template v-if="activeUserSection === 'support'">
+                        <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
+                            <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                            </button>
+                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">الدعم الفني</h2>
+                        </div>
+                        <div style="padding:8px 16px 20px;">
+                            <div class="section-card">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                                    <div style="width:44px;height:44px;border-radius:12px;background:rgba(201,162,67,0.15);display:flex;align-items:center;justify-content:center;">
+                                        <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);">support_agent</span>
+                                    </div>
+                                    <div>
+                                        <div style="color:var(--text-white);font-size:14px;font-weight:700;">تواصل مع فريق الدعم</div>
+                                        <div style="color:var(--text-muted);font-size:11px;">نحن هنا لمساعدتك، اكتب رسالتك وسنرد عليك قريباً</div>
+                                    </div>
+                                </div>
+                                <textarea v-model="supportMessage" placeholder="اكتب رسالتك هنا..." rows="5" style="width:100%;padding:12px;border-radius:12px;background:var(--bg-input);border:1px solid var(--border-input);color:var(--text-white);font-size:13px;font-family:Cairo,sans-serif;resize:vertical;box-sizing:border-box;outline:none;"></textarea>
+                                <button @click="submitSupport" style="width:100%;padding:12px;margin-top:10px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;">
+                                    <span class="material-symbols-outlined" style="font-size:18px;">send</span>
+                                    إرسال
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+
                 </template>
 
                 <!-- ==================== شركة ==================== -->
@@ -483,6 +511,8 @@
                         icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
                     { label: 'عروض الأسعار', section: 'user-offers',
                         icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+                    { label: 'الدعم الفني', section: 'support',
+                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
                     { label: 'الملف الشخصي', link: 'profile.html',
                         icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
                     { label: 'تسجيل الخروج', link: 'index.html', color: '#e74c3c',
@@ -630,6 +660,16 @@
 
                 // ===== User sections =====
                 var activeUserSection = ref('');
+                var supportMessage = ref('');
+
+                function submitSupport() {
+                    if (!supportMessage.value.trim()) { showBrandAlert('اكتب رسالتك أولاً'); return; }
+                    var msgs = JSON.parse(localStorage.getItem('bunean-support-messages') || '[]');
+                    msgs.push({ text: supportMessage.value.trim(), date: new Date().toISOString() });
+                    localStorage.setItem('bunean-support-messages', JSON.stringify(msgs));
+                    supportMessage.value = '';
+                    showBrandAlert('✅ تم إرسال رسالتك\nسيتم الرد عليك قريباً');
+                }
 
                 // ===== Offers (عروض الأسعار من الشركات) =====
                 var userOffers = ref([
@@ -699,7 +739,8 @@
                     myAds, showAdForm, newAd, submitAd,
                     myProjects, newProject, submitProject, categories,
                     editProfile, saveProfileEdit, handleLogout,
-                    activeUserSection, userOffers, selectedOffer, viewOfferDetail, acceptOffer
+                    activeUserSection, userOffers, selectedOffer, viewOfferDetail, acceptOffer,
+                    supportMessage, submitSupport
                 };
             }
         }).mount('#app');
