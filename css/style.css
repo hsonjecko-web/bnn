@@ -5359,6 +5359,8 @@ html.light-mode .mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
   cursor: pointer;
 }
 .mkt-grid-add-btn .material-symbols-outlined { font-size: 16px; }
+html.light-mode .mkt-add-cart { background:#3b82f6; color:#fff; }
+html.light-mode .mkt-grid-add-btn { background:#3b82f6; color:#fff; }
 
 /* --- صفحة الحاسبة --- */
 .mkt-calc-view .mkt-calc-item {
@@ -5568,6 +5570,7 @@ html.light-mode .mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
   cursor: pointer;
 }
 .mkt-confirm-btn .material-symbols-outlined { font-size: 22px; }
+html.light-mode .mkt-confirm-btn { background:#3b82f6; color:#fff; }
 
 /* --- زر السلة العائم (يسار فوق حسابي) --- */
 .mkt-floating-cart {
@@ -6280,6 +6283,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
 .prod-action-btn .material-symbols-outlined {
   font-size: 20px;
 }
+html.light-mode .prod-add-cart { background:#3b82f6; color:#fff; border-color:#3b82f6; }
 @media (max-width: 380px) {
   .prod-hero-gallery .prod-gallery { height: 150px; }
   .prod-hero-info .prod-title { font-size: 14px; }
