@@ -676,7 +676,6 @@
                     <div class="register-section">
                         <div class="reg-header"><span class="material-symbols-outlined reg-back" @click="view='login'">arrow_forward</span><span>إنشاء حساب مستخدم</span></div>
                         <input type="text" class="reg-input" placeholder="الاسم الكامل" v-model="regFullName">
-                        <input type="email" class="reg-input" placeholder="البريد الإلكتروني" v-model="regEmail">
                         <select class="reg-input" v-model="regGovernorate"><option value="" disabled>المحافظة</option><option v-for="g in governorates" :value="g">{{ g }}</option></select>
                         <input type="text" class="reg-input" placeholder="العنوان" v-model="regAddress">
                         <input type="tel" class="reg-input" placeholder="رقم الهاتف" v-model="regPhone">
@@ -781,7 +780,6 @@
 
                 // Registration
                 const regFullName = ref('');
-                const regEmail = ref('');
                 const regCompanyName = ref('');
                 const regGovernorate = ref('');
                 const regAddress = ref('');
@@ -830,7 +828,7 @@
                             successMsg.value = 'تم تسجيل الدخول بنجاح!';
                             setTimeout(() => {
                                 if (acct.role === 'user') {
-                                    var userData = { name: acct.name, email: acct.email || '', phone: acct.phone || '', governorate: acct.governorate || '', address: acct.address || '' };
+                                    var userData = { name: acct.name, phone: acct.phone || '', governorate: acct.governorate || '', address: acct.address || '' };
                                     localStorage.setItem('bunean-user-data', JSON.stringify(userData));
                                     localStorage.setItem('bunean-user-auth', uname);
                                     window.location.href = 'home.html';
@@ -867,7 +865,6 @@
 
                 const resetRegForm = () => {
                     regFullName.value = '';
-                    regEmail.value = '';
                     regCompanyName.value = '';
                     regGovernorate.value = '';
                     regAddress.value = '';
@@ -881,7 +878,6 @@
                 const submitRegistration = (type) => {
                     if (!regFullName.value.trim()) { showBrandAlert('أدخل الاسم الكامل'); return; }
                     if (type === 'company' && !regCompanyName.value.trim()) { showBrandAlert('أدخل اسم الشركة'); return; }
-                    if (type === 'user' && !regEmail.value.trim()) { showBrandAlert('أدخل البريد الإلكتروني'); return; }
                     if (!regGovernorate.value) { showBrandAlert('اختر المحافظة'); return; }
                     if (!regAddress.value.trim()) { showBrandAlert('أدخل العنوان'); return; }
                     if (!regPhone.value.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
@@ -896,7 +892,6 @@
                         password: regPassword.value.trim(),
                         role: type,
                         name: type === 'company' ? regCompanyName.value.trim() : regFullName.value.trim(),
-                        email: type === 'user' ? regEmail.value.trim() : '',
                         phone: regPhone.value.trim(),
                         governorate: regGovernorate.value,
                         address: regAddress.value.trim()
@@ -905,7 +900,7 @@
                     localStorage.setItem('bunean-accounts', JSON.stringify(accounts));
 
                     if (type === 'user') {
-                        var userData = { name: regFullName.value.trim(), email: regEmail.value.trim(), phone: regPhone.value.trim(), governorate: regGovernorate.value, address: regAddress.value.trim() };
+                        var userData = { name: regFullName.value.trim(), phone: regPhone.value.trim(), governorate: regGovernorate.value, address: regAddress.value.trim() };
                         localStorage.setItem('bunean-user-data', JSON.stringify(userData));
                         localStorage.setItem('bunean-user-auth', uid);
                         window.location.href = 'home.html';
@@ -943,7 +938,7 @@
                     focusPassword,
                     handleLogin, handleGuest, handleResetPassword,
                     view, openUserRegister, openCompanyRegister,
-                    regFullName, regEmail, regCompanyName, regGovernorate, regAddress, regPhone, regPassword, regConfirmPassword,
+                    regFullName, regCompanyName, regGovernorate, regAddress, regPhone, regPassword, regConfirmPassword,
                     regShowPwd, regShowConfirmPwd, regLoading, submitRegistration,
                     governorates
                 };

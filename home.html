@@ -75,7 +75,9 @@
                         احجز اعلانك
                     </button>
                 </div>
-                <div class="ad-slider">
+                <div class="ad-slider"
+                     @touchstart.passive="adSwipe.onTouchStart"
+                     @touchend="adSwipe.onTouchEnd">
                     <div class="ad-slider-track" dir="ltr" :style="{ transform: `translateX(-${adSlide * 100}%)` }">
                         <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openProject(ad)">
                             <div class="ad-slider-img">
@@ -193,45 +195,64 @@
             </div>
 
             <!-- ===== مودال حجز إعلان ===== -->
-            <div v-if="showAdBooking" class="project-modal" @click.self="showAdBooking = false">
-                <div class="modal-content">
+            <div v-if="showAdBooking" class="project-modal" @click.self="closeAdBooking"
+                 @touchstart.passive="adBookingTouch.onTouchStart"
+                 @touchmove.passive="adBookingTouch.onTouchMove"
+                 @touchend.passive="adBookingTouch.onTouchEnd">
+                <div class="modal-content" :style="adBookingPullStyle">
                     <div class="modal-pull-bar"><span></span></div>
-                    <button class="modal-close" @click="showAdBooking = false">
-                        <span class="material-symbols-outlined close-icon">close</span>
-                        <span class="material-symbols-outlined arrow-icon">arrow_back</span>
-                    </button>
-                    <div style="padding:4px 16px 16px;">
-                        <div style="text-align:center;margin-bottom:16px;">
-                            <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--accent-gold),#d4b050);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
-                                <span class="material-symbols-outlined" style="font-size:24px;color:var(--primary-dark);">campaign</span>
+                    <div class="ad-booking-body">
+                        <button class="ad-booking-close" @click="closeAdBooking">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                        <!-- Header -->
+                        <div class="ad-booking-header">
+                            <div class="ad-booking-icon">
+                                <span class="material-symbols-outlined">campaign</span>
                             </div>
-                            <h3 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0;">حجز إعلان ممول</h3>
-                            <p style="color:var(--text-muted);font-size:12px;margin:4px 0 0;">أدخل معلوماتك وسيتواصل معك فريق بنيان</p>
+                            <div class="ad-booking-header-text">
+                                <h3>حجز إعلان ممول</h3>
+                                <p>أدخل معلوماتك وسيتواصل معك فريق بنيان</p>
+                            </div>
                         </div>
+                        <!-- Decorative Divider -->
+                        <div class="ad-booking-divider"></div>
+                        <!-- Form -->
                         <div class="mkt-checkout-form">
                             <div class="mkt-form-group">
-                                <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">اسم الشركة</label>
-                                <input type="text" class="form-input" v-model="adBooking.company" placeholder="اسم الشركة" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                <label class="ad-booking-label">
+                                    <span class="material-symbols-outlined">business</span>
+                                    اسم الشركة
+                                </label>
+                                <input type="text" class="form-input" v-model="adBooking.company" placeholder="اسم الشركة">
                             </div>
                             <div class="mkt-form-group">
-                                <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">رقم الهاتف</label>
-                                <input type="tel" class="form-input" v-model="adBooking.phone" placeholder="رقم الهاتف" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                <label class="ad-booking-label">
+                                    <span class="material-symbols-outlined">headset_mic</span>
+                                    رقم الهاتف
+                                </label>
+                                <input type="tel" class="form-input" v-model="adBooking.phone" placeholder="رقم الهاتف">
                             </div>
                             <div class="mkt-form-group">
-                                <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">البريد الإلكتروني</label>
-                                <input type="email" class="form-input" v-model="adBooking.email" placeholder="البريد الإلكتروني" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
-                            </div>
-                            <div class="mkt-form-group">
-                                <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">نوع الإعلان</label>
-                                <select class="form-input" v-model="adBooking.type" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
-                                    <option value="">اختر نوع الإعلان</option>
-                                    <option value="banner">إعلان بانر</option>
-                                    <option value="sponsored">إعلان ممول (شريط)</option>
-                                    <option value="premium">إعلان متميز</option>
+                                <label class="ad-booking-label">
+                                    <span class="material-symbols-outlined">category</span>
+                                    قسم الإعلان
+                                </label>
+                                <select class="form-input" v-model="adBooking.type">
+                                    <option value="">اختر قسم الإعلان</option>
+                                    <option value="بناء وإنشاء">بناء وإنشاء</option>
+                                    <option value="تشطيبات داخلية">تشطيبات داخلية</option>
+                                    <option value="حدائق ولاندسكيب">حدائق ولاندسكيب</option>
+                                    <option value="مسابح">مسابح</option>
+                                    <option value="أعمال كهربائية">أعمال كهربائية</option>
+                                    <option value="أعمال سباكة">أعمال سباكة</option>
+                                    <option value="تكييف وتوفية">تكييف وتوفية</option>
+                                    <option value="واجهات والمنيوم">واجهات والمنيوم</option>
+                                    <option value="تصميم داخلي">تصميم داخلي</option>
                                 </select>
                             </div>
-                            <button class="mkt-confirm-btn" @click="submitAdBooking" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
-                                <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">send</span>
+                            <button class="ad-booking-submit" @click="submitAdBooking">
+                                <span class="material-symbols-outlined">send</span>
                                 إرسال طلب الحجز
                             </button>
                         </div>
@@ -285,7 +306,14 @@
                 const showAllWorks = ref(false);
                 const adSlide = ref(0);
                 const showAdBooking = ref(false);
-                const adBooking = ref({ company: '', phone: '', email: '', type: '' });
+                const adBooking = ref({ company: '', phone: '', type: '' });
+                const adBookingPullY = ref(0);
+                const adBookingClosing = ref(false);
+                const adBookingPullStyle = computed(() => {
+                    if (adBookingClosing.value) return 'transform: translateY(100%);transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);';
+                    if (adBookingPullY.value > 0) return `transform: translateY(${adBookingPullY.value}px);transition: none;`;
+                    return '';
+                });
                 let slideTimer = null;
                 let adTimer = null;
                 let exitTimer = null;
@@ -321,6 +349,39 @@
                         }
                     };
                 })();
+                // Ad Booking modal: swipe down → close
+                const adBookingTouch = (() => {
+                    let sy = 0;
+                    return {
+                        onTouchStart(e) {
+                            sy = e.touches[0].clientY;
+                            adBookingPullY.value = 0;
+                        },
+                        onTouchMove(e) {
+                            const dy = e.touches[0].clientY - sy;
+                            if (dy > 0) adBookingPullY.value = dy * 0.5;
+                        },
+                        onTouchEnd(e) {
+                            const dy = e.changedTouches[0].clientY - sy;
+                            if (dy > 100) {
+                                closeAdBooking();
+                            } else {
+                                adBookingPullY.value = 0;
+                            }
+                        }
+                    };
+                })();
+
+                function closeAdBooking() {
+                    if (adBookingClosing.value) return;
+                    adBookingClosing.value = true;
+                    adBookingPullY.value = 0;
+                    setTimeout(() => {
+                        showAdBooking.value = false;
+                        adBookingClosing.value = false;
+                    }, 350);
+                }
+
                 // Hero slider: horizontal swipe only
                 const heroSwipe = (() => {
                     let sx = 0, sy = 0;
@@ -332,6 +393,22 @@
                             if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
                                 const len = slides.value.length;
                                 currentSlide.value = (currentSlide.value + (dx < 0 ? 1 : -1) + len) % len;
+                            }
+                        }
+                    };
+                })();
+                // Ad slider: horizontal swipe only
+                const adSwipe = (() => {
+                    let sx = 0, sy = 0;
+                    return {
+                        onTouchStart(e) { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; },
+                        onTouchEnd(e) {
+                            const dx = e.changedTouches[0].clientX - sx;
+                            const dy = e.changedTouches[0].clientY - sy;
+                            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+                                const len = ads.value.length;
+                                adSlide.value = (adSlide.value + (dx < 0 ? 1 : -1) + len) % len;
+                                resetAdTimer();
                             }
                         }
                     };
@@ -669,7 +746,7 @@
                     var bookings = JSON.parse(localStorage.getItem('bunean-ad-bookings') || '[]');
                     bookings.push({ ...adBooking.value, createdAt: new Date().toISOString() });
                     localStorage.setItem('bunean-ad-bookings', JSON.stringify(bookings));
-                    adBooking.value = { company: '', phone: '', email: '', type: '' };
+                    adBooking.value = { company: '', phone: '', type: '' };
                     showAdBooking.value = false;
                     showBrandAlert('✅ تم إرسال طلب الحجز بنجاح\nسيتم التواصل معك قريباً');
                 }
@@ -734,10 +811,12 @@
                     openProject, closeModal,
                     viewerOpen, viewerImages, viewerIndex,
                     openViewer, closeViewer, nextViewer, prevViewer,
-                    heroSwipe, modalTouch, viewerTouch,
+                    heroSwipe, adSwipe, modalTouch, viewerTouch,
                     modalPullY, pullTransform, modalClosing,
                     adSlide, resetAdTimer, showAllWorks,
-                    showAdBooking, adBooking, submitAdBooking
+                    showAdBooking, adBooking, submitAdBooking,
+                    adBookingTouch, adBookingPullY, adBookingPullStyle,
+                    adBookingClosing, closeAdBooking
                 };
             }
         }).mount('#app');
