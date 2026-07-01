@@ -1119,6 +1119,7 @@
                     if (exists) { exists.qty++; }
                     else { cart.value.push({ name: p.name, baseName: p.name, price: p.price, img: p.img, qty: 1, productName: p.name }); }
                     saveCart();
+                    showBrandAlert('تمت الإضافة إلى السلة ✓');
                 }
 
                 function closeProductDetail() {
