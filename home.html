@@ -70,14 +70,17 @@
                 <!-- Ads -->
                 <div class="section-header">
                     <span class="section-title">إعلانات ممولة</span>
-                    <span class="section-link" @click="showAdBooking = true" style="cursor:pointer;">احجز اعلانك</span>
+                    <button class="ad-book-btn" @click="showAdBooking = true">
+                        <span class="material-symbols-outlined" style="font-size:18px;">campaign</span>
+                        احجز اعلانك
+                    </button>
                 </div>
                 <div class="ad-slider">
                     <div class="ad-slider-track" dir="ltr" :style="{ transform: `translateX(-${adSlide * 100}%)` }">
                         <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openProject(ad)">
                             <div class="ad-slider-img">
                                 <img :src="ad.bg" alt="">
-                                <span class="ad-sponsor" style="background:var(--accent-gold);color:var(--primary-dark);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:800;">ممول</span>
+                                <span class="ad-sponsor-badge">ممول</span>
                             </div>
                             <div class="ad-slider-info">
                                 <div class="ad-title">{{ ad.title }}</div>
