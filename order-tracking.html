@@ -48,6 +48,9 @@
         .tr-line.done { border-top-color:#3b82f6; }
 
         .tr-info-bar { margin:0 16px 12px; padding:10px 14px; border-radius:12px; background:rgba(201,162,67,0.08); border:1px solid rgba(201,162,67,0.15); display:flex; align-items:center; justify-content:center; gap:8px; }
+        html.light-mode .tr-info-bar { background:rgba(59,130,246,0.08); border-color:rgba(59,130,246,0.15); }
+        html.light-mode .tr-info-bar .material-symbols-outlined { color:#3b82f6; }
+        html.light-mode .tr-info-bar span { color:#1e3a8a; }
         .tr-info-bar .material-symbols-outlined { font-size:16px; color:var(--accent-gold); }
         .tr-info-bar span { color:var(--text-light); font-size:11px; font-weight:500; }
 
@@ -113,6 +116,10 @@
         .modal-box .modal-btn-cancel { background:var(--bg-card-light); color:var(--text-light); border:1px solid var(--border-input); }
         .modal-box .modal-btn-confirm { background:#e74c3c; color:#fff; }
         .modal-box .modal-btn-confirm:disabled { opacity:.4; cursor:default; }
+
+        html.light-mode .tr-line { border-top-color:rgba(0,0,0,0.12); }
+        html.light-mode .tr-step-dot { border-color:rgba(0,0,0,0.15); }
+        html.light-mode .tr-step-dot.pending { border-color:rgba(0,0,0,0.15); }
 
         .toast-message { position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--primary-blue); border:1px solid var(--border-light); border-radius:14px; padding:14px 20px; color:var(--text-white); font-size:13px; font-weight:500; z-index:200; opacity:0; transition:all .4s ease; pointer-events:none; box-shadow:0 8px 30px rgba(0,0,0,0.3); text-align:center; max-width:320px; }
         .toast-message.show { opacity:1; transform:translateX(-50%) translateY(0); }
