@@ -1022,8 +1022,26 @@
                     });
                     if (!saveData.length) {
                         localStorage.removeItem('bunean-market-cart');
+                        var fc = document.querySelector('.mkt-floating-cart');
+                        if (fc) fc.remove();
                     } else {
                         localStorage.setItem('bunean-market-cart', JSON.stringify(saveData));
+                        updateFloatingCartBadge(filtered);
+                    }
+                }
+
+                function updateFloatingCartBadge(items) {
+                    var fc = document.querySelector('.mkt-floating-cart');
+                    var count = items.reduce(function(s, c) { return s + (c.qty || 0); }, 0);
+                    if (fc) {
+                        var badge = fc.querySelector('.mkt-cart-badge');
+                        if (badge) badge.textContent = count;
+                    } else {
+                        initFloatingCart();
+                        fc = document.querySelector('.mkt-floating-cart');
+                    }
+                    if (fc && (cartView.value || checkoutView.value)) {
+                        fc.style.display = 'none';
                     }
                 }
 
@@ -1092,6 +1110,7 @@
                     var exists = cart.value.find(function(c) { return c.name === label; });
                     if (exists) { exists.qty += selectedQty.value; }
                     else { cart.value.push({ name: label, price: p.price, img: p.img, qty: selectedQty.value }); }
+                    saveCart();
                     selectedProduct.value = null;
                 }
 
@@ -1305,8 +1324,6 @@
                     cartView.value = false;
                     checkoutView.value = false;
                     saveCart();
-                    var fc = document.querySelector('.mkt-floating-cart');
-                    if (fc) fc.remove();
                 }
 
                 function resetMktTimer() {
