@@ -248,29 +248,3 @@ function initFloatingCart() {
         pulling = false;
     }, { passive: true });
 })();
-
-// ===== شعار بنيان عند دخول الصفحة =====
-(function() {
-    if (document.getElementById('brand-intro')) return;
-    var div = document.createElement('div');
-    div.id = 'brand-intro';
-    div.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-dark,#1a1a2e);pointer-events:none;opacity:0;transition:opacity 0.35s ease;';
-    div.innerHTML = '<img src="logo-small-transparent.png" alt="بنيان" style="width:48px;height:48px;animation:brandPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;">'
-        + '<span style="margin-top:8px;font-size:16px;font-weight:700;color:var(--accent-gold,#c9a243);opacity:0;animation:brandFade 0.3s 0.2s both;">بنيان</span>';
-    document.body.appendChild(div);
-
-    if (!document.getElementById('brand-style')) {
-        var s = document.createElement('style');
-        s.id = 'brand-style';
-        s.textContent = '@keyframes brandPop{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}@keyframes brandFade{to{opacity:1}}';
-        document.head.appendChild(s);
-    }
-
-    requestAnimationFrame(function() {
-        div.style.opacity = '1';
-        setTimeout(function() {
-            div.style.opacity = '0';
-            setTimeout(function() { div.remove(); }, 400);
-        }, 500);
-    });
-})();
