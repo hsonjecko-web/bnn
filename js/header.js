@@ -18,7 +18,7 @@ function renderHeader(options) {
 
     return '<header class="top-nav">'
         + backBtn
-        + '<div class="nav-brand" style="display:flex;align-items:center;gap:4px;">'
+        + '<div class="nav-brand">'
         + '<img src="logo-small-transparent.png" alt="بنيان" style="width:44px;height:44px;">'
         + '<span style="font-size:18px;font-weight:700;color:var(--accent-gold);">بنيان</span></div>'
         + '<div class="search-bar">'

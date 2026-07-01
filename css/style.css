@@ -465,6 +465,14 @@ input, textarea, select {
   height: 24px;
 }
 
+.top-nav .nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .top-nav .nav-title {
   font-size: 18px;
   font-weight: 700;
@@ -5759,6 +5767,10 @@ html.light-mode .mkt-modal-desc { color: #666; }
 
 /* ===== شاشات صغيرة جداً 360px فأقل ===== */
 @media (max-width: 360px) {
+  .top-nav { padding: 8px 10px; }
+  .top-nav .nav-brand img { width: 36px !important; height: 36px !important; }
+  .top-nav .nav-brand span { font-size: 15px !important; }
+  .search-bar { margin: 0 6px; padding: 8px 10px; }
   .hero-slider { height: 160px; margin: 8px 12px 0; }
   .slide-content h2 { font-size: 16px; }
   .slide-content { padding: 14px; }
