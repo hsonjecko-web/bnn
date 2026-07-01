@@ -458,21 +458,27 @@
                             <div class="mkt-cart-item-img">
                                 <img :src="item.img" alt="">
                             </div>
-                            <div class="mkt-cart-item-info">
-                                <h4>{{ item.name }}</h4>
-                                <div v-if="item.colorName" class="mkt-cart-item-opt" style="font-size:11px;color:var(--text-muted);margin:2px 0;">اللون: {{ item.colorName }}</div>
-                                <div v-if="item.finishName" class="mkt-cart-item-opt" style="font-size:11px;color:var(--text-muted);margin:2px 0;">التشطيب: {{ item.finishName }}</div>
-                                <div v-if="item.sizeName" class="mkt-cart-item-opt" style="font-size:11px;color:var(--text-muted);margin:2px 0;">الحجم: {{ item.sizeName }}</div>
-                                <div class="mkt-cart-item-price">{{ fmt(item.price * item.qty) }} د.ع</div>
-                                <div class="mkt-qty-control" @click.stop>
-                                    <button class="mkt-qty-btn" @click="item.qty = Math.max(1, item.qty - 1); saveCart()">-</button>
-                                    <span class="mkt-qty-val">{{ item.qty }}</span>
-                                    <button class="mkt-qty-btn" @click="item.qty++; saveCart()">+</button>
+                            <div class="mkt-cart-item-body">
+                                <div class="mkt-cart-item-top">
+                                    <div class="mkt-cart-item-info">
+                                        <h4>{{ item.name }}</h4>
+                                        <div v-if="item.colorName" class="mkt-cart-item-opt">اللون: {{ item.colorName }}</div>
+                                        <div v-if="item.finishName" class="mkt-cart-item-opt">التشطيب: {{ item.finishName }}</div>
+                                        <div v-if="item.sizeName" class="mkt-cart-item-opt">الحجم: {{ item.sizeName }}</div>
+                                    </div>
+                                    <button class="mkt-cart-remove" @click.stop="cart.splice(i, 1); saveCart()">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
+                                <div class="mkt-cart-item-bottom">
+                                    <div class="mkt-cart-item-price">{{ fmt(item.price * item.qty) }} د.ع</div>
+                                    <div class="mkt-qty-control" @click.stop>
+                                        <button class="mkt-qty-btn" @click="item.qty = Math.max(1, item.qty - 1); saveCart()">−</button>
+                                        <span class="mkt-qty-val">{{ item.qty }}</span>
+                                        <button class="mkt-qty-btn" @click="item.qty++; saveCart()">+</button>
+                                    </div>
                                 </div>
                             </div>
-                            <button class="mkt-cart-remove" @click.stop="cart.splice(i, 1); saveCart()">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
                         </div>
 
                         <div class="mkt-cart-summary">
