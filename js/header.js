@@ -20,7 +20,7 @@ function renderHeader(options) {
         + backBtn
         + '<div class="nav-brand" style="display:flex;align-items:center;gap:10px;">'
         + '<img src="logo-small-transparent.png" alt="بنيان" style="width:36px;height:36px;">'
-        + '<span style="font-size:18px;font-weight:700;color:var(--text-white);">بنيان</span></div>'
+        + '<span style="font-size:18px;font-weight:700;color:var(--accent-gold);">بنيان</span></div>'
         + '<div class="search-bar">'
         + '<span class="material-symbols-outlined">search</span>'
         + searchInput

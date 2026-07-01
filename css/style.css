@@ -847,7 +847,7 @@ html.light-mode .search-panel input {
 .section-title {
   font-size: 16px;
   font-weight: 700;
-  color: var(--text-white);
+  color: var(--accent-gold);
 }
 
 .section-link {
