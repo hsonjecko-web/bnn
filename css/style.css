@@ -5208,19 +5208,25 @@ html.light-mode .mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
   left: 16px;
   width: 56px;
   height: 56px;
-  background: #3a6a95;
+  background: var(--accent-gold);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(58,106,149,0.4);
+  color: var(--text-on-accent);
+  box-shadow: 0 4px 20px rgba(201, 162, 67, 0.35);
   cursor: pointer;
   z-index: 90;
   transition: all 0.3s ease;
+  border: none;
 }
-.mkt-floating-cart:hover { transform: scale(1.1); }
+.mkt-floating-cart:hover { transform: scale(1.08); box-shadow: 0 6px 25px rgba(201, 162, 67, 0.45); }
+.mkt-floating-cart:active { transform: scale(0.95); }
 .mkt-floating-cart .material-symbols-outlined { font-size: 26px; }
+html.light-mode .mkt-floating-cart {
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(44, 95, 138, 0.3);
+}
 .mkt-cart-badge {
   position: absolute;
   top: -2px;

@@ -771,10 +771,7 @@
             </div>
 
             <!-- زر السلة العائم -->
-            <div v-if="cart.length > 0 && !cartView && !checkoutView" class="mkt-floating-cart" @click="cartView = true">
-                <span class="material-symbols-outlined">shopping_cart</span>
-                <span class="mkt-cart-badge">{{ cartCount }}</span>
-            </div>
+
 
             <div id="bottomNav"></div>
         </div>
@@ -818,6 +815,8 @@
                 var mktTimer = null;
                 var showAllView = ref(false);
                 var showAllSuppliers = ref(false);
+
+                window.__openCart = function() { cartView.value = true; };
 
                 var selectedProduct = ref(null);
                 var selectedColor = ref(0);
@@ -1340,6 +1339,15 @@
                 });
                 onUnmounted(function() { if (mktTimer) clearInterval(mktTimer); });
 
+                watch([cartView, checkoutView], function() {
+                    var el = document.querySelector('.mkt-floating-cart');
+                    if (el && (cartView.value || checkoutView.value)) {
+                        el.style.display = 'none';
+                    } else if (el) {
+                        el.style.display = '';
+                    }
+                });
+
                 return {
                     categories, searchQuery, activeCatView, cartView, calculatorView, checkoutView,
                     sliderImages, mktSlide, sliderTouch, resetMktTimer,
@@ -1363,6 +1371,7 @@
         }).mount('#app');
     </script>
     <script>
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(function() { console.log('SW registered'); })

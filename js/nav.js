@@ -149,9 +149,14 @@ function initFloatingCart() {
         if (count < 1) { localStorage.removeItem('bunean-market-cart'); return; }
         var div = document.createElement('div');
         div.className = 'mkt-floating-cart';
-        div.style.cssText = 'position:fixed;bottom:calc(80px + env(safe-area-inset-bottom, 0px));left:16px;width:56px;height:56px;background:#3a6a95;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 20px rgba(58,106,149,0.4);cursor:pointer;z-index:90;';
-        div.innerHTML = '<span class="material-symbols-outlined" style="font-size:26px;">shopping_cart</span><span class="mkt-cart-badge" style="position:absolute;top:-2px;right:-2px;width:20px;height:20px;background:#e74c3c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;">' + count + '</span>';
-        div.addEventListener('click', function() { window.location.href = 'market.html?cart=1'; });
+        div.innerHTML = '<span class="material-symbols-outlined">shopping_cart</span><span class="mkt-cart-badge">' + count + '</span>';
+        div.addEventListener('click', function() {
+            if (typeof window.__openCart === 'function') {
+                window.__openCart();
+            } else {
+                window.location.href = 'market.html?cart=1';
+            }
+        });
         document.body.appendChild(div);
     } catch(e) {}
 }
