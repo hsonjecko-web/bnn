@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b1a2e">
-    <title>بنيان - استشارات</title>
+    <title>بنيان - عروض الأسعار</title>
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -30,74 +30,189 @@
         <div class="app-container">
             <div id="header"></div>
 
-            <div style="display: flex; align-items: center; padding: 8px 16px; gap: 10px;">
-                <a href="home.html" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--text-white); text-decoration: none;">
-                    <span class="material-symbols-outlined" style="font-size: 24px;">arrow_forward</span>
+            <div style="display:flex;align-items:center;padding:8px 16px 4px;gap:10px;">
+                <a href="home.html" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;color:var(--text-white);text-decoration:none;">
+                    <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
                 </a>
-                <div style="flex: 1; text-align: center;">
-                    <div style="font-size: 18px; font-weight: 700; color: var(--accent-gold);">الطلبات والعروض</div>
-                    <div style="font-size: 12px; color: var(--text-light);">املأ البيانات وسيتواصل معك المختصون</div>
+                <div style="flex:1;text-align:center;">
+                    <div style="font-size:18px;font-weight:700;color:var(--accent-gold);">عروض الأسعار</div>
+                    <div style="font-size:12px;color:var(--text-light);">جميع العروض المقدمة من الشركات</div>
                 </div>
-                <div style="width: 44px;"></div>
+                <button @click="showNewForm = true" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:var(--accent-gold);border:none;border-radius:50%;color:var(--primary-dark);cursor:pointer;">
+                    <span class="material-symbols-outlined" style="font-size:22px;">add</span>
+                </button>
             </div>
 
-            <!-- Tabs -->
-            <div style="display:flex;gap:6px;padding:0 16px 12px;">
-                <button class="notif-tab" :class="{ active: tab === 'consult' }" @click="tab='consult'" style="padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;background:var(--bg-input);color:var(--text-muted);" :style="tab === 'consult' ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : {}">طلب استشارة</button>
-                <button class="notif-tab" :class="{ active: tab === 'quote' }" @click="tab='quote'" style="padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;background:var(--bg-input);color:var(--text-muted);" :style="tab === 'quote' ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : {}">طلب عرض سعر</button>
-            </div>
+            <div class="page-content" style="padding-top:0;">
+                <!-- Status Tabs -->
+                <div style="display:flex;gap:6px;padding:8px 16px 12px;overflow-x:auto;">
+                    <button v-for="t in statusTabs" :key="t.key"
+                        @click="activeTab = t.key"
+                        style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;white-space:nowrap;"
+                        :style="activeTab === t.key ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : { background:'var(--bg-input)', color:'var(--text-muted)' }">
+                        {{ t.label }} <span style="font-size:11px;opacity:.7;">({{ t.count }})</span>
+                    </button>
+                </div>
 
-            <div class="page-content">
-                <!-- ===== Consultation Form ===== -->
-                <template v-if="tab === 'consult'">
-                    <div style="padding: 0 16px 20px;">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label"><span class="material-symbols-outlined">person</span> الاسم</label>
-                                <input type="text" class="form-input" v-model="form.name" placeholder="الاسم">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label"><span class="material-symbols-outlined">call</span> الهاتف</label>
-                                <input type="tel" class="form-input" v-model="form.phone" placeholder="رقم الهاتف">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label"><span class="material-symbols-outlined">location_city</span> المحافظة</label>
-                                <select class="form-select" v-model="form.gov"><option value="">اختر</option><option v-for="g in governorates" :key="g" :value="g">{{ g }}</option></select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label"><span class="material-symbols-outlined">category</span> نوع الاستشارة</label>
-                                <select class="form-select" v-model="form.type"><option value="">اختر</option><option value="هندسية">هندسية</option><option value="تصميم داخلي">تصميم داخلي</option><option value="تشطيبات">تشطيبات</option><option value="مواد بناء">مواد بناء</option><option value="قانونية">قانونية</option><option value="أخرى">أخرى</option></select>
-                            </div>
-                        </div>
-                        <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">map</span> العنوان</label><input type="text" class="form-input" v-model="form.address" placeholder="العنوان"></div>
-                        <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">description</span> تفاصيل الاستشارة</label><textarea class="form-textarea" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..."></textarea></div>
-                        <button class="consult-submit" @click="submitForm"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: 20px; margin-left: 6px;">send</span> إرسال الاستشارة</button>
-                    </div>
-                </template>
+                <!-- Empty State -->
+                <div v-if="filteredOffers.length === 0" style="padding:40px 16px;text-align:center;">
+                    <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted);opacity:.5;">description</span>
+                    <div style="color:var(--text-muted);font-size:14px;margin-top:8px;">لا توجد عروض {{ activeTab === 'all' ? '' : statusTabs.find(t => t.key === activeTab)?.label }}</div>
+                    <div style="color:var(--text-light);font-size:12px;margin-top:4px;">عندما ترسل الشركات عروضها ستظهر هنا</div>
+                </div>
 
-                <!-- ===== Quote Request Form ===== -->
-                <template v-if="tab === 'quote'">
-                    <div style="padding: 0 16px 20px;">
-                        <div class="form-row">
-                            <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">person</span> الاسم</label><input type="text" class="form-input" v-model="qr.name" placeholder="الاسم"></div>
-                            <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">call</span> الهاتف</label><input type="tel" class="form-input" v-model="qr.phone" placeholder="رقم الهاتف"></div>
+                <!-- Offers List -->
+                <div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:10px;">
+                    <div v-for="offer in filteredOffers" :key="offer.id" @click="openOffer(offer)"
+                        style="background:var(--bg-card);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;border:1px solid var(--border-light);display:flex;flex-direction:column;gap:10px;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent-gold),#a07820);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <span style="color:var(--primary-dark);font-size:18px;font-weight:800;">{{ offer.company.charAt(0) }}</span>
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="color:var(--text-white);font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ offer.company }}</div>
+                                <div style="color:var(--text-muted);font-size:11px;">{{ offer.service || 'خدمة مقاولات' }} · {{ offer.size || '—' }}</div>
+                            </div>
+                            <div :style="statusStyle(offer.status)">{{ offer.status }}</div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">assignment</span> اسم المشروع</label><input type="text" class="form-input" v-model="qr.projectName" placeholder="اسم المشروع"></div>
-                            <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">location_on</span> الموقع</label><input type="text" class="form-input" v-model="qr.location" placeholder="الموقع"></div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border-light);">
+                            <div style="color:var(--text-light);font-size:12px;">
+                                <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">calendar_today</span> {{ offer.date || '—' }}
+                            </div>
+                            <div style="color:var(--accent-gold);font-size:15px;font-weight:800;">{{ offer.price || '—' }}</div>
                         </div>
-                        <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">category</span> التصنيف</label>
-                            <select class="form-select" v-model="qr.category"><option value="">اختر</option><option v-for="c in categories" :key="c" :value="c">{{ c }}</option></select>
-                        </div>
-                        <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">description</span> التفاصيل</label><textarea class="form-textarea" v-model="qr.details" placeholder="وصف المشروع والمواصفات المطلوبة..."></textarea></div>
-                        <button class="consult-submit" @click="submitQuoteRequest"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: 20px; margin-left: 6px;">send</span> إرسال طلب عرض السعر</button>
                     </div>
-                </template>
+                </div>
             </div>
 
             <div id="bottomNav"></div>
+        </div>
+
+        <!-- Offer Detail Modal -->
+        <div v-if="selectedOffer" class="success-overlay" @click="selectedOffer = null">
+            <div class="success-modal" @click.stop style="text-align:right;max-width:340px;">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent-gold),#a07820);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="color:var(--primary-dark);font-size:20px;font-weight:800;">{{ selectedOffer.company.charAt(0) }}</span>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="color:var(--text-white);font-size:15px;font-weight:700;">{{ selectedOffer.company }}</div>
+                        <div style="display:inline-block;margin-top:2px;" :style="statusStyle(selectedOffer.status)">{{ selectedOffer.status }}</div>
+                    </div>
+                </div>
+                <div style="background:var(--bg-input);border-radius:10px;padding:12px;margin-bottom:8px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                        <span style="color:var(--text-muted);font-size:12px;">السعر</span>
+                        <span style="color:var(--accent-gold);font-size:18px;font-weight:800;">{{ selectedOffer.price }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                        <span style="color:var(--text-muted);font-size:12px;">المساحة</span>
+                        <span style="color:var(--text-white);font-size:13px;">{{ selectedOffer.size || '—' }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:var(--text-muted);font-size:12px;">تاريخ العرض</span>
+                        <span style="color:var(--text-white);font-size:13px;">{{ selectedOffer.date || '—' }}</span>
+                    </div>
+                </div>
+                <div style="background:var(--bg-input);border-radius:10px;padding:12px;margin-bottom:12px;">
+                    <div style="color:var(--text-white);font-size:12px;font-weight:600;margin-bottom:4px;">تفاصيل العرض</div>
+                    <div style="color:var(--text-light);font-size:12px;line-height:1.6;">{{ selectedOffer.desc || 'لا توجد تفاصيل إضافية' }}</div>
+                </div>
+                <a v-if="selectedOffer.companyLink" :href="selectedOffer.companyLink" style="display:block;text-align:center;padding:10px;border-radius:10px;border:1px solid var(--accent-gold);color:var(--accent-gold);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:8px;">
+                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">business</span> عرض ملف الشركة
+                </a>
+                <button @click="selectedOffer = null" class="success-btn">إغلاق</button>
+            </div>
+        </div>
+
+        <!-- New Quote/Consult Form Modal -->
+        <div v-if="showNewForm" class="success-overlay" @click="showNewForm = false">
+            <div class="success-modal" @click.stop style="text-align:right;max-width:340px;max-height:85vh;overflow-y:auto;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                    <button @click="showNewForm = false" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:0;">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                    <h2 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0;">{{ newFormTab === 'quote' ? 'طلب عرض سعر' : 'طلب استشارة' }}</h2>
+                </div>
+                <div style="display:flex;gap:6px;margin-bottom:12px;">
+                    <button @click="newFormTab = 'quote'" style="flex:1;padding:6px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;" :style="newFormTab === 'quote' ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : { background:'var(--bg-input)', color:'var(--text-muted)' }">طلب عرض سعر</button>
+                    <button @click="newFormTab = 'consult'" style="flex:1;padding:6px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;" :style="newFormTab === 'consult' ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : { background:'var(--bg-input)', color:'var(--text-muted)' }">طلب استشارة</button>
+                </div>
+
+                <template v-if="newFormTab === 'quote'">
+                    <div class="mkt-checkout-form">
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">person</span> الاسم</label>
+                            <input type="text" class="form-input" v-model="newQR.name" placeholder="الاسم" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">call</span> الهاتف</label>
+                            <input type="tel" class="form-input" v-model="newQR.phone" placeholder="رقم الهاتف" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">assignment</span> اسم المشروع</label>
+                            <input type="text" class="form-input" v-model="newQR.projectName" placeholder="اسم المشروع" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">location_on</span> الموقع</label>
+                            <input type="text" class="form-input" v-model="newQR.location" placeholder="الموقع" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">category</span> التصنيف</label>
+                            <select class="form-input" v-model="newQR.category" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                <option value="">اختر التصنيف</option>
+                                <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+                            </select>
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">description</span> التفاصيل</label>
+                            <textarea class="form-input" v-model="newQR.details" placeholder="وصف المشروع والمواصفات المطلوبة..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;min-height:80px;font-family:Cairo,sans-serif;"></textarea>
+                        </div>
+                        <button @click="submitNewQuoteRequest" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+                            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">send</span> إرسال طلب عرض السعر
+                        </button>
+                    </div>
+                </template>
+
+                <template v-if="newFormTab === 'consult'">
+                    <div class="mkt-checkout-form">
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">person</span> الاسم</label>
+                            <input type="text" class="form-input" v-model="newConsult.name" placeholder="الاسم" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">call</span> الهاتف</label>
+                            <input type="tel" class="form-input" v-model="newConsult.phone" placeholder="رقم الهاتف" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">location_city</span> المحافظة</label>
+                            <select class="form-input" v-model="newConsult.gov" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                <option value="">اختر المحافظة</option>
+                                <option v-for="g in governorates" :key="g" :value="g">{{ g }}</option>
+                            </select>
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">category</span> نوع الاستشارة</label>
+                            <select class="form-input" v-model="newConsult.type" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                <option value="">اختر</option>
+                                <option value="هندسية">هندسية</option>
+                                <option value="تصميم داخلي">تصميم داخلي</option>
+                                <option value="تشطيبات">تشطيبات</option>
+                                <option value="مواد بناء">مواد بناء</option>
+                                <option value="قانونية">قانونية</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
+                        <div class="mkt-form-group">
+                            <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">description</span> تفاصيل الاستشارة</label>
+                            <textarea class="form-input" v-model="newConsult.desc" placeholder="اكتب تفاصيل استشارتك هنا..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;min-height:80px;font-family:Cairo,sans-serif;"></textarea>
+                        </div>
+                        <button @click="submitNewConsult" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+                            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">send</span> إرسال الاستشارة
+                        </button>
+                    </div>
+                </template>
+            </div>
         </div>
 
         <!-- Success Modal -->
@@ -107,7 +222,7 @@
                     <span class="material-symbols-outlined success-icon">check_circle</span>
                 </div>
                 <h2 class="success-title">تم الإرسال بنجاح</h2>
-                <p class="success-desc" v-if="tab === 'consult'">تم استلام استشارتك بنجاح<br>سيتم التواصل معك من قبل المختصين قريباً</p>
+                <p class="success-desc" v-if="lastSubmitType === 'consult'">تم استلام استشارتك بنجاح<br>سيتم التواصل معك من قبل المختصين قريباً</p>
                 <p class="success-desc" v-else>تم إرسال طلب عرض السعر<br>سيتم الرد عليك من قبل الشركات المختصة</p>
                 <button class="success-btn" @click="showSuccess = false">حسناً</button>
             </div>
@@ -120,59 +235,117 @@
         document.getElementById('header').innerHTML = renderHeader({});
         document.getElementById('bottomNav').innerHTML = renderNav('home');
 
-        const { createApp, ref } = Vue;
+        const { createApp, ref, computed } = Vue;
 
         createApp({
             setup() {
                 initTheme();
-
-                var tab = ref('consult');
-
-                var governorates = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية'];
-
-                var form = ref({ name: '', gov: '', address: '', phone: '', type: '', desc: '' });
+                var activeTab = ref('all');
+                var selectedOffer = ref(null);
+                var showNewForm = ref(false);
+                var newFormTab = ref('quote');
                 var showSuccess = ref(false);
+                var lastSubmitType = ref('quote');
 
-                function submitForm() {
-                    if (!form.value.name.trim()) { showBrandAlert('يرجى إدخال الاسم'); return; }
-                    if (!form.value.gov) { showBrandAlert('يرجى اختيار المحافظة'); return; }
-                    if (!form.value.phone.trim()) { showBrandAlert('يرجى إدخال رقم الهاتف'); return; }
-                    if (!form.value.type) { showBrandAlert('يرجى اختيار نوع الاستشارة'); return; }
-                    if (!form.value.desc.trim()) { showBrandAlert('يرجى كتابة تفاصيل الاستشارة'); return; }
-                    form.value = { name: '', gov: '', address: '', phone: '', type: '', desc: '' };
-                    showSuccess.value = true;
-                }
-
-                // ===== Quote Request =====
-                var qr = ref({ name: '', phone: '', projectName: '', location: '', category: '', details: '' });
+                var governorates = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية', 'ديالى', 'واسط', 'ميسان', 'المثنى', 'ذي قار', 'بابل', 'الأنبار', 'صلاح الدين'];
                 var categories = ['بناء سكني', 'بناء تجاري', 'تشطيبات', 'خرسانة', 'أعمال صحية', 'أعمال كهربائية', 'دهانات', 'أرضيات', 'واجهات', 'حدائق', 'أخرى'];
 
-                function submitQuoteRequest() {
-                    if (!qr.value.name.trim()) { showBrandAlert('أدخل الاسم'); return; }
-                    if (!qr.value.phone.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
-                    if (!qr.value.projectName.trim()) { showBrandAlert('أدخل اسم المشروع'); return; }
-                    if (!qr.value.location.trim()) { showBrandAlert('أدخل الموقع'); return; }
-                    if (!qr.value.category) { showBrandAlert('اختر التصنيف'); return; }
-                    if (!qr.value.details.trim()) { showBrandAlert('أدخل تفاصيل المشروع'); return; }
+                var defaultOffers = [
+                    { id: 1, company: 'مؤسسة البناء الحديث', service: 'مقاولات عامة', status: 'تم الرد', price: '125,000,000 د.ع', size: '150 م²', date: '2025-06-15', desc: 'عرض أسعار لمشروع بناء سكني يشمل كافة الأعمال الإنشائية والتشطيبات حسب المواصفات المطلوبة.', companyLink: 'company.html?id=1' },
+                    { id: 2, company: 'شركة النخبة للمقاولات', service: 'تشطيب', status: 'قيد المراجعة', price: '75,000,000 د.ع', size: '120 م²', date: '2025-06-14', desc: 'عرض تشطيب شامل للشقة يشمل أعمال الكهرباء والسباكة والدهانات والأرضيات.', companyLink: 'company.html?id=2' },
+                    { id: 3, company: 'مؤسسة البركات', service: 'سباكة وكهرباء', status: 'مقبول', price: '45,000,000 د.ع', size: '200 م²', date: '2025-06-10', desc: 'تم الموافقة على عرض التركيبات الصحية والكهربائية للمشروع.', companyLink: 'company.html?id=3' },
+                    { id: 4, company: 'شركة الأساس المتين', service: 'أعمال هيكلية', status: 'ملغي', price: '250,000,000 د.ع', size: '300 م²', date: '2025-05-20', desc: 'تم إلغاء العرض بسبب تغير مواصفات المشروع.', companyLink: 'company.html?id=4' },
+                ];
+
+                var userOffers = ref([]);
+                var loadOffers = function() {
+                    var stored = loadFromStorage('bunean-user-offers');
+                    userOffers.value = stored && stored.length ? stored : defaultOffers;
+                };
+                loadOffers();
+
+                var statusTabs = computed(function() {
+                    var all = userOffers.value.length;
+                    var pending = userOffers.value.filter(function(o) { return o.status === 'قيد المراجعة' || o.status === 'قيد الانتظار'; }).length;
+                    var replied = userOffers.value.filter(function(o) { return o.status === 'تم الرد'; }).length;
+                    var accepted = userOffers.value.filter(function(o) { return o.status === 'مقبول'; }).length;
+                    return [
+                        { key: 'all', label: 'الكل', count: all },
+                        { key: 'pending', label: 'قيد المراجعة', count: pending },
+                        { key: 'replied', label: 'تم الرد', count: replied },
+                        { key: 'accepted', label: 'مقبول', count: accepted }
+                    ];
+                });
+
+                var filteredOffers = computed(function() {
+                    if (activeTab.value === 'all') return userOffers.value;
+                    if (activeTab.value === 'pending') return userOffers.value.filter(function(o) { return o.status === 'قيد المراجعة' || o.status === 'قيد الانتظار'; });
+                    if (activeTab.value === 'replied') return userOffers.value.filter(function(o) { return o.status === 'تم الرد'; });
+                    if (activeTab.value === 'accepted') return userOffers.value.filter(function(o) { return o.status === 'مقبول'; });
+                    return userOffers.value;
+                });
+
+                function statusStyle(status) {
+                    if (status === 'تم الرد') return { background: 'rgba(201,162,67,0.15)', color: 'var(--accent-gold)', fontSize:'11px', padding:'3px 8px', borderRadius:'20px', fontWeight:'600', whiteSpace:'nowrap' };
+                    if (status === 'مقبول') return { background: 'rgba(46,204,113,0.15)', color: '#2ecc71', fontSize:'11px', padding:'3px 8px', borderRadius:'20px', fontWeight:'600', whiteSpace:'nowrap' };
+                    if (status === 'ملغي') return { background: 'rgba(231,76,60,0.15)', color: '#e74c3c', fontSize:'11px', padding:'3px 8px', borderRadius:'20px', fontWeight:'600', whiteSpace:'nowrap' };
+                    return { background: 'rgba(255,255,255,0.08)', color: 'var(--text-muted)', fontSize:'11px', padding:'3px 8px', borderRadius:'20px', fontWeight:'600', whiteSpace:'nowrap' };
+                }
+
+                function openOffer(offer) {
+                    selectedOffer.value = offer;
+                }
+
+                // New Quote Request
+                var newQR = ref({ name: '', phone: '', projectName: '', location: '', category: '', details: '' });
+                function submitNewQuoteRequest() {
+                    if (!newQR.value.name.trim()) { showBrandAlert('أدخل الاسم'); return; }
+                    if (!newQR.value.phone.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
+                    if (!newQR.value.projectName.trim()) { showBrandAlert('أدخل اسم المشروع'); return; }
+                    if (!newQR.value.location.trim()) { showBrandAlert('أدخل الموقع'); return; }
+                    if (!newQR.value.category) { showBrandAlert('اختر التصنيف'); return; }
+                    if (!newQR.value.details.trim()) { showBrandAlert('أدخل تفاصيل المشروع'); return; }
                     var reqs = JSON.parse(localStorage.getItem('bunean-quote-requests') || '[]');
                     reqs.push({
                         id: Date.now(),
-                        name: qr.value.name.trim(),
-                        phone: qr.value.phone.trim(),
-                        projectName: qr.value.projectName.trim(),
-                        location: qr.value.location.trim(),
-                        category: qr.value.category,
-                        details: qr.value.details.trim(),
+                        name: newQR.value.name.trim(),
+                        phone: newQR.value.phone.trim(),
+                        projectName: newQR.value.projectName.trim(),
+                        location: newQR.value.location.trim(),
+                        category: newQR.value.category,
+                        details: newQR.value.details.trim(),
                         replied: false,
                         replyMessage: '',
                         createdAt: new Date().toISOString()
                     });
                     localStorage.setItem('bunean-quote-requests', JSON.stringify(reqs));
-                    qr.value = { name: '', phone: '', projectName: '', location: '', category: '', details: '' };
+                    newQR.value = { name: '', phone: '', projectName: '', location: '', category: '', details: '' };
+                    showNewForm.value = false;
+                    lastSubmitType.value = 'quote';
                     showSuccess.value = true;
                 }
 
-                return { tab, governorates, form, submitForm, showSuccess, qr, categories, submitQuoteRequest };
+                // New Consultation
+                var newConsult = ref({ name: '', phone: '', gov: '', type: '', desc: '' });
+                function submitNewConsult() {
+                    if (!newConsult.value.name.trim()) { showBrandAlert('أدخل الاسم'); return; }
+                    if (!newConsult.value.phone.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
+                    if (!newConsult.value.gov) { showBrandAlert('اختر المحافظة'); return; }
+                    if (!newConsult.value.type) { showBrandAlert('اختر نوع الاستشارة'); return; }
+                    if (!newConsult.value.desc.trim()) { showBrandAlert('أدخل تفاصيل الاستشارة'); return; }
+                    newConsult.value = { name: '', phone: '', gov: '', type: '', desc: '' };
+                    showNewForm.value = false;
+                    lastSubmitType.value = 'consult';
+                    showSuccess.value = true;
+                }
+
+                return {
+                    activeTab, selectedOffer, showNewForm, newFormTab, showSuccess, lastSubmitType,
+                    governorates, categories, userOffers, statusTabs, filteredOffers,
+                    statusStyle, openOffer,
+                    newQR, submitNewQuoteRequest,
+                    newConsult, submitNewConsult
+                };
             }
         }).mount('#app');
 

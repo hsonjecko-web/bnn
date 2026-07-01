@@ -1,5 +1,10 @@
 // ===== ملف مشترك - التنقل والوظائف المشتركة =====
 
+// ===== أدوات مساعدة =====
+function loadFromStorage(key, def) {
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e) { return def; }
+}
+
 // ===== إدارة السمة (Light/Dark Mode) =====
 function initTheme() {
     const saved = localStorage.getItem('bunean-theme');
