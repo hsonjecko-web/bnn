@@ -103,7 +103,7 @@
                                         <span class="material-symbols-outlined" style="font-size:12px;">close</span>
                                     </button>
                                 </div>
-                                <label style="width:72px;height:72px;border-radius:10px;border:1px dashed var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:10px;gap:2px;">
+                                <label v-if="newQR.images.length < 5" style="width:72px;height:72px;border-radius:10px;border:1px dashed var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:10px;gap:2px;">
                                     <span class="material-symbols-outlined" style="font-size:20px;">add_photo_alternate</span>
                                     إضافة
                                     <input type="file" accept="image/*" style="display:none;" @change="addQuoteImage">
@@ -161,7 +161,7 @@
                                         <span class="material-symbols-outlined" style="font-size:12px;">close</span>
                                     </button>
                                 </div>
-                                <label style="width:72px;height:72px;border-radius:10px;border:1px dashed var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:10px;gap:2px;">
+                                <label v-if="newConsult.images.length < 5" style="width:72px;height:72px;border-radius:10px;border:1px dashed var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:10px;gap:2px;">
                                     <span class="material-symbols-outlined" style="font-size:20px;">add_photo_alternate</span>
                                     إضافة
                                     <input type="file" accept="image/*" style="display:none;" @change="addConsultImage">
@@ -216,6 +216,7 @@
                 function addQuoteImage(e) {
                     var file = e.target.files[0];
                     if (!file) return;
+                    if (newQR.value.images.length >= 5) { showBrandAlert('الحد الأقصى 5 صور'); e.target.value = ''; return; }
                     var reader = new FileReader();
                     reader.onload = function(ev) { newQR.value.images.push(ev.target.result); };
                     reader.readAsDataURL(file);
@@ -253,6 +254,7 @@
                 function addConsultImage(e) {
                     var file = e.target.files[0];
                     if (!file) return;
+                    if (newConsult.value.images.length >= 5) { showBrandAlert('الحد الأقصى 5 صور'); e.target.value = ''; return; }
                     var reader = new FileReader();
                     reader.onload = function(ev) { newConsult.value.images.push(ev.target.result); };
                     reader.readAsDataURL(file);
