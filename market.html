@@ -817,7 +817,10 @@
                 var showAllView = ref(false);
                 var showAllSuppliers = ref(false);
 
-                window.__openCart = function() { cartView.value = true; };
+                window.__openCart = function() {
+                    cartView.value = true;
+                    productDetailView.value = false;
+                };
 
                 var selectedProduct = ref(null);
                 var selectedColor = ref(0);
