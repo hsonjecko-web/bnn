@@ -163,45 +163,58 @@ function initFloatingCart() {
 
 // ===== السحب للتحديث (Pull-to-Refresh) =====
 (function() {
-    var startY = 0, pulling = false;
+    var startY = 0, pulling = false, released = false;
     var indicator = null;
 
     function createIndicator() {
         indicator = document.createElement('div');
         indicator.id = 'ptr-indicator';
-        indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:0;overflow:hidden;transition:height 0.12s;background:linear-gradient(180deg,var(--bg-dark,#1a1a2e),transparent);padding-bottom:8px;';
-        indicator.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;transform:translateY(10px);">'
-            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:36px;height:36px;filter:drop-shadow(0 0 6px rgba(201,162,67,0.4));transition:transform 0.2s,opacity 0.2s;">'
-            + '<div style="width:50px;height:2px;background:rgba(201,162,67,0.15);border-radius:2px;overflow:hidden;">'
-            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:2px;transition:width 0.1s;"></div>'
+        indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:0;overflow:hidden;transition:height 0.25s cubic-bezier(0.34,1.56,0.64,1);padding-bottom:6px;';
+        indicator.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">'
+            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:32px;height:32px;opacity:0;transform:translateY(8px) scale(0.8);transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.25s;">'
+            + '<div style="width:40px;height:2px;background:rgba(201,162,67,0.12);border-radius:2px;overflow:hidden;opacity:0;transition:opacity 0.25s;" class="ptr-track">'
+            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:2px;transition:width 0.08s linear;"></div>'
             + '</div></div>';
         document.body.appendChild(indicator);
     }
 
     function showIndicator(dist) {
         if (!indicator) createIndicator();
-        var h = Math.min(dist * 0.8, 80);
-        indicator.style.height = h + 'px';
         var pct = Math.min(dist / 80, 1);
+        var h = Math.min(dist * 0.7, 70);
+        indicator.style.height = h + 'px';
         var logo = indicator.querySelector('.ptr-logo');
         var bar = indicator.querySelector('.ptr-bar');
+        var track = indicator.querySelector('.ptr-track');
         if (logo) {
-            logo.style.transform = 'translateY(' + (10 - pct * 10) + 'px) scale(' + (0.7 + pct * 0.3) + ')';
-            logo.style.opacity = pct;
+            logo.style.opacity = Math.min(pct * 1.5, 1);
+            logo.style.transform = 'translateY(' + (8 - pct * 8) + 'px) scale(' + (0.7 + pct * 0.3) + ')';
         }
+        if (track) track.style.opacity = Math.min(pct * 2, 1);
         if (bar) bar.style.width = (pct * 100) + '%';
     }
 
     function hideIndicator() {
         if (indicator) { indicator.style.height = '0'; }
+        released = false;
         pulling = false;
+    }
+
+    function doRefresh() {
+        released = true;
+        if (indicator) {
+            indicator.style.transition = 'height 0.3s cubic-bezier(0.34,1.56,0.64,1)';
+            indicator.style.height = '0';
+            indicator.style.background = 'none';
+        }
+        setTimeout(function() { location.reload(); }, 350);
     }
 
     // Inject animations once
     if (!document.getElementById('ptr-style')) {
         var s = document.createElement('style');
         s.id = 'ptr-style';
-        s.textContent = '@keyframes ptr-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:0.8}}';
+        s.textContent = '@keyframes ptr-spin{to{transform:rotate(360deg)}}';
         document.head.appendChild(s);
     }
 
@@ -215,35 +228,23 @@ function initFloatingCart() {
     }
 
     document.addEventListener('touchstart', function(e) {
-        if (isAtTop() && !hasOverlay()) {
+        if (isAtTop() && !hasOverlay() && !released) {
             startY = e.touches[0].clientY;
             pulling = true;
         }
     }, { passive: true });
     document.addEventListener('touchmove', function(e) {
-        if (pulling && isAtTop() && !hasOverlay()) {
+        if (pulling && isAtTop() && !hasOverlay() && !released) {
             var diff = e.touches[0].clientY - startY;
             if (diff > 0) showIndicator(diff);
             if (diff > 80) {
                 pulling = false;
-                if (indicator) {
-                    indicator.style.transition = 'none';
-                    indicator.style.height = '90px';
-                    indicator.style.background = 'linear-gradient(180deg,var(--bg-dark,#1a1a2e),transparent)';
-                    var logo = indicator.querySelector('.ptr-logo');
-                    var bar = indicator.querySelector('.ptr-bar');
-                    if (bar) bar.style.width = '100%';
-                    if (logo) {
-                        logo.style.transform = 'translateY(0) scale(1)';
-                        logo.style.animation = 'ptr-pulse 0.6s ease-in-out infinite';
-                    }
-                }
-                setTimeout(function() { location.reload(); }, 400);
+                doRefresh();
             }
         }
     }, { passive: true });
     document.addEventListener('touchend', function() {
-        if (pulling) hideIndicator();
+        if (pulling && !released) hideIndicator();
         pulling = false;
     }, { passive: true });
 })();
