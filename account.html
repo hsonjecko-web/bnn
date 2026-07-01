@@ -35,6 +35,8 @@
         .mkt-detail-row { display:flex; align-items:center; justify-content:space-between; padding:6px 0; }
         .mkt-detail-label { color:var(--text-muted); font-size:12px; }
         .mkt-detail-value { color:var(--text-white); font-size:13px; }
+        .notif-overlay { position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; padding:20px; }
+        .notif-modal { background:var(--bg-card); border:1px solid var(--border-light); border-radius:16px; width:100%; max-width:380px; max-height:80vh; overflow-y:auto; padding:0; direction:rtl; }
     </style>
 </head>
 <body>
@@ -133,7 +135,7 @@
 
                         <!-- Offers List -->
                         <div style="padding:8px 16px 20px;display:flex;flex-direction:column;gap:12px;">
-                            <div v-for="(off, i) in userOffers" :key="i" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid var(--border-light);transition:all .2s;"
+                            <div v-for="(off, i) in userOffers" :key="i" :id="'offer-' + off.id" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid var(--border-light);transition:all .2s;"
                                 :style="off.accepted ? { borderColor:'var(--accent-gold)', background:'rgba(201,162,67,0.06)' } : {}">
                                 <!-- Top Row -->
                                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
@@ -184,66 +186,76 @@
                             </div>
                         </div>
 
-                        <!-- Offer Detail Modal -->
-                        <div v-if="selectedOffer" class="project-modal" @click.self="selectedOffer = null">
-                            <div class="modal-content">
-                                <div class="modal-pull-bar"><span></span></div>
-                                <button class="modal-close" @click="selectedOffer = null">
-                                    <span class="material-symbols-outlined close-icon">close</span>
-                                    <span class="material-symbols-outlined arrow-icon">arrow_back</span>
-                                </button>
-                                <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">تفاصيل العرض</h3>
-
-                                <!-- Company header -->
-                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-                                    <div style="width:44px;height:44px;border-radius:12px;background:var(--bg-input);display:flex;align-items:center;justify-content:center;">
-                                        <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);">business</span>
+                        <!-- Offer Detail Modal (مثل شكل الإشعارات) -->
+                        <div v-if="selectedOffer" class="notif-overlay" @click.self="selectedOffer = null">
+                            <div class="notif-modal" @click.stop>
+                                <div style="padding:20px 16px;text-align:center;border-bottom:1px solid var(--border-light);">
+                                    <div style="width:48px;height:48px;border-radius:14px;background:var(--accent-gold);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
+                                        <span class="material-symbols-outlined" style="font-size:24px;color:var(--primary-dark);">request_quote</span>
                                     </div>
-                                    <div>
-                                        <div style="color:var(--text-white);font-size:14px;font-weight:700;">{{ selectedOffer.company }}</div>
-                                        <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
-                                            <div style="display:flex;">
-                                                <span v-for="s in 5" :key="s" class="material-symbols-outlined" :style="{ fontSize:'11px', color:'var(--accent-gold)', opacity: s > selectedOffer.rating ? 0.3 : 1 }">star</span>
-                                            </div>
-                                            <span style="color:var(--accent-gold);font-size:11px;font-weight:600;">{{ selectedOffer.rating }}</span>
+                                    <h3 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0;">عرض جديد</h3>
+                                    <p style="color:var(--text-muted);font-size:11px;margin:4px 0 0;">
+                                        {{ selectedOffer.company }}
+                                        <span v-if="selectedOffer.rating" style="margin-right:6px;">
+                                            <span style="color:var(--accent-gold);font-weight:600;">{{ selectedOffer.rating }}</span>
+                                            <span style="color:var(--text-muted);">({{ selectedOffer.reviews }})</span>
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div style="padding:16px;">
+                                    <!-- Company info card -->
+                                    <div style="background:var(--bg-input);border-radius:12px;padding:14px;margin-bottom:12px;">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                                            <span style="color:var(--text-white);font-size:14px;font-weight:700;">{{ selectedOffer.company }}</span>
+                                            <svg width="20" height="20" fill="var(--accent-gold)" viewBox="0 0 24 24"><path d="M19,2L14,6.5V9H10V6L5,10.5V22H9V18H15V22H19V2M7,20V12L10,9.3V11H14V8.3L17,5.6V20H15V16H9V16H7V20Z"></path></svg>
+                                        </div>
+                                        <!-- Rating stars inline -->
+                                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
+                                            <span v-for="s in 5" :key="s" class="material-symbols-outlined" :style="{ fontSize:'12px', color:'var(--accent-gold)', opacity: s > Math.round(selectedOffer.rating) ? 0.3 : 1 }">star</span>
+                                            <span style="color:var(--accent-gold);font-size:12px;font-weight:600;margin-right:4px;">{{ selectedOffer.rating }}</span>
                                             <span style="color:var(--text-muted);font-size:10px;">({{ selectedOffer.reviews }})</span>
                                         </div>
+                                        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border-light);">
+                                            <span style="color:var(--text-muted);font-size:12px;">السعر الإجمالي</span>
+                                            <span style="color:var(--accent-gold);font-size:18px;font-weight:700;">{{ selectedOffer.price }}</span>
+                                        </div>
+                                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                                            <span style="color:var(--text-muted);font-size:12px;">مدة التنفيذ</span>
+                                            <span style="color:#4caf50;font-size:13px;font-weight:600;">{{ selectedOffer.duration }}</span>
+                                        </div>
+                                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                                            <span style="color:var(--text-muted);font-size:12px;">الموقع</span>
+                                            <span style="color:var(--text-white);font-size:13px;">{{ selectedOffer.location }}</span>
+                                        </div>
                                     </div>
-                                    <div style="margin-right:auto;text-align:left;">
-                                        <div style="color:var(--accent-gold);font-size:18px;font-weight:800;">{{ selectedOffer.price }}</div>
-                                        <div style="color:#2ecc71;font-size:11px;font-weight:600;">{{ selectedOffer.duration }}</div>
+
+                                    <!-- Company Reply -->
+                                    <div v-if="selectedOffer.reply" style="background:rgba(201,162,67,0.08);border:1px solid rgba(201,162,67,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">
+                                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                            <span class="material-symbols-outlined" style="font-size:16px;color:var(--accent-gold);">forum</span>
+                                            <span style="color:var(--accent-gold);font-size:12px;font-weight:600;">رد الشركة</span>
+                                        </div>
+                                        <p style="color:var(--text-white);font-size:13px;line-height:1.7;margin:0;">{{ selectedOffer.reply }}</p>
+                                    </div>
+
+                                    <!-- Accept indicator inline -->
+                                    <div v-if="selectedOffer.accepted" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.25);margin-bottom:12px;">
+                                        <span class="material-symbols-outlined" style="font-size:18px;color:#2ecc71;">check_circle</span>
+                                        <span style="color:#2ecc71;font-size:13px;font-weight:700;">تم اختيار هذا العرض</span>
                                     </div>
                                 </div>
 
-                                <!-- Offer details -->
-                                <div style="background:var(--bg-input);border-radius:10px;padding:12px;margin-bottom:10px;">
-                                    <div class="mkt-detail-row"><span class="mkt-detail-label">الموقع</span><span class="mkt-detail-value">{{ selectedOffer.location }}</span></div>
-                                    <div class="mkt-detail-row"><span class="mkt-detail-label">السعر الإجمالي</span><span class="mkt-detail-value" style="color:var(--accent-gold);font-weight:700;">{{ selectedOffer.price }}</span></div>
-                                    <div class="mkt-detail-row"><span class="mkt-detail-label">مدة التنفيذ</span><span class="mkt-detail-value" style="color:#2ecc71;font-weight:600;">{{ selectedOffer.duration }}</span></div>
-                                </div>
-
-                                <!-- Company Reply -->
-                                <div v-if="selectedOffer.reply" style="background:rgba(201,162,67,0.08);border:1px solid rgba(201,162,67,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">
-                                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-                                        <span class="material-symbols-outlined" style="font-size:16px;color:var(--accent-gold);">forum</span>
-                                        <span style="color:var(--accent-gold);font-size:12px;font-weight:600;">رد الشركة</span>
-                                    </div>
-                                    <div style="color:var(--text-white);font-size:12px;line-height:1.6;">{{ selectedOffer.reply }}</div>
-                                </div>
-
-                                <!-- Company Profile Link -->
-                                <a :href="selectedOffer.companyLink || '#'" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;border:1px solid var(--accent-gold);color:var(--accent-gold);text-decoration:none;font-size:12px;font-weight:600;margin-bottom:10px;">
-                                    <span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span>
-                                    ملف الشركة
-                                </a>
-
-                                <!-- Accept Button -->
-                                <button v-if="!selectedOffer.accepted" @click="acceptOffer(selectedOffer); selectedOffer = null" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
-                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">check</span> اختيار هذا العرض
-                                </button>
-                                <div v-else style="width:100%;padding:12px;border-radius:12px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.25);text-align:center;">
-                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;color:#2ecc71;">check_circle</span>
-                                    <span style="color:#2ecc71;font-size:13px;font-weight:700;">تم اختيار هذا العرض</span>
+                                <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;">
+                                    <a :href="selectedOffer.companyLink || '#'" style="display:block;text-align:center;padding:10px;border-radius:12px;border:1px solid var(--border-light);color:var(--text-white);font-size:13px;font-weight:600;text-decoration:none;font-family:Cairo,sans-serif;">
+                                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">open_in_new</span> عرض ملف الشركة
+                                    </a>
+                                    <button v-if="!selectedOffer.accepted" @click="acceptOffer(selectedOffer); selectedOffer = null" style="width:100%;padding:10px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:13px;font-weight:700;font-family:Cairo,sans-serif;cursor:pointer;">
+                                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">check</span> اختيار هذا العرض
+                                    </button>
+                                    <button v-else @click="selectedOffer = null" style="width:100%;padding:10px;border:none;border-radius:12px;background:rgba(46,204,113,0.15);color:#2ecc71;font-size:13px;font-weight:700;font-family:Cairo,sans-serif;cursor:pointer;">
+                                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">check_circle</span> تم الاختيار
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -675,6 +687,24 @@
                     userOffers.value.forEach(function(o) {
                         if (accepted.indexOf(o.id) !== -1) o.accepted = true;
                     });
+                })();
+
+                // Handle URL params (navigation from notifications)
+                (function() {
+                    var params = new URLSearchParams(window.location.search);
+                    var section = params.get('section');
+                    var offerId = params.get('offerId');
+                    if (section === 'user-offers' && offerId) {
+                        activeUserSection.value = 'user-offers';
+                        var off = userOffers.value.find(function(o) { return o.id === parseInt(offerId); });
+                        if (off) {
+                            setTimeout(function() {
+                                selectedOffer.value = off;
+                                var el = document.getElementById('offer-' + off.id);
+                                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }, 400);
+                        }
+                    }
                 })();
 
                 return {
