@@ -164,23 +164,32 @@ function initFloatingCart() {
 // ===== السحب للتحديث (Pull-to-Refresh) =====
 (function() {
     var startY = 0, pulling = false;
-    var indicator = null, spinner = null;
+    var indicator = null;
 
     function createIndicator() {
         indicator = document.createElement('div');
         indicator.id = 'ptr-indicator';
-        indicator.innerHTML = '<div class="ptr-spinner"></div>';
-        indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;justify-content:center;align-items:center;height:0;overflow:hidden;transition:height 0.15s;background:linear-gradient(180deg,var(--bg-dark,#1a1a2e),transparent);';
+        indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:0;overflow:hidden;transition:height 0.12s;background:linear-gradient(180deg,var(--bg-dark,#1a1a2e),transparent);padding-bottom:8px;';
+        indicator.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;transform:translateY(10px);">'
+            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:36px;height:36px;filter:drop-shadow(0 0 6px rgba(201,162,67,0.4));transition:transform 0.2s,opacity 0.2s;">'
+            + '<div style="width:50px;height:2px;background:rgba(201,162,67,0.15);border-radius:2px;overflow:hidden;">'
+            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:2px;transition:width 0.1s;"></div>'
+            + '</div></div>';
         document.body.appendChild(indicator);
-        spinner = indicator.querySelector('.ptr-spinner');
     }
 
     function showIndicator(dist) {
         if (!indicator) createIndicator();
-        var h = Math.min(dist, 60);
+        var h = Math.min(dist * 0.8, 80);
         indicator.style.height = h + 'px';
-        var scale = Math.min(dist / 80, 1);
-        spinner.style.cssText = 'width:28px;height:28px;border:3px solid rgba(201,162,67,0.2);border-top-color:var(--accent-gold,#c9a243);border-radius:50%;animation:ptr-spin 0.6s linear infinite;transform:scale('+scale+');opacity:'+scale+';';
+        var pct = Math.min(dist / 80, 1);
+        var logo = indicator.querySelector('.ptr-logo');
+        var bar = indicator.querySelector('.ptr-bar');
+        if (logo) {
+            logo.style.transform = 'translateY(' + (10 - pct * 10) + 'px) scale(' + (0.7 + pct * 0.3) + ')';
+            logo.style.opacity = pct;
+        }
+        if (bar) bar.style.width = (pct * 100) + '%';
     }
 
     function hideIndicator() {
@@ -188,11 +197,11 @@ function initFloatingCart() {
         pulling = false;
     }
 
-    // Inject keyframes once
+    // Inject animations once
     if (!document.getElementById('ptr-style')) {
         var s = document.createElement('style');
         s.id = 'ptr-style';
-        s.textContent = '@keyframes ptr-spin{to{transform:rotate(360deg)}}';
+        s.textContent = '@keyframes ptr-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:0.8}}';
         document.head.appendChild(s);
     }
 
@@ -219,10 +228,17 @@ function initFloatingCart() {
                 pulling = false;
                 if (indicator) {
                     indicator.style.transition = 'none';
-                    indicator.style.height = '50px';
+                    indicator.style.height = '90px';
                     indicator.style.background = 'linear-gradient(180deg,var(--bg-dark,#1a1a2e),transparent)';
+                    var logo = indicator.querySelector('.ptr-logo');
+                    var bar = indicator.querySelector('.ptr-bar');
+                    if (bar) bar.style.width = '100%';
+                    if (logo) {
+                        logo.style.transform = 'translateY(0) scale(1)';
+                        logo.style.animation = 'ptr-pulse 0.6s ease-in-out infinite';
+                    }
                 }
-                setTimeout(function() { location.reload(); }, 300);
+                setTimeout(function() { location.reload(); }, 400);
             }
         }
     }, { passive: true });
