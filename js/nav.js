@@ -160,3 +160,74 @@ function initFloatingCart() {
         document.body.appendChild(div);
     } catch(e) {}
 }
+
+// ===== السحب للتحديث (Pull-to-Refresh) =====
+(function() {
+    var startY = 0, pulling = false;
+    var indicator = null, spinner = null;
+
+    function createIndicator() {
+        indicator = document.createElement('div');
+        indicator.id = 'ptr-indicator';
+        indicator.innerHTML = '<div class="ptr-spinner"></div>';
+        indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;justify-content:center;align-items:center;height:0;overflow:hidden;transition:height 0.15s;background:linear-gradient(180deg,var(--bg-dark,#1a1a2e),transparent);';
+        document.body.appendChild(indicator);
+        spinner = indicator.querySelector('.ptr-spinner');
+    }
+
+    function showIndicator(dist) {
+        if (!indicator) createIndicator();
+        var h = Math.min(dist, 60);
+        indicator.style.height = h + 'px';
+        var scale = Math.min(dist / 80, 1);
+        spinner.style.cssText = 'width:28px;height:28px;border:3px solid rgba(201,162,67,0.2);border-top-color:var(--accent-gold,#c9a243);border-radius:50%;animation:ptr-spin 0.6s linear infinite;transform:scale('+scale+');opacity:'+scale+';';
+    }
+
+    function hideIndicator() {
+        if (indicator) { indicator.style.height = '0'; }
+        pulling = false;
+    }
+
+    // Inject keyframes once
+    if (!document.getElementById('ptr-style')) {
+        var s = document.createElement('style');
+        s.id = 'ptr-style';
+        s.textContent = '@keyframes ptr-spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(s);
+    }
+
+    function isAtTop() {
+        var el = document.querySelector('.page-content');
+        if (el) return el.scrollTop <= 0;
+        return window.scrollY <= 0;
+    }
+    function hasOverlay() {
+        return !!document.querySelector('.notif-overlay, .project-modal, .brand-alert-overlay, .modal-overlay, .image-viewer');
+    }
+
+    document.addEventListener('touchstart', function(e) {
+        if (isAtTop() && !hasOverlay()) {
+            startY = e.touches[0].clientY;
+            pulling = true;
+        }
+    }, { passive: true });
+    document.addEventListener('touchmove', function(e) {
+        if (pulling && isAtTop() && !hasOverlay()) {
+            var diff = e.touches[0].clientY - startY;
+            if (diff > 0) showIndicator(diff);
+            if (diff > 80) {
+                pulling = false;
+                if (indicator) {
+                    indicator.style.transition = 'none';
+                    indicator.style.height = '50px';
+                    indicator.style.background = 'linear-gradient(180deg,var(--bg-dark,#1a1a2e),transparent)';
+                }
+                setTimeout(function() { location.reload(); }, 300);
+            }
+        }
+    }, { passive: true });
+    document.addEventListener('touchend', function() {
+        if (pulling) hideIndicator();
+        pulling = false;
+    }, { passive: true });
+})();
