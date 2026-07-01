@@ -167,8 +167,8 @@
 
                         <!-- Offer Detail Modal (مثل شكل الإشعارات) -->
                         <div v-if="selectedOffer" class="notif-overlay" @click.self="selectedOffer = null">
-                            <div class="notif-modal" @click.stop>
-                                <button @click="selectedOffer = null" style="position:absolute;top:10px;left:10px;width:32px;height:32px;border-radius:50%;border:none;background:var(--bg-input);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;font-family:Cairo,sans-serif;">
+                            <div class="notif-modal" @click.stop style="position:relative;">
+                                <button @click="selectedOffer = null" style="position:sticky;top:10px;z-index:20;float:inline-start;width:32px;height:32px;border-radius:50%;border:none;background:var(--bg-input);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:Cairo,sans-serif;">
                                     <span class="material-symbols-outlined" style="font-size:16px;">close</span>
                                 </button>
                                 <div style="padding:20px 16px;text-align:center;border-bottom:1px solid var(--border-light);">

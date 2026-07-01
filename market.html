@@ -1163,18 +1163,20 @@
                     if (p.finishTypes && p.finishTypes.length) { finishName = p.finishTypes[selectedFinish.value]; label += ' (' + finishName + ')'; }
                     if (p.sizes && p.sizes.length) { sizeName = p.sizes[selectedSize.value]; label += ' [' + sizeName + ']'; }
                     var exists = cart.value.find(function(c) { return c.name === label; });
-                    if (exists) { exists.qty += selectedQty.value; exists.price = p.price; }
-                    else {
-                        cart.value.push({
-                            name: label, baseName: p.name, price: p.price, img: p.img,
-                            qty: selectedQty.value, productName: p.name,
-                            colorIdx: selectedColor.value, colorName: colorName,
-                            finishIdx: selectedFinish.value, finishName: finishName,
-                            sizeIdx: selectedSize.value, sizeName: sizeName
-                        });
+                    if (exists) {
+                        showBrandAlert('هذا المنتج موجود بالفعل في السلة');
+                        return;
                     }
+                    cart.value.push({
+                        name: label, baseName: p.name, price: p.price, img: p.img,
+                        qty: selectedQty.value, productName: p.name,
+                        colorIdx: selectedColor.value, colorName: colorName,
+                        finishIdx: selectedFinish.value, finishName: finishName,
+                        sizeIdx: selectedSize.value, sizeName: sizeName
+                    });
                     saveCart();
                     showBrandAlert('تم إضافة المنتج إلى سلة المشتريات ✓');
+                    closeProductDetail();
                 }
 
                 var filteredCatProducts = computed(function() {
