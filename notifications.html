@@ -53,11 +53,11 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
 
                 <!-- Tabs -->
                 <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
-                    <button class="notif-tab" :style="tabStyle(activeTab === 'all')" @click="activeTab='all'">الكل</button>
-                    <button class="notif-tab" :style="tabStyle(activeTab === 'support')" @click="activeTab='support'">الدعم الفني</button>
-                    <button class="notif-tab" :style="tabStyle(activeTab === 'offer')" @click="activeTab='offer'">العروض</button>
-                    <button class="notif-tab" :style="tabStyle(activeTab === 'service')" @click="activeTab='service'">طلبات الخدمة</button>
-                    <button v-if="isCompany" class="notif-tab" :style="tabStyle(activeTab === 'quote_request')" @click="activeTab='quote_request'">طلبات العروض</button>
+                    <button class="notif-tab" :style="{ background: activeTab === 'all' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'all' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'all' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'all' ? 700 : 600 }" @click="activeTab='all'">الكل</button>
+                    <button class="notif-tab" :style="{ background: activeTab === 'support' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'support' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'support' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'support' ? 700 : 600 }" @click="activeTab='support'">الدعم الفني</button>
+                    <button class="notif-tab" :style="{ background: activeTab === 'offer' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'offer' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'offer' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'offer' ? 700 : 600 }" @click="activeTab='offer'">العروض</button>
+                    <button class="notif-tab" :style="{ background: activeTab === 'service' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'service' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'service' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'service' ? 700 : 600 }" @click="activeTab='service'">طلبات الخدمة</button>
+                    <button v-if="isCompany" class="notif-tab" :style="{ background: activeTab === 'quote_request' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'quote_request' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'quote_request' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'quote_request' ? 700 : 600 }" @click="activeTab='quote_request'">طلبات العروض</button>
                 </div>
 
                 <!-- Notifications List -->
@@ -199,13 +199,6 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                     if (activeTab.value === 'all') return notifications.value;
                     return notifications.value.filter(function(n) { return n.type === activeTab.value; });
                 });
-
-                function tabStyle(active) {
-                    if (!active) return {};
-                    var isLight = document.documentElement.classList.contains('light-mode');
-                    if (isLight) return { background:'#3b82f6', color:'#fff', borderColor:'#3b82f6', fontWeight:700 };
-                    return { background:'#c9a243', color:'#0a1628', borderColor:'#c9a243' };
-                }
 
                 function iconName(type) {
                     if (type === 'support') return 'support_agent';
@@ -359,7 +352,7 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                     document.body.appendChild(overlay);
                 }
 
-                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif, tabStyle };
+                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif };
             }
         }).mount('#app');
 
