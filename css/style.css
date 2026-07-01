@@ -5190,6 +5190,14 @@ html.light-mode .mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
 .mkt-form-group {
   margin-bottom: 14px;
 }
+.mkt-form-row {
+  display: flex;
+  gap: 12px;
+}
+.mkt-form-row .mkt-form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
 .mkt-form-group label {
   display: block;
   font-size: 13px;

@@ -516,21 +516,30 @@
                     </div>
 
                     <div class="mkt-checkout-form">
-                        <div class="mkt-form-group">
-                            <label>الاسم الكامل</label>
-                            <input type="text" class="form-input" placeholder="أدخل اسمك الكامل">
+                        <div class="mkt-form-row">
+                            <div class="mkt-form-group">
+                                <label>الاسم الكامل</label>
+                                <input type="text" class="form-input" placeholder="أدخل اسمك الكامل" v-model="checkoutName">
+                            </div>
+                            <div class="mkt-form-group">
+                                <label>رقم الهاتف</label>
+                                <input type="tel" class="form-input" placeholder="07XXXXXXXXX" v-model="checkoutPhone">
+                            </div>
                         </div>
                         <div class="mkt-form-group">
-                            <label>رقم الهاتف</label>
-                            <input type="tel" class="form-input" placeholder="07XXXXXXXXX">
+                            <label>المحافظة</label>
+                            <select class="form-input" v-model="checkoutGov">
+                                <option value="">اختر المحافظة</option>
+                                <option v-for="g in governorates" :key="g" :value="g">{{ g }}</option>
+                            </select>
                         </div>
                         <div class="mkt-form-group">
                             <label>العنوان</label>
-                            <input type="text" class="form-input" placeholder="المدينة / المنطقة / الشارع">
+                            <input type="text" class="form-input" placeholder="المدينة / المنطقة / الشارع" v-model="checkoutAddress">
                         </div>
                         <div class="mkt-form-group">
                             <label>ملاحظات</label>
-                            <textarea class="form-textarea" placeholder="أي ملاحظات إضافية..." rows="3"></textarea>
+                            <textarea class="form-textarea" placeholder="أي ملاحظات إضافية..." rows="3" v-model="checkoutNotes"></textarea>
                         </div>
                     </div>
 
@@ -827,6 +836,13 @@
                     cartView.value = true;
                     productDetailView.value = false;
                 };
+
+                var checkoutName = ref('');
+                var checkoutPhone = ref('');
+                var checkoutGov = ref('');
+                var checkoutAddress = ref('');
+                var checkoutNotes = ref('');
+                var governorates = ref(['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية', 'ديالى', 'واسط', 'ميسان', 'ذي قار', 'المثنى', 'القادسية', 'بابل', 'صلاح الدين', 'الأنبار', 'دهوك']);
 
                 var selectedProduct = ref(null);
                 var selectedColor = ref(0);
@@ -1391,6 +1407,7 @@
                     paintArea, paintBuckets, paintCost,
                     gypsumArea, gypsumSheets, gypsumCost,
                     calcTotal, addCalcToCart, confirmOrder, cancelCart,
+                    checkoutName, checkoutPhone, checkoutGov, checkoutAddress, checkoutNotes, governorates,
                     selectedProduct, selectedColor, selectedSize, selectedFinish, selectedQty, modalSlide,
                     addToCartFromModal, openViewer, nextViewer, prevViewer,
                     viewerOpen, viewerImages, viewerIndex, viewerTouch,
