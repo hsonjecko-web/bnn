@@ -26,376 +26,105 @@
     <script src="js/bottom-nav.js"></script>
     <script src="js/router.js"></script>
     <style>
-        .tracking-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            padding-top: env(safe-area-inset-top, 12px);
-            background: var(--primary-dark);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-        .tracking-header .tracking-back {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--bg-card-light);
-            border: 1px solid var(--border-input);
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            text-decoration: none;
-        }
-        .tracking-header .tracking-back .material-symbols-outlined {
-            font-size: 20px;
-        }
-        .tracking-header .tracking-title {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--text-white);
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .tracking-header .tracking-spacer {
-            width: 44px;
-            flex-shrink: 0;
-        }
-        .tracking-progress {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 28px 16px 24px;
-            gap: 0;
-            position: relative;
-        }
-        .tracking-step-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            z-index: 1;
-            flex: 1;
-        }
-        .tracking-step-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-input);
-            border: 3px dashed rgba(255, 255, 255, 0.12);
-            color: var(--text-muted);
-            font-size: 24px;
-            transition: all 0.4s ease;
-            position: relative;
-        }
-        .tracking-step-circle.completed {
-            background: #2ecc71;
-            border-color: #2ecc71;
-            color: #fff;
-            border-style: solid;
-            box-shadow: 0 0 20px rgba(46, 204, 113, 0.35);
-        }
-        .tracking-step-circle.active {
-            background: var(--primary-blue);
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-            border-style: solid;
-            box-shadow: 0 0 20px rgba(201, 162, 67, 0.3);
-        }
-        .tracking-step-circle.pending {
-            border-style: dashed;
-        }
-        .tracking-step-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-align: center;
-            font-weight: 500;
-            max-width: 80px;
-        }
-        .tracking-step-label.completed {
-            color: #2ecc71;
-            font-weight: 600;
-        }
-        .tracking-step-label.active {
-            color: var(--text-white);
-            font-weight: 600;
-        }
-        .tracking-connector {
-            flex: 1;
-            height: 0;
-            border-top: 2px dashed rgba(255, 255, 255, 0.12);
-            margin: 0 -4px;
-            min-width: 16px;
-            position: relative;
-            top: -30px;
-            z-index: 0;
-        }
-        .tracking-connector.done {
-            border-top-color: #2ecc71;
-            border-style: solid;
-        }
-        .tracking-connector.partial {
-            border-top: 2px solid rgba(46, 204, 113, 0.4);
-        }
-        .order-card {
-            margin: 8px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 16px;
-            padding: 18px;
-            backdrop-filter: blur(10px);
-        }
-        .order-card-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-white);
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .order-card-title .material-symbols-outlined {
-            font-size: 20px;
-            color: var(--accent-gold);
-        }
-        .order-info-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .order-info-row:last-child {
-            border-bottom: none;
-        }
-        .order-info-label {
-            font-size: 13px;
-            color: var(--text-light);
-        }
-        .order-info-value {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-white);
-        }
-        .order-status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            background: rgba(201, 162, 67, 0.15);
-            color: var(--accent-gold);
-            border: 1px solid rgba(201, 162, 67, 0.25);
-        }
-        .order-status-badge .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent-gold);
-            animation: pulse-dot 1.5s ease-in-out infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 0.4; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.1); }
-        }
-        .products-section {
-            margin: 8px 16px;
-        }
-        .product-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 14px;
-            margin-bottom: 10px;
-            backdrop-filter: blur(10px);
-        }
-        .product-item-img {
-            width: 64px;
-            height: 64px;
-            border-radius: 12px;
-            overflow: hidden;
-            flex-shrink: 0;
-            background: var(--bg-input);
-        }
-        .product-item-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .product-item-info {
-            flex: 1;
-            min-width: 0;
-        }
-        .product-item-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-white);
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .product-item-meta {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-        .product-item-price {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--accent-gold);
-            white-space: nowrap;
-        }
-        .cancel-order-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: calc(100% - 32px);
-            margin: 12px 16px 8px;
-            padding: 14px;
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            border-radius: 14px;
-            color: #e74c3c;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: "Cairo", sans-serif;
-        }
-        .cancel-order-btn:hover {
-            background: rgba(231, 76, 60, 0.2);
-        }
-        .cancel-order-btn .material-symbols-outlined {
-            font-size: 20px;
-        }
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 24px;
-            backdrop-filter: blur(4px);
-        }
-        .modal-box {
-            background: var(--primary-blue);
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            padding: 24px;
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-        }
-        .modal-box h3 {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--text-white);
-            margin: 0 0 8px;
-        }
-        .modal-box p {
-            font-size: 13px;
-            color: var(--text-light);
-            margin: 0 0 18px;
-        }
-        .modal-box textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-input);
-            color: var(--text-white);
-            font-size: 13px;
-            font-family: "Cairo", sans-serif;
-            resize: vertical;
-            min-height: 80px;
-            box-sizing: border-box;
-            outline: none;
-        }
-        .modal-box textarea:focus {
-            border-color: var(--accent-gold);
-        }
-        .modal-box .modal-btns {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        .modal-box .modal-btns button {
-            flex: 1;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: "Cairo", sans-serif;
-            border: none;
-        }
-        .modal-box .modal-btn-cancel {
-            background: var(--bg-card-light);
-            color: var(--text-light);
-            border: 1px solid var(--border-input);
-        }
-        .modal-box .modal-btn-confirm {
-            background: #e74c3c;
-            color: #fff;
-        }
-        .toast-message {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: var(--primary-blue);
-            border: 1px solid var(--border-light);
-            border-radius: 14px;
-            padding: 14px 20px;
-            color: var(--text-white);
-            font-size: 13px;
-            font-weight: 500;
-            z-index: 200;
-            opacity: 0;
-            transition: all 0.4s ease;
-            pointer-events: none;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 320px;
-        }
-        .toast-message.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-        html.light-mode .tracking-step-circle {
-            border-color: rgba(26, 58, 92, 0.15);
-        }
-        html.light-mode .tracking-connector {
-            border-top-color: rgba(26, 58, 92, 0.15);
-        }
-        html.light-mode .tracking-step-circle.completed {
-            border-color: #2ecc71;
-        }
-        html.light-mode .tracking-step-circle.pending {
-            border-style: dashed;
-        }
+        body { -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { display: none; }
+
+        .tr-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; padding-top:env(safe-area-inset-top,12px); background:var(--primary-dark); position:sticky; top:0; z-index:50; }
+        .tr-back { width:44px; height:44px; border-radius:50%; background:var(--bg-card-light); border:1px solid var(--border-input); color:var(--text-light); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; text-decoration:none; }
+        .tr-back .material-symbols-outlined { font-size:20px; }
+        .tr-title { font-size:17px; font-weight:700; color:var(--text-white); position:absolute; left:50%; transform:translateX(-50%); }
+        .tr-cart { position:relative; width:44px; height:44px; border-radius:50%; background:var(--bg-card-light); border:1px solid var(--border-input); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; text-decoration:none; color:var(--accent-gold); }
+        .tr-cart .material-symbols-outlined { font-size:20px; }
+        .tr-cart-badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; border-radius:50%; background:var(--accent-gold); color:var(--primary-dark); font-size:9px; font-weight:800; display:flex; align-items:center; justify-content:center; border:2px solid var(--primary-dark); line-height:1; }
+
+        .tr-status { text-align:center; padding:20px 16px 4px; }
+        .tr-status-icon { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(46,204,113,0.15); color:#2ecc71; vertical-align:middle; margin-left:8px; }
+        .tr-status-icon .material-symbols-outlined { font-size:16px; }
+        .tr-status-title { display:inline; color:var(--text-white); font-size:17px; font-weight:700; }
+        .tr-status-sub { color:var(--text-muted); font-size:12px; margin-top:4px; }
+
+        .tr-stepper { display:flex; align-items:center; justify-content:center; padding:16px 16px 20px; gap:0; }
+        .tr-step { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; }
+        .tr-step-dot { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; background:var(--bg-input); border:2px dashed rgba(255,255,255,0.12); color:var(--text-muted); transition:all .3s; }
+        .tr-step-dot.done { background:#2ecc71; border-color:#2ecc71; border-style:solid; color:#fff; box-shadow:0 0 16px rgba(46,204,113,0.3); }
+        .tr-step-dot.active { background:var(--primary-blue); border-color:var(--accent-gold); border-style:solid; color:var(--accent-gold); box-shadow:0 0 16px rgba(201,162,67,0.25); }
+        .tr-step-label { font-size:10px; color:var(--text-muted); text-align:center; font-weight:500; }
+        .tr-step-label.done { color:#2ecc71; font-weight:600; }
+        .tr-step-label.active { color:var(--text-white); font-weight:600; }
+        .tr-step-time { font-size:8px; color:var(--text-muted); margin-top:-2px; }
+        .tr-line { flex:1; height:0; border-top:2px dashed rgba(255,255,255,0.12); margin:0 -4px; position:relative; top:-17px; }
+        .tr-line.done { border-top-color:#2ecc71; border-style:solid; }
+        .tr-line.partial { border-top:2px solid rgba(46,204,113,0.4); }
+
+        .tr-info-bar { margin:0 16px 12px; padding:10px 14px; border-radius:12px; background:rgba(201,162,67,0.08); border:1px solid rgba(201,162,67,0.15); display:flex; align-items:center; justify-content:center; gap:8px; }
+        .tr-info-bar .material-symbols-outlined { font-size:16px; color:var(--accent-gold); }
+        .tr-info-bar span { color:var(--text-light); font-size:11px; font-weight:500; }
+
+        .tr-card { margin:0 16px 12px; background:var(--bg-card); border:1px solid var(--border-light); border-radius:16px; padding:16px; }
+        .tr-card-title { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; color:var(--text-white); margin-bottom:12px; }
+        .tr-card-title .material-symbols-outlined { font-size:18px; color:var(--accent-gold); }
+
+        .tr-product { display:flex; gap:12px; align-items:center; }
+        .tr-product-img { width:64px; height:64px; border-radius:10px; overflow:hidden; flex-shrink:0; background:var(--bg-input); display:flex; align-items:center; justify-content:center; }
+        .tr-product-img img { width:100%; height:100%; object-fit:cover; }
+        .tr-product-info { flex:1; min-width:0; }
+        .tr-product-name { font-size:13px; font-weight:600; color:var(--text-white); margin-bottom:2px; }
+        .tr-product-meta { font-size:11px; color:var(--text-muted); line-height:1.5; }
+        .tr-product-price { font-size:14px; font-weight:700; color:var(--accent-gold); white-space:nowrap; }
+
+        .tr-pricing { margin-top:12px; padding-top:12px; border-top:1px solid var(--border-light); display:flex; flex-direction:column; gap:8px; }
+        .tr-pricing-row { display:flex; justify-content:space-between; align-items:center; }
+        .tr-pricing-label { font-size:12px; color:var(--text-muted); }
+        .tr-pricing-value { font-size:12px; color:var(--text-white); font-weight:600; }
+        .tr-pricing-value.gold { color:var(--accent-gold); font-size:16px; font-weight:800; }
+        .tr-pricing-value.green { color:#2ecc71; }
+        .tr-pricing-total { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px dashed var(--border-light); margin-top:4px; }
+        .tr-pricing-total .tr-pricing-label { font-size:14px; font-weight:700; color:var(--text-white); }
+
+        .tr-delivery-row { display:flex; align-items:flex-start; gap:8px; padding:8px 0; }
+        .tr-delivery-row:not(:last-child) { border-bottom:1px solid var(--border-light); }
+        .tr-delivery-label { font-size:12px; color:var(--text-muted); min-width:60px; flex-shrink:0; }
+        .tr-delivery-value { font-size:12px; color:var(--text-white); font-weight:600; text-align:left; flex:1; }
+        .tr-delivery-sub { font-size:10px; color:var(--text-muted); display:block; }
+
+        .tr-actions { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:0 16px 12px; }
+        .tr-action-btn { display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 6px; border-radius:12px; border:1px solid var(--border-light); background:var(--bg-card); cursor:pointer; font-family:Cairo,sans-serif; transition:all .15s; }
+        .tr-action-btn:active { opacity:.7; }
+        .tr-action-icon { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+        .tr-action-icon .material-symbols-outlined { font-size:18px; }
+        .tr-action-label { font-size:10px; font-weight:600; color:var(--text-light); }
+
+        .tr-banner { margin:0 16px 12px; border-radius:16px; padding:16px; background:rgba(201,162,67,0.06); border:1px solid rgba(201,162,67,0.12); display:flex; align-items:center; gap:12px; }
+        .tr-banner-content { flex:1; }
+        .tr-banner-title { font-size:13px; font-weight:700; color:var(--text-white); margin-bottom:2px; }
+        .tr-banner-desc { font-size:10px; color:var(--text-muted); line-height:1.5; }
+        .tr-banner-icon { color:var(--accent-gold); display:flex; align-items:center; justify-content:center; }
+        .tr-banner-icon .material-symbols-outlined { font-size:28px; }
+
+        .tr-trust { margin:0 16px 24px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; padding-top:16px; border-top:1px solid var(--border-light); }
+        .tr-trust-item { display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; }
+        .tr-trust-icon { width:36px; height:36px; border-radius:50%; background:var(--bg-input); display:flex; align-items:center; justify-content:center; color:var(--text-muted); }
+        .tr-trust-icon .material-symbols-outlined { font-size:16px; }
+        .tr-trust-label { font-size:9px; color:var(--text-muted); font-weight:500; line-height:1.3; }
+
+        .cancel-order-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:calc(100% - 32px); margin:0 16px 8px; padding:14px; background:rgba(231,76,60,0.1); border:1px solid rgba(231,76,60,0.3); border-radius:14px; color:#e74c3c; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; font-family:"Cairo",sans-serif; }
+        .cancel-order-btn:hover { background:rgba(231,76,60,0.2); }
+        .cancel-order-btn .material-symbols-outlined { font-size:20px; }
+
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:100; padding:24px; backdrop-filter:blur(4px); }
+        .modal-box { background:var(--primary-blue); border:1px solid var(--border-light); border-radius:20px; padding:24px; width:100%; max-width:360px; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.4); }
+        .modal-box h3 { font-size:17px; font-weight:700; color:var(--text-white); margin:0 0 8px; }
+        .modal-box p { font-size:13px; color:var(--text-light); margin:0 0 18px; }
+        .modal-box textarea { width:100%; padding:12px; border-radius:12px; background:var(--bg-input); border:1px solid var(--border-input); color:var(--text-white); font-size:13px; font-family:"Cairo",sans-serif; resize:vertical; min-height:80px; box-sizing:border-box; outline:none; }
+        .modal-box textarea:focus { border-color:var(--accent-gold); }
+        .modal-box .modal-btns { display:flex; gap:10px; margin-top:16px; }
+        .modal-box .modal-btns button { flex:1; padding:12px; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; font-family:"Cairo",sans-serif; border:none; }
+        .modal-box .modal-btn-cancel { background:var(--bg-card-light); color:var(--text-light); border:1px solid var(--border-input); }
+        .modal-box .modal-btn-confirm { background:#e74c3c; color:#fff; }
+        .modal-box .modal-btn-confirm:disabled { opacity:.4; cursor:default; }
+
+        .toast-message { position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--primary-blue); border:1px solid var(--border-light); border-radius:14px; padding:14px 20px; color:var(--text-white); font-size:13px; font-weight:500; z-index:200; opacity:0; transition:all .4s ease; pointer-events:none; box-shadow:0 8px 30px rgba(0,0,0,0.3); text-align:center; max-width:320px; }
+        .toast-message.show { opacity:1; transform:translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
@@ -405,74 +134,172 @@
 
             <div class="page-content" style="padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px));">
 
-                <!-- Progress Bar -->
-                <div class="tracking-progress">
+                <!-- Status Header -->
+                <div class="tr-status">
+                    <div>
+                        <span class="tr-status-icon"><span class="material-symbols-outlined">check</span></span>
+                        <h2 class="tr-status-title">تم استلام طلبك بنجاح</h2>
+                    </div>
+                    <p class="tr-status-sub">رقم الطلب: {{ order.id }}</p>
+                </div>
+
+                <!-- Order Stepper -->
+                <div class="tr-stepper">
                     <template v-for="(step, index) in steps" :key="index">
-                        <div class="tracking-step-wrap">
-                            <div class="tracking-step-circle" :class="step.status">
+                        <div class="tr-step">
+                            <div class="tr-step-dot" :class="step.status">
                                 <span class="material-symbols-outlined">{{ step.icon }}</span>
                             </div>
-                            <span class="tracking-step-label" :class="step.status">{{ step.label }}</span>
+                            <span class="tr-step-label" :class="step.status">{{ step.label }}</span>
+                            <span v-if="step.time" class="tr-step-time">{{ step.time }}</span>
                         </div>
-                        <div v-if="index < steps.length - 1" class="tracking-connector" :class="step.connectorClass"></div>
+                        <div v-if="index < steps.length - 1" class="tr-line" :class="step.lineClass"></div>
                     </template>
                 </div>
 
-                <!-- Order Info Card -->
-                <div class="order-card">
-                    <div class="order-card-title">
+                <!-- Info Banner -->
+                <div class="tr-info-bar">
+                    <span class="material-symbols-outlined">schedule</span>
+                    <span>سنقوم بإبلاغك عند أي تحديث في حالة طلبك</span>
+                </div>
+
+                <!-- Order Details Card -->
+                <div class="tr-card">
+                    <div class="tr-card-title">
                         <span class="material-symbols-outlined">receipt_long</span>
                         تفاصيل الطلب
                     </div>
-                    <div class="order-info-row">
-                        <span class="order-info-label">رقم الطلب</span>
-                        <span class="order-info-value">{{ order.id }}</span>
-                    </div>
-                    <div class="order-info-row">
-                        <span class="order-info-label">العنوان</span>
-                        <span class="order-info-value">{{ order.address }}</span>
-                    </div>
-                    <div class="order-info-row">
-                        <span class="order-info-label">الحالة</span>
-                        <span class="order-status-badge">
-                            <span class="status-dot"></span>
-                            {{ order.status }}
-                        </span>
-                    </div>
-                </div>
 
-                <!-- Products -->
-                <div class="products-section">
-                    <div class="order-card-title" style="padding:0 0 4px;">
-                        <span class="material-symbols-outlined">inventory_2</span>
-                        المنتجات ({{ products.length }})
-                    </div>
-                    <div v-for="(item, index) in products" :key="index" class="product-item">
-                        <div class="product-item-img">
-                            <img :src="item.img" :alt="item.name">
+                    <!-- Product -->
+                    <div class="tr-product">
+                        <div class="tr-product-img">
+                            <img :src="product.img" :alt="product.name">
                         </div>
-                        <div class="product-item-info">
-                            <div class="product-item-name">{{ item.name }}</div>
-                            <div class="product-item-meta">
-                                <span>الكمية: {{ item.qty }}</span>
-                                <span>{{ fmt(item.price) }} د.ع</span>
+                        <div class="tr-product-info">
+                            <div class="tr-product-name">{{ product.name }}</div>
+                            <div class="tr-product-meta">
+                                <div>{{ product.color }}</div>
+                                <div>{{ product.size }}</div>
+                                <div>الكمية: {{ product.qty }}</div>
                             </div>
                         </div>
-                        <div class="product-item-price">{{ fmt(item.price * item.qty) }} د.ع</div>
+                        <div class="tr-product-price">{{ fmt(product.price) }} د.ع</div>
+                    </div>
+
+                    <!-- Pricing Breakdown -->
+                    <div class="tr-pricing">
+                        <div class="tr-pricing-row">
+                            <span class="tr-pricing-label">قيمة المنتجات</span>
+                            <span class="tr-pricing-value">{{ fmt(product.price) }} د.ع</span>
+                        </div>
+                        <div class="tr-pricing-row">
+                            <span class="tr-pricing-label">أجور التوصيل</span>
+                            <span class="tr-pricing-value">{{ fmt(deliveryFee) }} د.ع</span>
+                        </div>
+                        <div class="tr-pricing-row">
+                            <span class="tr-pricing-label">خصم الكمية</span>
+                            <span class="tr-pricing-value green">{{ fmt(discount) }} د.ع-</span>
+                        </div>
+                        <div class="tr-pricing-total">
+                            <span class="tr-pricing-label">الإجمالي</span>
+                            <span class="tr-pricing-value gold">{{ fmt(total) }} د.ع</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Cancel Order Button -->
-                <button class="cancel-order-btn" @click="openCancelModal">
-                    <span class="material-symbols-outlined">cancel</span>
-                    إلغاء الطلب
-                </button>
+                <!-- Delivery Info -->
+                <div class="tr-card">
+                    <div class="tr-card-title">
+                        <span class="material-symbols-outlined">location_on</span>
+                        معلومات التوصيل
+                    </div>
+                    <div>
+                        <div class="tr-delivery-row">
+                            <span class="tr-delivery-label">المحافظة</span>
+                            <span class="tr-delivery-value">{{ delivery.governorate }}</span>
+                        </div>
+                        <div class="tr-delivery-row">
+                            <span class="tr-delivery-label">المدينة</span>
+                            <span class="tr-delivery-value">{{ delivery.city }}</span>
+                        </div>
+                        <div class="tr-delivery-row">
+                            <span class="tr-delivery-label">العنوان</span>
+                            <span class="tr-delivery-value">{{ delivery.address }}</span>
+                        </div>
+                        <div class="tr-delivery-row">
+                            <span class="tr-delivery-label">موعد التوصيل المتوقع</span>
+                            <div style="text-align:left;">
+                                <span class="tr-delivery-value" style="font-size:12px;">{{ delivery.expected }}</span>
+                                <span class="tr-delivery-sub">{{ delivery.expectedRange }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- padding to avoid bottom nav overlap -->
+                <!-- Management Actions -->
+                <div class="tr-card">
+                    <div class="tr-card-title">
+                        <span class="material-symbols-outlined">settings</span>
+                        إدارة الطلب
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                        <button class="tr-action-btn" @click="openCancelModal">
+                            <div class="tr-action-icon" style="background:rgba(231,76,60,0.12);color:#e74c3c;">
+                                <span class="material-symbols-outlined">cancel</span>
+                            </div>
+                            <span class="tr-action-label">إلغاء الطلب</span>
+                        </button>
+                        <button class="tr-action-btn" @click="contactSupport">
+                            <div class="tr-action-icon" style="background:rgba(201,162,67,0.12);color:var(--accent-gold);">
+                                <span class="material-symbols-outlined">chat</span>
+                            </div>
+                            <span class="tr-action-label">تواصل مع الدعم</span>
+                        </button>
+                        <button class="tr-action-btn" @click="viewInvoice">
+                            <div class="tr-action-icon" style="background:var(--bg-input);color:var(--text-muted);">
+                                <span class="material-symbols-outlined">description</span>
+                            </div>
+                            <span class="tr-action-label">عرض الفاتورة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tracking Banner -->
+                <div class="tr-banner">
+                    <div class="tr-banner-content">
+                        <div class="tr-banner-title">تابع طلبك لحظة بلحظة</div>
+                        <div class="tr-banner-desc">يمكنك متابعة حالة طلبك من خلال الإشعارات أو من صفحة الطلبات</div>
+                    </div>
+                    <div class="tr-banner-icon">
+                        <span class="material-symbols-outlined">notifications_active</span>
+                    </div>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="tr-trust">
+                    <div class="tr-trust-item">
+                        <div class="tr-trust-icon"><span class="material-symbols-outlined">support_agent</span></div>
+                        <span class="tr-trust-label">دعم فني من بنيان</span>
+                    </div>
+                    <div class="tr-trust-item">
+                        <div class="tr-trust-icon"><span class="material-symbols-outlined">verified</span></div>
+                        <span class="tr-trust-label">ضمان جودة المنتج</span>
+                    </div>
+                    <div class="tr-trust-item">
+                        <div class="tr-trust-icon"><span class="material-symbols-outlined">lock</span></div>
+                        <span class="tr-trust-label">دفع آمن</span>
+                    </div>
+                    <div class="tr-trust-item">
+                        <div class="tr-trust-icon"><span class="material-symbols-outlined">badge</span></div>
+                        <span class="tr-trust-label">مورد معتمد</span>
+                    </div>
+                </div>
+
+                <!-- padding -->
                 <div style="height:24px;"></div>
             </div>
 
-            <!-- Cancel Confirmation Modal -->
+            <!-- Cancel Modal -->
             <div v-if="showCancelModal" class="modal-overlay" @click.self="showCancelModal = false">
                 <div class="modal-box">
                     <h3>إلغاء الطلب</h3>
@@ -495,12 +322,10 @@
     <script src="js/nav.js"></script>
     <script>
         document.getElementById('header').innerHTML = [
-            '<div class="tracking-header">',
-                '<a href="home.html" class="tracking-back">',
-                    '<span class="material-symbols-outlined">arrow_forward</span>',
-                '</a>',
-                '<span class="tracking-title">تتبع الطلب</span>',
-                '<span class="tracking-spacer"></span>',
+            '<div class="tr-header">',
+                '<a href="home.html" class="tr-back"><span class="material-symbols-outlined">arrow_forward</span></a>',
+                '<span class="tr-title">تتبع الطلب</span>',
+                '<a href="cart.html" class="tr-cart"><span class="material-symbols-outlined">shopping_cart</span><span class="tr-cart-badge">3</span></a>',
             '</div>'
         ].join('');
 
@@ -512,30 +337,43 @@
             setup() {
                 initTheme();
 
-                const steps = ref([
-                    { label: 'تأكيد الطلب', status: 'completed', icon: 'check_circle', connectorClass: 'done' },
-                    { label: 'بدء التصنيع', status: 'active', icon: 'precision_manufacturing', connectorClass: 'partial' },
-                    { label: 'الشحن', status: 'pending', icon: 'local_shipping', connectorClass: '' },
-                    { label: 'التوصيل', status: 'pending', icon: 'delivery_dining', connectorClass: '' }
+                var steps = ref([
+                    { label: 'تم التوصيل', status: 'done', icon: 'check', lineClass: 'done', time: '' },
+                    { label: 'تم الشحن', status: 'done', icon: 'local_shipping', lineClass: 'done', time: '' },
+                    { label: 'قيد التجهيز', status: 'done', icon: 'inventory_2', lineClass: 'partial', time: '' },
+                    { label: 'تم استلام الطلب', status: 'active', icon: 'assignment', lineClass: '', time: '20 مايو 2025 - 12:13 م' }
                 ]);
 
-                const order = ref({
-                    id: 'ORD-2026-00421',
-                    address: 'بغداد، حي النرجس، شارع 14، مجمع النخيل',
-                    status: 'قيد التصنيع'
+                var order = ref({
+                    id: '#BN-2505-78932'
                 });
 
-                const products = ref([
-                    { name: 'سيراميك أسباني 60×60', img: 'images/img1.jpg', price: 25000, qty: 10 },
-                    { name: 'دهان جوتن داخلي أبيض', img: 'images/img6.jpg', price: 35000, qty: 5 },
-                    { name: 'بوابة حديد خارجية فخمة', img: 'images/img11.jpg', price: 175000, qty: 1 },
-                    { name: 'خلاط ماء حساس ذهبي', img: 'images/img16.jpg', price: 45000, qty: 2 }
-                ]);
+                var product = ref({
+                    name: 'جوتن فينوماستك الداخلي',
+                    color: 'لون: أبيض نقي - مطفي',
+                    size: 'حجم العبوة: 4 لتر',
+                    qty: 1,
+                    price: 75000,
+                    img: 'images/img6.jpg'
+                });
 
-                const showCancelModal = ref(false);
-                const cancelReason = ref('');
-                const toastVisible = ref(false);
-                const toastText = ref('');
+                var deliveryFee = 5000;
+                var discount = 0;
+
+                var total = ref(product.value.price + deliveryFee - discount);
+
+                var delivery = ref({
+                    governorate: 'بغداد',
+                    city: 'الكرخ',
+                    address: 'شارع الربيعي، مقابل مجمع البناء',
+                    expected: 'خلال 24-48 ساعة',
+                    expectedRange: 'بين 1 - 22 مايو 2025'
+                });
+
+                var showCancelModal = ref(false);
+                var cancelReason = ref('');
+                var toastVisible = ref(false);
+                var toastText = ref('');
 
                 function fmt(num) {
                     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -544,7 +382,7 @@
                 function showToast(msg) {
                     toastText.value = msg;
                     toastVisible.value = true;
-                    setTimeout(() => { toastVisible.value = false; }, 3500);
+                    setTimeout(function() { toastVisible.value = false; }, 3500);
                 }
 
                 function openCancelModal() {
@@ -558,11 +396,21 @@
                     showToast('سيتم مراجعة طلب إلغاء الطلب');
                 }
 
+                function contactSupport() {
+                    showToast('سيتم توجيهك إلى فريق الدعم الفني');
+                }
+
+                function viewInvoice() {
+                    showToast('عرض الفاتورة قيد التطوير');
+                }
+
                 return {
-                    steps, order, products,
+                    steps, order, product,
+                    deliveryFee, discount, total,
+                    delivery,
                     showCancelModal, cancelReason,
                     toastVisible, toastText,
-                    fmt, openCancelModal, submitCancel
+                    fmt, openCancelModal, submitCancel, contactSupport, viewInvoice
                 };
             }
         }).mount('#app');
