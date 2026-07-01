@@ -35,8 +35,8 @@
                     <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
                 </a>
                 <div style="flex:1;text-align:center;">
-                    <div style="font-size:18px;font-weight:700;color:var(--accent-gold);">عروض الأسعار</div>
-                    <div style="font-size:12px;color:var(--text-light);">جميع العروض المقدمة من الشركات</div>
+                    <div style="font-size:18px;font-weight:700;color:var(--accent-gold);">{{ viewType === 'offers' ? 'عروض الأسعار' : 'الاستشارات' }}</div>
+                    <div style="font-size:12px;color:var(--text-light);">{{ viewType === 'offers' ? 'جميع العروض المقدمة من الشركات' : 'جميع استشاراتك المقدمة' }}</div>
                 </div>
                 <button @click="showNewForm = true" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:var(--accent-gold);border:none;border-radius:50%;color:var(--primary-dark);cursor:pointer;">
                     <span class="material-symbols-outlined" style="font-size:22px;">add</span>
@@ -44,45 +44,93 @@
             </div>
 
             <div class="page-content" style="padding-top:0;">
-                <!-- Status Tabs -->
-                <div style="display:flex;gap:6px;padding:8px 16px 12px;overflow-x:auto;">
-                    <button v-for="t in statusTabs" :key="t.key"
-                        @click="activeTab = t.key"
-                        style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;white-space:nowrap;"
-                        :style="activeTab === t.key ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : { background:'var(--bg-input)', color:'var(--text-muted)' }">
-                        {{ t.label }} <span style="font-size:11px;opacity:.7;">({{ t.count }})</span>
+                <!-- View Toggle -->
+                <div style="display:flex;gap:6px;padding:8px 16px 4px;">
+                    <button @click="viewType = 'offers'" style="flex:1;padding:8px;border-radius:25px;font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;" :style="viewType === 'offers' ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : { background:'var(--bg-input)', color:'var(--text-muted)' }">
+                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">description</span> عروض الأسعار
+                    </button>
+                    <button @click="viewType = 'consults'" style="flex:1;padding:8px;border-radius:25px;font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;" :style="viewType === 'consults' ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : { background:'var(--bg-input)', color:'var(--text-muted)' }">
+                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">psychology</span> الاستشارات
                     </button>
                 </div>
 
-                <!-- Empty State -->
-                <div v-if="filteredOffers.length === 0" style="padding:40px 16px;text-align:center;">
-                    <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted);opacity:.5;">description</span>
-                    <div style="color:var(--text-muted);font-size:14px;margin-top:8px;">لا توجد عروض {{ activeTab === 'all' ? '' : statusTabs.find(t => t.key === activeTab)?.label }}</div>
-                    <div style="color:var(--text-light);font-size:12px;margin-top:4px;">عندما ترسل الشركات عروضها ستظهر هنا</div>
-                </div>
+                <!-- === OFFERS VIEW === -->
+                <template v-if="viewType === 'offers'">
+                    <!-- Status Tabs -->
+                    <div style="display:flex;gap:6px;padding:8px 16px 12px;overflow-x:auto;">
+                        <button v-for="t in statusTabs" :key="t.key"
+                            @click="activeTab = t.key"
+                            style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;white-space:nowrap;"
+                            :style="activeTab === t.key ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : { background:'var(--bg-input)', color:'var(--text-muted)' }">
+                            {{ t.label }} <span style="font-size:11px;opacity:.7;">({{ t.count }})</span>
+                        </button>
+                    </div>
 
-                <!-- Offers List -->
-                <div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:10px;">
-                    <div v-for="offer in filteredOffers" :key="offer.id" @click="openOffer(offer)"
-                        style="background:var(--bg-card);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;border:1px solid var(--border-light);display:flex;flex-direction:column;gap:10px;">
-                        <div style="display:flex;align-items:center;gap:12px;">
-                            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent-gold),#a07820);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <span style="color:var(--primary-dark);font-size:18px;font-weight:800;">{{ offer.company.charAt(0) }}</span>
+                    <!-- Empty State -->
+                    <div v-if="filteredOffers.length === 0" style="padding:40px 16px;text-align:center;">
+                        <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted);opacity:.5;">description</span>
+                        <div style="color:var(--text-muted);font-size:14px;margin-top:8px;">لا توجد عروض</div>
+                        <div style="color:var(--text-light);font-size:12px;margin-top:4px;">عندما ترسل الشركات عروضها ستظهر هنا</div>
+                    </div>
+
+                    <!-- Offers List -->
+                    <div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:10px;">
+                        <div v-for="offer in filteredOffers" :key="offer.id" @click="openOffer(offer)"
+                            style="background:var(--bg-card);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;border:1px solid var(--border-light);display:flex;flex-direction:column;gap:10px;">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent-gold),#a07820);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <span style="color:var(--primary-dark);font-size:18px;font-weight:800;">{{ offer.company.charAt(0) }}</span>
+                                </div>
+                                <div style="flex:1;min-width:0;">
+                                    <div style="color:var(--text-white);font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ offer.company }}</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">{{ offer.service || 'خدمة مقاولات' }} · {{ offer.size || '—' }}</div>
+                                </div>
+                                <div :style="statusStyle(offer.status)">{{ offer.status }}</div>
                             </div>
-                            <div style="flex:1;min-width:0;">
-                                <div style="color:var(--text-white);font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ offer.company }}</div>
-                                <div style="color:var(--text-muted);font-size:11px;">{{ offer.service || 'خدمة مقاولات' }} · {{ offer.size || '—' }}</div>
+                            <div style="display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border-light);">
+                                <div style="color:var(--text-light);font-size:12px;">
+                                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">calendar_today</span> {{ offer.date || '—' }}
+                                </div>
+                                <div style="color:var(--accent-gold);font-size:15px;font-weight:800;">{{ offer.price || '—' }}</div>
                             </div>
-                            <div :style="statusStyle(offer.status)">{{ offer.status }}</div>
-                        </div>
-                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border-light);">
-                            <div style="color:var(--text-light);font-size:12px;">
-                                <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">calendar_today</span> {{ offer.date || '—' }}
-                            </div>
-                            <div style="color:var(--accent-gold);font-size:15px;font-weight:800;">{{ offer.price || '—' }}</div>
                         </div>
                     </div>
-                </div>
+                </template>
+
+                <!-- === CONSULTS VIEW === -->
+                <template v-if="viewType === 'consults'">
+                    <!-- Empty State -->
+                    <div v-if="userConsults.length === 0" style="padding:40px 16px;text-align:center;">
+                        <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted);opacity:.5;">psychology</span>
+                        <div style="color:var(--text-muted);font-size:14px;margin-top:8px;">لا توجد استشارات</div>
+                        <div style="color:var(--text-light);font-size:12px;margin-top:4px;">عندما ترسل استشارة ستظهر هنا</div>
+                    </div>
+
+                    <!-- Consults List -->
+                    <div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:10px;">
+                        <div v-for="c in userConsults" :key="c.id" @click="openConsult(c)"
+                            style="background:var(--bg-card);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;border:1px solid var(--border-light);display:flex;flex-direction:column;gap:10px;">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#4fc3f7,#0288d1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <span class="material-symbols-outlined" style="color:#fff;font-size:22px;">psychology</span>
+                                </div>
+                                <div style="flex:1;min-width:0;">
+                                    <div style="color:var(--text-white);font-size:14px;font-weight:700;">{{ c.name || 'بدون اسم' }}</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">{{ c.consultType || c.type || 'استشارة' }}</div>
+                                </div>
+                                <div :style="consultStatusStyle(c.status || 'قيد المراجعة')">{{ c.status || 'قيد المراجعة' }}</div>
+                            </div>
+                            <div style="display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border-light);">
+                                <div style="color:var(--text-light);font-size:12px;">
+                                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">calendar_today</span> {{ formatDate(c.createdAt) || '—' }}
+                                </div>
+                                <div style="color:var(--accent-gold);font-size:12px;font-weight:600;">
+                                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">visibility</span> عرض التفاصيل
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
 
             <div id="bottomNav"></div>
@@ -240,6 +288,7 @@
         createApp({
             setup() {
                 initTheme();
+                var viewType = ref('offers');
                 var activeTab = ref('all');
                 var selectedOffer = ref(null);
                 var showNewForm = ref(false);
@@ -296,6 +345,31 @@
                     selectedOffer.value = offer;
                 }
 
+                // ===== Consultations =====
+                var userConsults = ref([]);
+                function loadConsults() {
+                    var stored = loadFromStorage('bunean-service-requests');
+                    userConsults.value = stored && stored.length ? stored.filter(function(r) { return r.submitType === 'consult'; }) : [];
+                }
+                loadConsults();
+
+                function openConsult(c) {
+                    window.location.href = 'request-detail.html?id=' + c.id;
+                }
+
+                function consultStatusStyle(status) {
+                    if (status === 'تم الرد') return { background: 'rgba(201,162,67,0.15)', color: 'var(--accent-gold)', fontSize:'11px', padding:'3px 8px', borderRadius:'20px', fontWeight:'600', whiteSpace:'nowrap' };
+                    if (status === 'مقبول') return { background: 'rgba(46,204,113,0.15)', color: '#2ecc71', fontSize:'11px', padding:'3px 8px', borderRadius:'20px', fontWeight:'600', whiteSpace:'nowrap' };
+                    if (status === 'ملغي') return { background: 'rgba(231,76,60,0.15)', color: '#e74c3c', fontSize:'11px', padding:'3px 8px', borderRadius:'20px', fontWeight:'600', whiteSpace:'nowrap' };
+                    return { background: 'rgba(79,195,247,0.15)', color: '#4fc3f7', fontSize:'11px', padding:'3px 8px', borderRadius:'20px', fontWeight:'600', whiteSpace:'nowrap' };
+                }
+
+                function formatDate(iso) {
+                    if (!iso) return '—';
+                    var d = new Date(iso);
+                    return d.toLocaleDateString('ar-IQ', { year:'numeric', month:'short', day:'numeric' });
+                }
+
                 // New Quote Request
                 var newQR = ref({ name: '', phone: '', projectName: '', location: '', category: '', details: '' });
                 function submitNewQuoteRequest() {
@@ -333,16 +407,32 @@
                     if (!newConsult.value.gov) { showBrandAlert('اختر المحافظة'); return; }
                     if (!newConsult.value.type) { showBrandAlert('اختر نوع الاستشارة'); return; }
                     if (!newConsult.value.desc.trim()) { showBrandAlert('أدخل تفاصيل الاستشارة'); return; }
+                    var reqs = JSON.parse(localStorage.getItem('bunean-service-requests') || '[]');
+                    reqs.push({
+                        id: Date.now(),
+                        submitType: 'consult',
+                        name: newConsult.value.name.trim(),
+                        phone: newConsult.value.phone.trim(),
+                        gov: newConsult.value.gov,
+                        consultType: newConsult.value.type,
+                        desc: newConsult.value.desc.trim(),
+                        status: 'قيد المراجعة',
+                        reply: '',
+                        createdAt: new Date().toISOString()
+                    });
+                    localStorage.setItem('bunean-service-requests', JSON.stringify(reqs));
                     newConsult.value = { name: '', phone: '', gov: '', type: '', desc: '' };
                     showNewForm.value = false;
                     lastSubmitType.value = 'consult';
                     showSuccess.value = true;
+                    loadConsults();
                 }
 
                 return {
-                    activeTab, selectedOffer, showNewForm, newFormTab, showSuccess, lastSubmitType,
+                    viewType, activeTab, selectedOffer, showNewForm, newFormTab, showSuccess, lastSubmitType,
                     governorates, categories, userOffers, statusTabs, filteredOffers,
                     statusStyle, openOffer,
+                    userConsults, openConsult, consultStatusStyle, formatDate, loadConsults,
                     newQR, submitNewQuoteRequest,
                     newConsult, submitNewConsult
                 };
