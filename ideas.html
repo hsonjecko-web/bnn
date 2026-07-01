@@ -415,7 +415,7 @@
                 result.push({
                     title: prefix + ' ' + names[i % 8],
                     company: opts.company || 'شركة البناء الحديث',
-                    companyLink: 'company.html',
+                    companyLink: 'company.html?id=' + encodeURIComponent(opts.company || 'شركة البناء الحديث'),
                     governorate: govs[i % 8],
                     style: sty[i % 8],
                     areaNum: areas[i % 8],
@@ -657,6 +657,7 @@
         }).mount('#app');
     </script>
     <script>
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(function() { console.log('SW registered'); })

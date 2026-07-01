@@ -25,66 +25,468 @@
     <script src="js/header.js"></script>
     <script src="js/bottom-nav.js"></script>
     <script src="js/router.js"></script>
+    <style>
+        .tracking-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            padding-top: env(safe-area-inset-top, 12px);
+            background: var(--primary-dark);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .tracking-header .tracking-back {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-card-light);
+            border: 1px solid var(--border-input);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+        .tracking-header .tracking-back .material-symbols-outlined {
+            font-size: 20px;
+        }
+        .tracking-header .tracking-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-white);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .tracking-header .tracking-spacer {
+            width: 44px;
+            flex-shrink: 0;
+        }
+        .tracking-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 16px 24px;
+            gap: 0;
+            position: relative;
+        }
+        .tracking-step-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+        .tracking-step-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-input);
+            border: 3px dashed rgba(255, 255, 255, 0.12);
+            color: var(--text-muted);
+            font-size: 24px;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .tracking-step-circle.completed {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+            border-style: solid;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.35);
+        }
+        .tracking-step-circle.active {
+            background: var(--primary-blue);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            border-style: solid;
+            box-shadow: 0 0 20px rgba(201, 162, 67, 0.3);
+        }
+        .tracking-step-circle.pending {
+            border-style: dashed;
+        }
+        .tracking-step-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 500;
+            max-width: 80px;
+        }
+        .tracking-step-label.completed {
+            color: #2ecc71;
+            font-weight: 600;
+        }
+        .tracking-step-label.active {
+            color: var(--text-white);
+            font-weight: 600;
+        }
+        .tracking-connector {
+            flex: 1;
+            height: 0;
+            border-top: 2px dashed rgba(255, 255, 255, 0.12);
+            margin: 0 -4px;
+            min-width: 16px;
+            position: relative;
+            top: -30px;
+            z-index: 0;
+        }
+        .tracking-connector.done {
+            border-top-color: #2ecc71;
+            border-style: solid;
+        }
+        .tracking-connector.partial {
+            border-top: 2px solid rgba(46, 204, 113, 0.4);
+        }
+        .order-card {
+            margin: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 18px;
+            backdrop-filter: blur(10px);
+        }
+        .order-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .order-card-title .material-symbols-outlined {
+            font-size: 20px;
+            color: var(--accent-gold);
+        }
+        .order-info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .order-info-row:last-child {
+            border-bottom: none;
+        }
+        .order-info-label {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        .order-info-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-white);
+        }
+        .order-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(201, 162, 67, 0.15);
+            color: var(--accent-gold);
+            border: 1px solid rgba(201, 162, 67, 0.25);
+        }
+        .order-status-badge .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 0.4; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+        .products-section {
+            margin: 8px 16px;
+        }
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .product-item-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: var(--bg-input);
+        }
+        .product-item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .product-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .product-item-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-white);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .product-item-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .product-item-price {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            white-space: nowrap;
+        }
+        .cancel-order-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: calc(100% - 32px);
+            margin: 12px 16px 8px;
+            padding: 14px;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 14px;
+            color: #e74c3c;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: "Cairo", sans-serif;
+        }
+        .cancel-order-btn:hover {
+            background: rgba(231, 76, 60, 0.2);
+        }
+        .cancel-order-btn .material-symbols-outlined {
+            font-size: 20px;
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 24px;
+            backdrop-filter: blur(4px);
+        }
+        .modal-box {
+            background: var(--primary-blue);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+        .modal-box h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-white);
+            margin: 0 0 8px;
+        }
+        .modal-box p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin: 0 0 18px;
+        }
+        .modal-box textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-input);
+            color: var(--text-white);
+            font-size: 13px;
+            font-family: "Cairo", sans-serif;
+            resize: vertical;
+            min-height: 80px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .modal-box textarea:focus {
+            border-color: var(--accent-gold);
+        }
+        .modal-box .modal-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .modal-box .modal-btns button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: "Cairo", sans-serif;
+            border: none;
+        }
+        .modal-box .modal-btn-cancel {
+            background: var(--bg-card-light);
+            color: var(--text-light);
+            border: 1px solid var(--border-input);
+        }
+        .modal-box .modal-btn-confirm {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .toast-message {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--primary-blue);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 14px 20px;
+            color: var(--text-white);
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 200;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 320px;
+        }
+        .toast-message.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        html.light-mode .tracking-step-circle {
+            border-color: rgba(26, 58, 92, 0.15);
+        }
+        html.light-mode .tracking-connector {
+            border-top-color: rgba(26, 58, 92, 0.15);
+        }
+        html.light-mode .tracking-step-circle.completed {
+            border-color: #2ecc71;
+        }
+        html.light-mode .tracking-step-circle.pending {
+            border-style: dashed;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <div class="app-container">
             <div id="header"></div>
 
-            <div class="page-content">
-                <!-- رأس الطلب -->
-                <div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.08);">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                        <h1 style="font-size:20px;font-weight:800;color:#fff;">طلب #{{ order.id }}</h1>
-                        <span class="status-badge" :class="order.statusClass">{{ order.status }}</span>
-                    </div>
-                    <p style="font-size:13px;color:#8a9bb0;">{{ order.title }}</p>
-                </div>
+            <div class="page-content" style="padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px));">
 
-                <!-- خطوات التتبع -->
-                <div class="order-timeline">
-                    <div v-for="(step, index) in steps" :key="index" class="timeline-step">
-                        <div class="step-icon" :class="step.status">
-                            <svg v-if="step.status === 'completed'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12"/>
-                            </svg>
-                            <svg v-else-if="step.status === 'active'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                            </svg>
-                            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <polyline points="16 12 12 8 8 12"/>
-                                <line x1="12" y1="16" x2="12" y2="8"/>
-                            </svg>
-                        </div>
-                        <span class="step-label" :class="{ active: step.status !== 'pending' }">{{ step.label }}</span>
-                    </div>
-                </div>
-
-                <!-- معلومات الطلب -->
-                <div class="order-info">
-                    <div class="order-info-card">
-                        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">تفاصيل الطلب</h3>
-                        <div v-for="(detail, index) in order.details" :key="index" class="order-info-row">
-                            <span class="order-info-label">{{ detail.label }}</span>
-                            <span class="order-info-value" :style="{ color: detail.color || '#fff' }">{{ detail.value }}</span>
-                        </div>
-                    </div>
-
-                    <!-- التحديثات -->
-                    <div class="order-info-card">
-                        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">آخر التحديثات</h3>
-                        <div v-for="(update, index) in order.updates" :key="index"
-                             style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-                                <span style="font-size:13px;font-weight:600;color:#fff;">{{ update.title }}</span>
-                                <span style="font-size:11px;color:#5a7088;">{{ update.time }}</span>
+                <!-- Progress Bar -->
+                <div class="tracking-progress">
+                    <template v-for="(step, index) in steps" :key="index">
+                        <div class="tracking-step-wrap">
+                            <div class="tracking-step-circle" :class="step.status">
+                                <span class="material-symbols-outlined">{{ step.icon }}</span>
                             </div>
-                            <p style="font-size:12px;color:#8a9bb0;">{{ update.desc }}</p>
+                            <span class="tracking-step-label" :class="step.status">{{ step.label }}</span>
                         </div>
+                        <div v-if="index < steps.length - 1" class="tracking-connector" :class="step.connectorClass"></div>
+                    </template>
+                </div>
+
+                <!-- Order Info Card -->
+                <div class="order-card">
+                    <div class="order-card-title">
+                        <span class="material-symbols-outlined">receipt_long</span>
+                        تفاصيل الطلب
+                    </div>
+                    <div class="order-info-row">
+                        <span class="order-info-label">رقم الطلب</span>
+                        <span class="order-info-value">{{ order.id }}</span>
+                    </div>
+                    <div class="order-info-row">
+                        <span class="order-info-label">العنوان</span>
+                        <span class="order-info-value">{{ order.address }}</span>
+                    </div>
+                    <div class="order-info-row">
+                        <span class="order-info-label">الحالة</span>
+                        <span class="order-status-badge">
+                            <span class="status-dot"></span>
+                            {{ order.status }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <div class="products-section">
+                    <div class="order-card-title" style="padding:0 0 4px;">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        المنتجات ({{ products.length }})
+                    </div>
+                    <div v-for="(item, index) in products" :key="index" class="product-item">
+                        <div class="product-item-img">
+                            <img :src="item.img" :alt="item.name">
+                        </div>
+                        <div class="product-item-info">
+                            <div class="product-item-name">{{ item.name }}</div>
+                            <div class="product-item-meta">
+                                <span>الكمية: {{ item.qty }}</span>
+                                <span>{{ fmt(item.price) }} د.ع</span>
+                            </div>
+                        </div>
+                        <div class="product-item-price">{{ fmt(item.price * item.qty) }} د.ع</div>
+                    </div>
+                </div>
+
+                <!-- Cancel Order Button -->
+                <button class="cancel-order-btn" @click="openCancelModal">
+                    <span class="material-symbols-outlined">cancel</span>
+                    إلغاء الطلب
+                </button>
+
+                <!-- padding to avoid bottom nav overlap -->
+                <div style="height:24px;"></div>
+            </div>
+
+            <!-- Cancel Confirmation Modal -->
+            <div v-if="showCancelModal" class="modal-overlay" @click.self="showCancelModal = false">
+                <div class="modal-box">
+                    <h3>إلغاء الطلب</h3>
+                    <p>هل أنت متأكد من رغبتك في إلغاء هذا الطلب؟ يرجى ذكر السبب.</p>
+                    <textarea v-model="cancelReason" placeholder="اذكر سبب الإلغاء..." rows="3"></textarea>
+                    <div class="modal-btns">
+                        <button class="modal-btn-cancel" @click="showCancelModal = false">رجوع</button>
+                        <button class="modal-btn-confirm" @click="submitCancel" :disabled="!cancelReason.trim()">تأكيد الإلغاء</button>
                     </div>
                 </div>
             </div>
+
+            <!-- Toast -->
+            <div class="toast-message" :class="{ show: toastVisible }">{{ toastText }}</div>
 
             <div id="bottomNav"></div>
         </div>
@@ -92,7 +494,16 @@
 
     <script src="js/nav.js"></script>
     <script>
-        document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
+        document.getElementById('header').innerHTML = [
+            '<div class="tracking-header">',
+                '<a href="home.html" class="tracking-back">',
+                    '<span class="material-symbols-outlined">arrow_forward</span>',
+                '</a>',
+                '<span class="tracking-title">تتبع الطلب</span>',
+                '<span class="tracking-spacer"></span>',
+            '</div>'
+        ].join('');
+
         document.getElementById('bottomNav').innerHTML = renderNav('account');
 
         const { createApp, ref } = Vue;
@@ -100,45 +511,69 @@
         createApp({
             setup() {
                 initTheme();
+
                 const steps = ref([
-                    { label: 'تأكيد الطلب', status: 'completed' },
-                    { label: 'بدء التنفيذ', status: 'completed' },
-                    { label: 'قيد التنفيذ', status: 'active' },
-                    { label: 'التسليم', status: 'pending' }
+                    { label: 'تأكيد الطلب', status: 'completed', icon: 'check_circle', connectorClass: 'done' },
+                    { label: 'بدء التصنيع', status: 'active', icon: 'precision_manufacturing', connectorClass: 'partial' },
+                    { label: 'الشحن', status: 'pending', icon: 'local_shipping', connectorClass: '' },
+                    { label: 'التوصيل', status: 'pending', icon: 'delivery_dining', connectorClass: '' }
                 ]);
 
                 const order = ref({
-                    id: '12345',
-                    title: 'فيلا سكنية - حي النرجس',
-                    status: 'قيد التنفيذ',
-                    statusClass: 'active',
-                    details: [
-                        { label: 'المقاول', value: 'شركة البناء الحديث' },
-                        { label: 'نوع الخدمة', value: 'بناء فيلا سكنية' },
-                        { label: 'الميزانية', value: '82,000,000 د.ع', color: '#c9a243' },
-                        { label: 'مدة التنفيذ', value: '3 شهور' },
-                        { label: 'تاريخ البدء', value: '2026/06/15' },
-                        { label: 'تاريخ الانتهاء المتوقع', value: '2026/09/15' }
-                    ],
-                    updates: [
-                        { title: 'تم الانتهاء من الأساسات', time: 'اليوم', desc: 'تم الانتهاء من أعمال الأساسات بنجاح وبدء أعمال الهيكل الخرساني' },
-                        { title: 'بدء أعمال الحفر', time: 'قبل 3 أيام', desc: 'تم البدء في أعمال حفر الأساسات وتجهيز الموقع' },
-                        { title: 'تأكيد الطلب', time: 'قبل أسبوع', desc: 'تم تأكيد الطلب والاتفاق على الشروط والميزانية' }
-                    ]
+                    id: 'ORD-2026-00421',
+                    address: 'بغداد، حي النرجس، شارع 14، مجمع النخيل',
+                    status: 'قيد التصنيع'
                 });
 
-                return { steps, order };
+                const products = ref([
+                    { name: 'سيراميك أسباني 60×60', img: 'images/img1.jpg', price: 25000, qty: 10 },
+                    { name: 'دهان جوتن داخلي أبيض', img: 'images/img6.jpg', price: 35000, qty: 5 },
+                    { name: 'بوابة حديد خارجية فخمة', img: 'images/img11.jpg', price: 175000, qty: 1 },
+                    { name: 'خلاط ماء حساس ذهبي', img: 'images/img16.jpg', price: 45000, qty: 2 }
+                ]);
+
+                const showCancelModal = ref(false);
+                const cancelReason = ref('');
+                const toastVisible = ref(false);
+                const toastText = ref('');
+
+                function fmt(num) {
+                    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+
+                function showToast(msg) {
+                    toastText.value = msg;
+                    toastVisible.value = true;
+                    setTimeout(() => { toastVisible.value = false; }, 3500);
+                }
+
+                function openCancelModal() {
+                    cancelReason.value = '';
+                    showCancelModal.value = true;
+                }
+
+                function submitCancel() {
+                    if (!cancelReason.value.trim()) return;
+                    showCancelModal.value = false;
+                    showToast('سيتم مراجعة طلب إلغاء الطلب');
+                }
+
+                return {
+                    steps, order, products,
+                    showCancelModal, cancelReason,
+                    toastVisible, toastText,
+                    fmt, openCancelModal, submitCancel
+                };
             }
         }).mount('#app');
     </script>
     <script>
-        // Register Service Worker for PWA
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('SW registered'))
-                .catch(err => console.log('SW registration failed'));
+                .then(function() { console.log('SW registered'); })
+                .catch(function(err) { console.log('SW registration failed'); });
         }
     </script>
 </body>
 </html>
-

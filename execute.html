@@ -613,6 +613,7 @@
         }).mount('#app');
     </script>
     <script>
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(function() { console.log('SW registered'); })

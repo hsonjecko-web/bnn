@@ -704,17 +704,7 @@
                     </div>
                 </template>
 
-                <!-- ======= OTP VIEW ======= -->
-                <template v-if="view === 'otp-verify'">
-                    <div class="register-section">
-                        <div style="text-align:center;margin-bottom:12px;"><span class="material-symbols-outlined" style="font-size:48px;color:#c9a243;">verified</span></div>
-                        <div style="text-align:center;font-size:16px;font-weight:700;color:#fff;">التحقق من الرقم</div>
-                        <div style="text-align:center;font-size:13px;color:#b0c4d9;margin:4px 0 12px;">أدخل رمز التحقق المرسل إلى {{ regPhone }}</div>
-                        <input type="text" class="reg-input" placeholder="000000" v-model="otpCode" maxlength="6" style="text-align:center;font-size:24px;letter-spacing:8px;font-weight:700;">
-                        <button class="reg-submit" @click="verifyOtp" style="margin-top:8px;">تحقق <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span></button>
-                        <div style="text-align:center;margin-top:10px;"><span style="color:#b0c4d9;font-size:12px;cursor:pointer;" @click="view='login'">العودة لتسجيل الدخول</span></div>
-                    </div>
-                </template>
+
 
             </div>
 
@@ -794,9 +784,7 @@
                 const regShowPwd = ref(false);
                 const regLoading = ref(false);
 
-                // OTP
-                const otpCode = ref('');
-                const otpLoading = ref(false);
+
 
                 const focusPassword = () => {
                     passwordInput.value?.focus();
@@ -818,10 +806,35 @@
                     isLoading.value = true;
 
                     setTimeout(() => {
-                        if (username.value === 'admin' && password.value === '123456') {
+                        var uname = username.value.trim();
+                        var pwd = password.value.trim();
+                        var accounts = JSON.parse(localStorage.getItem('bunean-accounts') || '{}');
+                        var acct = null;
+
+                        if (uname === 'admin1' && pwd === '123456') {
+                            acct = { role: 'company', name: 'شركة البناء الحديث' };
+                        } else {
+                            acct = accounts[uname];
+                            if (acct && acct.password !== pwd) acct = null;
+                        }
+
+                        if (acct) {
                             successMsg.value = 'تم تسجيل الدخول بنجاح!';
                             setTimeout(() => {
-                                window.location.href = 'home.html';
+                                if (acct.role === 'user') {
+                                    var userData = { name: acct.name, phone: acct.phone || '', governorate: acct.governorate || '', address: acct.address || '' };
+                                    localStorage.setItem('bunean-user-data', JSON.stringify(userData));
+                                    localStorage.setItem('bunean-user-auth', uname);
+                                    window.location.href = 'home.html';
+                                } else {
+                                    var saved = JSON.parse(localStorage.getItem('bunean-company-profile'));
+                                    if (saved) {
+                                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: saved.name, status: saved.status }));
+                                    } else {
+                                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: acct.name || 'شركة البناء الحديث', status: 'قيد المراجعة' }));
+                                    }
+                                    window.location.href = 'account.html';
+                                }
                             }, 800);
                         } else {
                             errorMsg.value = 'اسم المستخدم أو كلمة المرور غير صحيحة';
@@ -852,7 +865,6 @@
                     regPhone.value = '';
                     regPassword.value = '';
                     regShowPwd.value = false;
-                    otpCode.value = '';
                 };
 
                 const submitRegistration = (type) => {
@@ -862,16 +874,37 @@
                     if (!regAddress.value.trim()) { showBrandAlert('أدخل العنوان'); return; }
                     if (!regPhone.value.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
                     if (!regPassword.value.trim()) { showBrandAlert('أدخل كلمة المرور'); return; }
-                    view.value = 'otp-verify';
-                };
 
-                const verifyOtp = () => {
-                    if (otpCode.value === '123456') {
-                        showBrandAlert('تم إنشاء الحساب بنجاح!');
-                        resetRegForm();
-                        view.value = 'login';
+                    var accounts = JSON.parse(localStorage.getItem('bunean-accounts') || '{}');
+                    var uid = regPhone.value.trim();
+                    if (accounts[uid]) { showBrandAlert('رقم الهاتف مسجل مسبقاً'); return; }
+                    var entry = {
+                        password: regPassword.value.trim(),
+                        role: type,
+                        name: type === 'company' ? regCompanyName.value.trim() : regFullName.value.trim(),
+                        phone: regPhone.value.trim(),
+                        governorate: regGovernorate.value,
+                        address: regAddress.value.trim()
+                    };
+                    accounts[uid] = entry;
+                    localStorage.setItem('bunean-accounts', JSON.stringify(accounts));
+
+                    if (type === 'user') {
+                        var userData = { name: regFullName.value.trim(), phone: regPhone.value.trim(), governorate: regGovernorate.value, address: regAddress.value.trim() };
+                        localStorage.setItem('bunean-user-data', JSON.stringify(userData));
+                        localStorage.setItem('bunean-user-auth', uid);
+                        window.location.href = 'home.html';
                     } else {
-                        showBrandAlert('رمز التحقق غير صحيح');
+                        var profile = {
+                            name: regCompanyName.value.trim(), about: '', specs: [], location: regGovernorate.value,
+                            phone: regPhone.value.trim(), email: '', logo: 'images/img3.jpg', cover: 'images/img16.jpg',
+                            workImages: ['images/img1.jpg','images/img2.jpg','images/img3.jpg'],
+                            years: 1, workers: 0, engineers: 0, done: 0,
+                            projects: [], ads: [], quotes: [], status: 'قيد المراجعة'
+                        };
+                        localStorage.setItem('bunean-company-profile', JSON.stringify(profile));
+                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: profile.name, status: profile.status }));
+                        window.location.href = 'account.html';
                     }
                 };
 
@@ -897,7 +930,6 @@
                     view, openUserRegister, openCompanyRegister,
                     regFullName, regCompanyName, regGovernorate, regAddress, regPhone, regPassword,
                     regShowPwd, regLoading, submitRegistration,
-                    otpCode, otpLoading, verifyOtp,
                     governorates
                 };
             }

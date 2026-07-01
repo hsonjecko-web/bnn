@@ -35,80 +35,66 @@
                     <span class="material-symbols-outlined" style="font-size: 24px;">arrow_forward</span>
                 </a>
                 <div style="flex: 1; text-align: center;">
-                    <div style="font-size: 18px; font-weight: 700; color: var(--accent-gold);">طلب استشارة</div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--accent-gold);">الطلبات والعروض</div>
                     <div style="font-size: 12px; color: var(--text-light);">املأ البيانات وسيتواصل معك المختصون</div>
                 </div>
                 <div style="width: 44px;"></div>
             </div>
 
+            <!-- Tabs -->
+            <div style="display:flex;gap:6px;padding:0 16px 12px;">
+                <button class="notif-tab" :class="{ active: tab === 'consult' }" @click="tab='consult'" style="padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;background:var(--bg-input);color:var(--text-muted);" :style="tab === 'consult' ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : {}">طلب استشارة</button>
+                <button class="notif-tab" :class="{ active: tab === 'quote' }" @click="tab='quote'" style="padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;transition:all .2s;background:var(--bg-input);color:var(--text-muted);" :style="tab === 'quote' ? { background:'var(--accent-gold)', color:'var(--primary-dark)' } : {}">طلب عرض سعر</button>
+            </div>
+
             <div class="page-content">
-                <div style="padding: 0 16px 20px;">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">
-                                <span class="material-symbols-outlined">person</span>
-                                الاسم
-                            </label>
-                            <input type="text" class="form-input" v-model="form.name" placeholder="الاسم">
+                <!-- ===== Consultation Form ===== -->
+                <template v-if="tab === 'consult'">
+                    <div style="padding: 0 16px 20px;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label"><span class="material-symbols-outlined">person</span> الاسم</label>
+                                <input type="text" class="form-input" v-model="form.name" placeholder="الاسم">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><span class="material-symbols-outlined">call</span> الهاتف</label>
+                                <input type="tel" class="form-input" v-model="form.phone" placeholder="رقم الهاتف">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">
-                                <span class="material-symbols-outlined">call</span>
-                                الهاتف
-                            </label>
-                            <input type="tel" class="form-input" v-model="form.phone" placeholder="رقم الهاتف">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label"><span class="material-symbols-outlined">location_city</span> المحافظة</label>
+                                <select class="form-select" v-model="form.gov"><option value="">اختر</option><option v-for="g in governorates" :key="g" :value="g">{{ g }}</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><span class="material-symbols-outlined">category</span> نوع الاستشارة</label>
+                                <select class="form-select" v-model="form.type"><option value="">اختر</option><option value="هندسية">هندسية</option><option value="تصميم داخلي">تصميم داخلي</option><option value="تشطيبات">تشطيبات</option><option value="مواد بناء">مواد بناء</option><option value="قانونية">قانونية</option><option value="أخرى">أخرى</option></select>
+                            </div>
                         </div>
+                        <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">map</span> العنوان</label><input type="text" class="form-input" v-model="form.address" placeholder="العنوان"></div>
+                        <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">description</span> تفاصيل الاستشارة</label><textarea class="form-textarea" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..."></textarea></div>
+                        <button class="consult-submit" @click="submitForm"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: 20px; margin-left: 6px;">send</span> إرسال الاستشارة</button>
                     </div>
+                </template>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">
-                                <span class="material-symbols-outlined">location_city</span>
-                                المحافظة
-                            </label>
-                            <select class="form-select" v-model="form.gov">
-                                <option value="">اختر</option>
-                                <option v-for="g in governorates" :key="g" :value="g">{{ g }}</option>
-                            </select>
+                <!-- ===== Quote Request Form ===== -->
+                <template v-if="tab === 'quote'">
+                    <div style="padding: 0 16px 20px;">
+                        <div class="form-row">
+                            <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">person</span> الاسم</label><input type="text" class="form-input" v-model="qr.name" placeholder="الاسم"></div>
+                            <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">call</span> الهاتف</label><input type="tel" class="form-input" v-model="qr.phone" placeholder="رقم الهاتف"></div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">
-                                <span class="material-symbols-outlined">category</span>
-                                نوع الاستشارة
-                            </label>
-                            <select class="form-select" v-model="form.type">
-                                <option value="">اختر</option>
-                                <option value="هندسية">هندسية</option>
-                                <option value="تصميم داخلي">تصميم داخلي</option>
-                                <option value="تشطيبات">تشطيبات</option>
-                                <option value="مواد بناء">مواد بناء</option>
-                                <option value="قانونية">قانونية</option>
-                                <option value="أخرى">أخرى</option>
-                            </select>
+                        <div class="form-row">
+                            <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">assignment</span> اسم المشروع</label><input type="text" class="form-input" v-model="qr.projectName" placeholder="اسم المشروع"></div>
+                            <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">location_on</span> الموقع</label><input type="text" class="form-input" v-model="qr.location" placeholder="الموقع"></div>
                         </div>
+                        <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">category</span> التصنيف</label>
+                            <select class="form-select" v-model="qr.category"><option value="">اختر</option><option v-for="c in categories" :key="c" :value="c">{{ c }}</option></select>
+                        </div>
+                        <div class="form-group"><label class="form-label"><span class="material-symbols-outlined">description</span> التفاصيل</label><textarea class="form-textarea" v-model="qr.details" placeholder="وصف المشروع والمواصفات المطلوبة..."></textarea></div>
+                        <button class="consult-submit" @click="submitQuoteRequest"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: 20px; margin-left: 6px;">send</span> إرسال طلب عرض السعر</button>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <span class="material-symbols-outlined">map</span>
-                            العنوان
-                        </label>
-                        <input type="text" class="form-input" v-model="form.address" placeholder="العنوان">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <span class="material-symbols-outlined">description</span>
-                            تفاصيل الاستشارة
-                        </label>
-                        <textarea class="form-textarea" v-model="form.desc" placeholder="اكتب تفاصيل استشارتك هنا..."></textarea>
-                    </div>
-
-                    <button class="consult-submit" @click="submitForm">
-                        <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 20px; margin-left: 6px;">send</span>
-                        إرسال الاستشارة
-                    </button>
-                </div>
+                </template>
             </div>
 
             <div id="bottomNav"></div>
@@ -121,7 +107,8 @@
                     <span class="material-symbols-outlined success-icon">check_circle</span>
                 </div>
                 <h2 class="success-title">تم الإرسال بنجاح</h2>
-                <p class="success-desc">تم استلام استشارتك بنجاح<br>سيتم التواصل معك من قبل المختصين قريباً</p>
+                <p class="success-desc" v-if="tab === 'consult'">تم استلام استشارتك بنجاح<br>سيتم التواصل معك من قبل المختصين قريباً</p>
+                <p class="success-desc" v-else>تم إرسال طلب عرض السعر<br>سيتم الرد عليك من قبل الشركات المختصة</p>
                 <button class="success-btn" @click="showSuccess = false">حسناً</button>
             </div>
         </div>
@@ -139,17 +126,11 @@
             setup() {
                 initTheme();
 
-                var governorates = ref(['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية']);
+                var tab = ref('consult');
 
-                var form = ref({
-                    name: '',
-                    gov: '',
-                    address: '',
-                    phone: '',
-                    type: '',
-                    desc: ''
-                });
+                var governorates = ['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية'];
 
+                var form = ref({ name: '', gov: '', address: '', phone: '', type: '', desc: '' });
                 var showSuccess = ref(false);
 
                 function submitForm() {
@@ -158,15 +139,44 @@
                     if (!form.value.phone.trim()) { showBrandAlert('يرجى إدخال رقم الهاتف'); return; }
                     if (!form.value.type) { showBrandAlert('يرجى اختيار نوع الاستشارة'); return; }
                     if (!form.value.desc.trim()) { showBrandAlert('يرجى كتابة تفاصيل الاستشارة'); return; }
-
                     form.value = { name: '', gov: '', address: '', phone: '', type: '', desc: '' };
                     showSuccess.value = true;
                 }
 
-                return { form, governorates, submitForm, showSuccess };
+                // ===== Quote Request =====
+                var qr = ref({ name: '', phone: '', projectName: '', location: '', category: '', details: '' });
+                var categories = ['بناء سكني', 'بناء تجاري', 'تشطيبات', 'خرسانة', 'أعمال صحية', 'أعمال كهربائية', 'دهانات', 'أرضيات', 'واجهات', 'حدائق', 'أخرى'];
+
+                function submitQuoteRequest() {
+                    if (!qr.value.name.trim()) { showBrandAlert('أدخل الاسم'); return; }
+                    if (!qr.value.phone.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
+                    if (!qr.value.projectName.trim()) { showBrandAlert('أدخل اسم المشروع'); return; }
+                    if (!qr.value.location.trim()) { showBrandAlert('أدخل الموقع'); return; }
+                    if (!qr.value.category) { showBrandAlert('اختر التصنيف'); return; }
+                    if (!qr.value.details.trim()) { showBrandAlert('أدخل تفاصيل المشروع'); return; }
+                    var reqs = JSON.parse(localStorage.getItem('bunean-quote-requests') || '[]');
+                    reqs.push({
+                        id: Date.now(),
+                        name: qr.value.name.trim(),
+                        phone: qr.value.phone.trim(),
+                        projectName: qr.value.projectName.trim(),
+                        location: qr.value.location.trim(),
+                        category: qr.value.category,
+                        details: qr.value.details.trim(),
+                        replied: false,
+                        replyMessage: '',
+                        createdAt: new Date().toISOString()
+                    });
+                    localStorage.setItem('bunean-quote-requests', JSON.stringify(reqs));
+                    qr.value = { name: '', phone: '', projectName: '', location: '', category: '', details: '' };
+                    showSuccess.value = true;
+                }
+
+                return { tab, governorates, form, submitForm, showSuccess, qr, categories, submitQuoteRequest };
             }
         }).mount('#app');
 
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(function() { console.log('SW registered'); })

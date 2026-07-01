@@ -25,6 +25,14 @@
     <script src="js/header.js"></script>
     <script src="js/bottom-nav.js"></script>
     <script src="js/router.js"></script>
+    <style>
+        .section-title { color: var(--text-white); font-size: 15px; font-weight: 700; margin: 20px 16px 10px; }
+        .section-card { background: var(--bg-card); border-radius: 14px; margin: 0 16px 12px; padding: 16px; }
+        .spec-tag { display:inline-block; padding:3px 10px; border-radius:50px; font-size:11px; background:rgba(255,136,0,0.1); color:#FF8800; border:1px solid rgba(255,136,0,0.2); margin:2px; }
+        .status-badge { display:inline-block; padding:3px 12px; border-radius:50px; font-size:11px; font-weight:600; }
+        .img-preview { width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--bg-input); display:flex; align-items:center; justify-content:center; border:1px solid var(--border-light); }
+        .img-preview img { width:100%; height:100%; object-fit:cover; }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -32,52 +40,404 @@
             <div id="header"></div>
 
             <div class="page-content">
-                <!-- الملف الشخصي -->
-                <div class="profile-section">
-                    <div class="profile-avatar">{{ user.name.charAt(0) }}</div>
-                    <div class="profile-name">{{ user.name }}</div>
-                    <div class="profile-email">{{ user.email }}</div>
-                    <div class="profile-phone-row">
-                        <a :href="'tel:' + user.phone" class="profile-phone">{{ user.phone }}</a>
-                    </div>
-                </div>
 
-                <!-- الإحصائيات -->
-                <div class="stats-row">
-                    <div class="stat-box">
-                        <div class="stat-number">{{ user.activeProjects }}</div>
-                        <div class="stat-label">مشاريع جارية</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">{{ user.completedProjects }}</div>
-                        <div class="stat-label">مشاريع منجزة</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">{{ user.orders }}</div>
-                        <div class="stat-label">طلبات</div>
-                    </div>
-                </div>
-
-                <!-- القائمة -->
-                <div class="menu-section">
-                    <a v-for="(item, index) in menuItems" :key="index"
-                       :href="item.link" class="menu-item">
-                        <div class="menu-item-left">
-                            <div class="menu-item-icon" v-html="item.icon"></div>
-                            <span class="menu-item-label" :style="{ color: item.color || '' }">{{ item.label }}</span>
+                <!-- ==================== ضيف / مستخدم ==================== -->
+                <template v-if="!companyAuth">
+                    <!-- الملف الشخصي -->
+                    <div class="profile-section">
+                        <div class="profile-avatar">{{ user.name.charAt(0) }}</div>
+                        <div class="profile-name">{{ user.name }}</div>
+                        <div class="profile-email">{{ user.email }}</div>
+                        <div class="profile-phone-row">
+                            <a :href="'tel:' + user.phone" class="profile-phone">{{ user.phone }}</a>
                         </div>
-                        <svg class="menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                    </a>
-
-                    <!-- Theme Toggle -->
-                    <div class="theme-toggle-item" @click="handleToggleTheme">
-                        <div class="toggle-left">
-                            <div class="toggle-icon" v-html="themeIcon"></div>
-                            <span class="toggle-label">{{ isLightMode ? 'الوضع النهاري' : 'الوضع الليلي' }}</span>
-                        </div>
-                        <div class="toggle-switch" :class="{ active: isLightMode }"></div>
                     </div>
-                </div>
+
+                    <!-- زر طلب خدمة + عروض الأسعار (أسفل الملف الشخصي) -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 16px 16px;">
+                        <button @click="activeUserSection = 'service-request'" style="padding:12px;border-radius:12px;border:1px solid var(--accent-gold);background:rgba(201,162,67,0.08);color:var(--accent-gold);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:Cairo,sans-serif;">
+                            <span class="material-symbols-outlined" style="font-size:18px;">handyman</span>
+                            طلب خدمة
+                        </button>
+                        <button @click="activeUserSection = 'offers'" style="padding:12px;border-radius:12px;border:1px solid var(--accent-gold);background:rgba(201,162,67,0.08);color:var(--accent-gold);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:Cairo,sans-serif;">
+                            <span class="material-symbols-outlined" style="font-size:18px;">description</span>
+                            عروض الأسعار
+                        </button>
+                    </div>
+
+                    <!-- القائمة -->
+                    <div class="menu-section">
+                        <template v-for="(item, index) in menuItems" :key="index">
+                            <a v-if="!item.section" :href="item.link" class="menu-item">
+                                <div class="menu-item-left">
+                                    <div class="menu-item-icon" v-html="item.icon"></div>
+                                    <span class="menu-item-label" :style="{ color: item.color || '' }">{{ item.label }}</span>
+                                </div>
+                                <svg class="menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                            </a>
+                            <div v-else class="menu-item" @click="activeUserSection = item.section" style="cursor:pointer;">
+                                <div class="menu-item-left">
+                                    <div class="menu-item-icon" v-html="item.icon"></div>
+                                    <span class="menu-item-label" :style="{ color: item.color || '' }">{{ item.label }}</span>
+                                </div>
+                                <svg class="menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                            </div>
+                        </template>
+
+                        <!-- Theme Toggle -->
+                        <div class="theme-toggle-item" @click="handleToggleTheme">
+                            <div class="toggle-left">
+                                <div class="toggle-icon" v-html="themeIcon"></div>
+                                <span class="toggle-label">{{ isLightMode ? 'الوضع النهاري' : 'الوضع الليلي' }}</span>
+                            </div>
+                            <div class="toggle-switch" :class="{ active: isLightMode }"></div>
+                        </div>
+                    </div>
+
+                    <!-- ===== قسم طلب خدمة ===== -->
+                    <template v-if="activeUserSection === 'service-request'">
+                        <div style="padding:16px;">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                                <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </button>
+                                <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">طلب خدمة</h2>
+                            </div>
+
+                            <!-- Banner -->
+                            <div style="background:linear-gradient(135deg,rgba(201,162,67,0.15),rgba(201,162,67,0.05));border:1px solid rgba(201,162,67,0.2);border-radius:14px;padding:16px;margin-bottom:16px;text-align:center;">
+                                <span class="material-symbols-outlined" style="font-size:32px;color:var(--accent-gold);display:block;margin-bottom:8px;">handyman</span>
+                                <h3 style="color:var(--text-white);font-size:15px;font-weight:700;margin:0 0 4px;">أخبرنا عن مشروعك</h3>
+                                <p style="color:var(--text-muted);font-size:12px;margin:0;">وسنتصل بك خلال 24 ساعة</p>
+                            </div>
+
+                            <div class="mkt-checkout-form">
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">نوع الخدمة</label>
+                                    <select class="form-input" v-model="srForm.serviceType" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                        <option value="">اختر نوع الخدمة</option>
+                                        <option v-for="s in serviceTypes" :key="s" :value="s">{{ s }}</option>
+                                    </select>
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">المحافظة</label>
+                                    <select class="form-input" v-model="srForm.gov" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                        <option value="">اختر المحافظة</option>
+                                        <option v-for="g in governorates" :key="g" :value="g">{{ g }}</option>
+                                    </select>
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">العنوان</label>
+                                    <input type="text" class="form-input" v-model="srForm.address" placeholder="أدخل العنوان" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">المساحة (م²)</label>
+                                    <input type="text" inputmode="numeric" class="form-input" v-model="srForm.area" placeholder="أدخل المساحة" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">الميزانية التقديرية</label>
+                                    <input type="text" inputmode="numeric" class="form-input" v-model="srForm.budget" placeholder="أدخل الميزانية" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">وصف المشروع</label>
+                                    <textarea class="form-textarea" v-model="srForm.desc" placeholder="اكتب تفاصيل مشروعك..." rows="4" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;resize:none;font-family:Cairo,sans-serif;"></textarea>
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">رفع صور (اختياري، كحد أقصى 5 صور)</label>
+                                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                        <div v-for="(img, i) in srForm.images" :key="i" style="width:60px;height:60px;border-radius:8px;overflow:hidden;position:relative;background:var(--bg-input);border:1px solid var(--border-light);">
+                                            <img :src="img" style="width:100%;height:100%;object-fit:cover;">
+                                            <button @click="srForm.images.splice(i,1)" style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(231,76,60,0.8);color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;">×</button>
+                                        </div>
+                                        <div v-if="srForm.images.length < 5" @click="srForm.images.push('images/img' + (srForm.images.length % 31 + 1) + '.jpg')" style="width:60px;height:60px;border-radius:8px;border:2px dashed var(--border-light);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);">
+                                            <span class="material-symbols-outlined" style="font-size:24px;">add_photo_alternate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="mkt-confirm-btn" @click="submitServiceRequest" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+                                    <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">send</span> تأكيد وإرسال الطلب
+                                </button>
+                            </div>
+
+                            <!-- Footer -->
+                            <div style="text-align:center;padding:16px 0;margin-top:8px;">
+                                <span class="material-symbols-outlined" style="font-size:16px;color:#4caf50;vertical-align:middle;">lock</span>
+                                <span style="color:var(--text-muted);font-size:11px;">بياناتك محمية وآمنة</span>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- ===== قسم عروض الأسعار ===== -->
+                    <template v-if="activeUserSection === 'offers'">
+                        <div style="padding:16px;">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                                <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </button>
+                                <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">عروض الأسعار</h2>
+                            </div>
+
+                            <div v-if="userOffers.length === 0" style="text-align:center;padding:40px 16px;color:var(--text-muted);font-size:13px;">
+                                <span class="material-symbols-outlined" style="font-size:48px;display:block;margin-bottom:12px;opacity:0.4;">description</span>
+                                لا توجد عروض أسعار حالياً
+                            </div>
+
+                            <div v-for="(offer, i) in userOffers" :key="i" style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:16px;margin-bottom:12px;">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                                    <div>
+                                        <div style="color:var(--text-white);font-size:14px;font-weight:700;">{{ offer.company }}</div>
+                                        <div style="color:var(--text-muted);font-size:11px;">{{ offer.project }}</div>
+                                    </div>
+                                    <span class="status-badge" :style="offer.status === 'مقبول' ? 'background:rgba(46,204,113,0.1);color:#2ecc71;border:1px solid rgba(46,204,113,0.2);' : (offer.status === 'مرفوض' ? 'background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);' : 'background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);')" style="font-size:10px;padding:3px 10px;border-radius:50px;">{{ offer.status }}</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:12px;padding-top:10px;border-top:1px solid var(--border-light);">
+                                    <div v-if="offer.logo" style="width:40px;height:40px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--bg-input);">
+                                        <img :src="offer.logo" style="width:100%;height:100%;object-fit:cover;">
+                                    </div>
+                                    <div style="flex:1;">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                                            <span style="color:var(--text-muted);font-size:11px;">السعر</span>
+                                            <span style="color:var(--accent-gold);font-size:16px;font-weight:700;">{{ offer.price }}</span>
+                                        </div>
+                                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                                            <span style="color:var(--text-muted);font-size:11px;">مدة التنفيذ</span>
+                                            <span style="color:#4caf50;font-size:12px;font-weight:600;">{{ offer.duration }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- ===== قسم تعديل الملف الشخصي ===== -->
+                    <template v-if="activeUserSection === 'edit-profile'">
+                        <div style="padding:16px;">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                                <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </button>
+                                <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">الملف الشخصي</h2>
+                            </div>
+                            <div class="mkt-checkout-form">
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">الاسم</label>
+                                    <input type="text" class="form-input" v-model="editUser.name" placeholder="الاسم" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">البريد الإلكتروني</label>
+                                    <input type="email" class="form-input" v-model="editUser.email" placeholder="البريد الإلكتروني" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">رقم الهاتف</label>
+                                    <input type="tel" class="form-input" v-model="editUser.phone" placeholder="رقم الهاتف" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">المحافظة</label>
+                                    <select class="form-input" v-model="editUser.governorate" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                        <option value="">اختر المحافظة</option>
+                                        <option v-for="g in governorates" :key="g" :value="g">{{ g }}</option>
+                                    </select>
+                                </div>
+                                <div class="mkt-form-group">
+                                    <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">العنوان</label>
+                                    <input type="text" class="form-input" v-model="editUser.address" placeholder="العنوان" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                </div>
+                                <button class="mkt-confirm-btn" @click="saveUserProfile" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+                                    <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">save</span> حفظ التعديلات
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+
+                <!-- ==================== شركة ==================== -->
+                <template v-if="companyAuth">
+                    <!-- رأس -->
+                    <div style="padding:16px;border-bottom:1px solid var(--border-light);">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#003399,#FF8800);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;">{{ companyName.charAt(0) }}</div>
+                            <div>
+                                <div style="color:var(--text-white);font-size:15px;font-weight:700;">{{ companyName }}</div>
+                                <div class="status-badge" :style="{ background: 'rgba(255,136,0,0.1)', color: '#FF8800', border: '1px solid rgba(255,136,0,0.2)' }">{{ companyStatus }}</div>
+                            </div>
+                            <div style="margin-right:auto;">
+                                <button @click="handleLogout" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:20px;font-family:Cairo,sans-serif;">
+                                    <span class="material-symbols-outlined">logout</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- أزرار الأقسام -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px;">
+                        <button v-for="sec in sections" :key="sec.id" @click="activeSection = sec.id"
+                            style="padding:14px 8px;border-radius:12px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-white);font-size:12px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:Cairo,sans-serif;"
+                            :style="activeSection === sec.id ? { borderColor: 'var(--accent-gold)', background: 'rgba(201,162,67,0.08)' } : {}">
+                            <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);">{{ sec.icon }}</span>
+                            {{ sec.label }}
+                        </button>
+                    </div>
+
+                    <!-- ===== طلبات العروض ===== -->
+                    <template v-if="activeSection === 'quotes'">
+                        <div class="section-title">طلبات العروض ({{ quoteRequests.length }})</div>
+                        <div v-if="quoteRequests.length === 0" style="text-align:center;padding:30px 16px;color:var(--text-muted);font-size:13px;">
+                            لا توجد طلبات عروض حتى الآن
+                        </div>
+                        <div v-for="(qr, i) in quoteRequests" :key="i" class="section-card" style="cursor:pointer;" @click="activeRequest = qr">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <div>
+                                    <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ qr.name }}</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">{{ qr.projectName }}</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">{{ qr.createdAt }}</div>
+                                </div>
+                                <div v-if="qr.replied" class="status-badge" style="background:rgba(46,204,113,0.1);color:#2ecc71;border:1px solid rgba(46,204,113,0.2);font-size:10px;">تم الرد</div>
+                                <div v-else class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;">جديد</div>
+                            </div>
+                        </div>
+
+                        <!-- مودال تفاصيل الطلب -->
+                        <div v-if="activeRequest" class="project-modal" @click.self="activeRequest=null">
+                            <div class="modal-content">
+                                <div class="modal-pull-bar"><span></span></div>
+                                <button class="modal-close" @click="activeRequest=null">
+                                    <span class="material-symbols-outlined close-icon">close</span>
+                                    <span class="material-symbols-outlined arrow-icon">arrow_back</span>
+                                </button>
+                                <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">تفاصيل الطلب</h3>
+                                <div class="mkt-detail-row"><span class="mkt-detail-label">الاسم</span><span class="mkt-detail-value">{{ activeRequest.name }}</span></div>
+                                <div class="mkt-detail-row"><span class="mkt-detail-label">الهاتف</span><span class="mkt-detail-value">{{ activeRequest.phone }}</span></div>
+                                <div class="mkt-detail-row"><span class="mkt-detail-label">المشروع</span><span class="mkt-detail-value">{{ activeRequest.projectName }}</span></div>
+                                <div class="mkt-detail-row"><span class="mkt-detail-label">الموقع</span><span class="mkt-detail-value">{{ activeRequest.location }}</span></div>
+                                <div class="mkt-detail-row"><span class="mkt-detail-label">القسم</span><span class="mkt-detail-value">{{ activeRequest.category }}</span></div>
+                                <div class="mkt-detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+                                    <span class="mkt-detail-label">التفاصيل</span>
+                                    <span class="mkt-detail-value">{{ activeRequest.details }}</span>
+                                </div>
+                                <div v-if="activeRequest.replyMessage" class="mkt-detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;border-top:1px solid var(--border-light);padding-top:10px;">
+                                    <span class="mkt-detail-label" style="color:#2ecc71;">ردك</span>
+                                    <span class="mkt-detail-value">{{ activeRequest.replyMessage }}</span>
+                                </div>
+                                <div v-if="!activeRequest.replied" style="margin-top:12px;">
+                                    <textarea class="form-textarea" v-model="replyText" placeholder="اكتب ردك على هذا الطلب..." rows="3" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;font-family:Cairo,sans-serif;resize:none;box-sizing:border-box;"></textarea>
+                                    <button @click="sendReply" style="width:100%;padding:10px;margin-top:8px;border-radius:10px;border:none;background:var(--accent-gold);color:var(--primary-dark);font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">إرسال الرد</button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- ===== عروضي المقدمة ===== -->
+                    <template v-if="activeSection === 'my-quotes'">
+                        <div class="section-title">عروضي المقدمة</div>
+                        <div v-if="myQuotes.length === 0" style="text-align:center;padding:30px 16px;color:var(--text-muted);font-size:13px;">
+                            لم تقدم أي عروض بعد
+                        </div>
+                        <div v-for="(mq, i) in myQuotes" :key="i" class="section-card">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <div>
+                                    <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ mq.client }}</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">{{ mq.project }}</div>
+                                    <div style="color:var(--accent-gold);font-size:13px;font-weight:700;">{{ mq.amount }}</div>
+                                </div>
+                                <div class="status-badge" :style="getStatusStyle(mq.status)">{{ mq.status }}</div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- ===== حجز إعلاناتي ===== -->
+                    <template v-if="activeSection === 'ads'">
+                        <div class="section-title">إعلاناتي</div>
+                        <button @click="showAdForm = true" style="margin:0 16px 12px;padding:10px 16px;border-radius:10px;border:none;background:var(--accent-gold);color:var(--primary-dark);font-size:12px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+                            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">add</span> إضافة إعلان
+                        </button>
+                        <div v-if="myAds.length === 0" style="text-align:center;padding:20px 16px;color:var(--text-muted);font-size:13px;">لا توجد إعلانات</div>
+                        <div v-for="(ad, i) in myAds" :key="i" class="section-card">
+                            <div style="display:flex;gap:10px;">
+                                <div class="img-preview"><img :src="ad.image" alt=""></div>
+                                <div>
+                                    <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ ad.title }}</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">{{ ad.desc }}</div>
+                                    <div class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;margin-top:4px;">قيد المراجعة</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- مودال إضافة إعلان -->
+                        <div v-if="showAdForm" class="project-modal" @click.self="showAdForm = false">
+                            <div class="modal-content">
+                                <div class="modal-pull-bar"><span></span></div>
+                                <button class="modal-close" @click="showAdForm = false"><span class="material-symbols-outlined close-icon">close</span><span class="material-symbols-outlined arrow-icon">arrow_back</span></button>
+                                <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">إضافة إعلان</h3>
+                                <div class="mkt-checkout-form">
+                                    <div class="mkt-form-group"><label>عنوان الإعلان</label><input class="form-input" v-model="newAd.title"></div>
+                                    <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="newAd.desc" rows="3"></textarea></div>
+                                    <div class="mkt-form-group"><label>رابط الصورة</label><input class="form-input" v-model="newAd.image"></div>
+                                    <button class="mkt-confirm-btn" @click="submitAd">إضافة</button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- ===== إضافة مشروع ===== -->
+                    <template v-if="activeSection === 'add-project'">
+                        <div class="section-title">إضافة مشروع جديد</div>
+                        <div class="section-card">
+                            <div class="mkt-checkout-form">
+                                <div class="mkt-form-group"><label>اسم المشروع</label><input class="form-input" v-model="newProject.title"></div>
+                                <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="newProject.desc" rows="3"></textarea></div>
+                                <div class="mkt-form-group"><label>التصنيف</label>
+                                    <select class="form-input" v-model="newProject.category">
+                                        <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+                                    </select>
+                                </div>
+                                <div class="mkt-form-group"><label>رابط الصورة</label><input class="form-input" v-model="newProject.image"></div>
+                                <div class="mkt-form-group"><label>تاريخ الإنجاز</label><input class="form-input" type="date" v-model="newProject.date"></div>
+                                <button class="mkt-confirm-btn" @click="submitProject">إضافة المشروع</button>
+                            </div>
+                            <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
+                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الإضافة سيتم مراجعة المشروع من قبل الدعم الفني
+                            </div>
+                        </div>
+
+                        <div class="section-title">المشاريع المضافة ({{ myProjects.length }})</div>
+                        <div v-for="(p, i) in myProjects" :key="i" class="section-card">
+                            <div style="display:flex;gap:10px;">
+                                <div class="img-preview"><img :src="p.image" alt=""></div>
+                                <div style="flex:1;">
+                                    <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ p.title }}</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">{{ p.category }} • {{ p.date }}</div>
+                                    <div class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;margin-top:4px;">قيد المراجعة</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- ===== تعديل البروفايل ===== -->
+                    <template v-if="activeSection === 'edit-profile'">
+                        <div class="section-title">تعديل ملف الشركة</div>
+                        <div class="section-card">
+                            <div class="mkt-checkout-form">
+                                <div class="mkt-form-group"><label>اسم الشركة</label><input class="form-input" v-model="editProfile.name"></div>
+                                <div class="mkt-form-group"><label>نبذة عن الشركة</label><textarea class="form-input" v-model="editProfile.about" rows="3"></textarea></div>
+                                <div class="mkt-form-group"><label>التخصصات (كل تخصص بسطر)</label><textarea class="form-input" v-model="editProfile.specsStr" rows="3"></textarea></div>
+                                <div class="mkt-form-group"><label>الموقع</label><input class="form-input" v-model="editProfile.location"></div>
+                                <div class="mkt-form-group"><label>رقم الهاتف</label><input class="form-input" v-model="editProfile.phone"></div>
+                                <div class="mkt-form-group"><label>البريد الإلكتروني</label><input class="form-input" v-model="editProfile.email"></div>
+                                <div class="mkt-form-group"><label>رابط الشعار</label><input class="form-input" v-model="editProfile.logo"></div>
+                                <div class="mkt-form-group"><label>رابط الغلاف</label><input class="form-input" v-model="editProfile.cover"></div>
+                                <div class="mkt-form-group"><label>سنوات الخبرة</label><input class="form-input" type="number" v-model="editProfile.years"></div>
+                                <div class="mkt-form-group"><label>عدد العمال</label><input class="form-input" type="number" v-model="editProfile.workers"></div>
+                                <div class="mkt-form-group"><label>عدد المهندسين</label><input class="form-input" type="number" v-model="editProfile.engineers"></div>
+                                <div class="mkt-form-group"><label>المشاريع المنفذة</label><input class="form-input" type="number" v-model="editProfile.done"></div>
+                                <button class="mkt-confirm-btn" @click="saveProfileEdit">حفظ التعديلات</button>
+                            </div>
+                            <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
+                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الحفظ سيتم مراجعة التعديلات من قبل الدعم الفني
+                            </div>
+                        </div>
+                    </template>
+                </template>
+
             </div>
 
             <div id="bottomNav"></div>
@@ -91,10 +451,27 @@
 
         const { createApp, ref, computed } = Vue;
 
+        function loadFromStorage(key, def) {
+            try { var v = JSON.parse(localStorage.getItem(key)); return v !== null ? v : def; } catch(e) { return def; }
+        }
+
         createApp({
             setup() {
                 initTheme();
-                const user = ref({
+
+                // ===== Auth detection =====
+                var companyAuth = ref(loadFromStorage('bunean-company-auth', null));
+                var myAuth = loadFromStorage('bunean-user-auth', null);
+                var myData = loadFromStorage('bunean-user-data', null);
+
+                var user = ref(myData ? {
+                    name: myData.name,
+                    email: myData.email || '',
+                    phone: myData.phone || '+964 770 123 4567',
+                    activeProjects: 3,
+                    completedProjects: 5,
+                    orders: 12
+                } : {
                     name: 'أحمد محمد علي',
                     email: 'ahmed@email.com',
                     phone: '+964 770 123 4567',
@@ -102,63 +479,244 @@
                     completedProjects: 5,
                     orders: 12
                 });
-                localStorage.setItem('bunean-user', user.value.name);
 
-                const menuItems = ref([
-                    {
-                        label: 'طلباتي',
-                        link: 'order-tracking.html',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
-                    },
-                    {
-                        label: 'عروض الأسعار',
-                        link: 'quotes.html',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>'
-                    },
-                    {
-                        label: 'الملف الشخصي',
-                        link: '#',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
-                    },
-                    {
-                        label: 'المساعدة',
-                        link: '#',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
-                    },
-                    {
-                        label: 'تسجيل الخروج',
-                        link: 'index.html',
-                        color: '#e74c3c',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
-                    }
+                // Set user name for header
+                if (myData && myData.name) {
+                    localStorage.setItem('bunean-user', myData.name);
+                } else if (!localStorage.getItem('bunean-user')) {
+                    localStorage.setItem('bunean-user', user.value.name);
+                }
+
+                var menuItems = ref([
+                    { label: 'طلباتي', link: 'order-tracking.html',
+                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
+                    { label: 'عروض الأسعار', link: 'quotes.html',
+                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+                    { label: 'الملف الشخصي', link: '#', section: 'edit-profile',
+                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
+                    { label: 'تسجيل الخروج', link: 'index.html', color: '#e74c3c',
+                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' }
                 ]);
 
-                const isLightMode = ref(document.documentElement.classList.contains('light-mode'));
+                var isLightMode = ref(document.documentElement.classList.contains('light-mode'));
 
-                const themeIcon = computed(() => {
+                var themeIcon = computed(function() {
                     return isLightMode.value
                         ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
                         : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
                 });
 
-                const handleToggleTheme = () => {
+                var handleToggleTheme = function() {
                     document.documentElement.classList.toggle('light-mode');
                     isLightMode.value = document.documentElement.classList.contains('light-mode');
                     localStorage.setItem('bunean-theme', isLightMode.value ? 'light' : 'dark');
                 };
 
-                return { user, menuItems, isLightMode, themeIcon, handleToggleTheme };
+                // ===== Company dashboard =====
+                var companyName = ref(companyAuth.value ? companyAuth.value.name : '');
+                var companyStatus = ref(companyAuth.value ? companyAuth.value.status : '');
+                var activeSection = ref('');
+
+                var sections = [
+                    { id: 'quotes', label: 'طلبات العروض', icon: 'request_quote' },
+                    { id: 'my-quotes', label: 'عروضي المقدمة', icon: 'description' },
+                    { id: 'ads', label: 'حجز إعلاناتي', icon: 'campaign' },
+                    { id: 'add-project', label: 'إضافة مشروع', icon: 'add_circle' },
+                    { id: 'edit-profile', label: 'تعديل البروفايل', icon: 'edit' }
+                ];
+
+                // Quote requests
+                var quoteRequests = ref(loadFromStorage('bunean-quote-requests', []));
+                var activeRequest = ref(null);
+                var replyText = ref('');
+
+                var sendReply = function() {
+                    if (!replyText.value.trim()) { showBrandAlert('اكتب الرد أولاً'); return; }
+                    var qrs = loadFromStorage('bunean-quote-requests', []);
+                    var idx = qrs.findIndex(function(q) { return q.id === activeRequest.value.id; });
+                    if (idx !== -1) {
+                        qrs[idx].replied = true;
+                        qrs[idx].replyMessage = replyText.value.trim();
+                        localStorage.setItem('bunean-quote-requests', JSON.stringify(qrs));
+                        quoteRequests.value = qrs;
+                        activeRequest.value = qrs[idx];
+                        replyText.value = '';
+                        showBrandAlert('✅ تم إرسال الرد بنجاح');
+                    }
+                };
+
+                // User quotes (my-quotes)
+                var myQuotes = ref(loadFromStorage('bunean-company-quotes', []));
+
+                var getStatusStyle = function(s) {
+                    if (s === 'مقبول') return 'background:rgba(46,204,113,0.1);color:#2ecc71;border:1px solid rgba(46,204,113,0.2)';
+                    if (s === 'مرفوض') return 'background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)';
+                    return 'background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2)';
+                };
+
+                // Ads
+                var profile = ref(loadFromStorage('bunean-company-profile', { ads: [] }));
+                var myAds = ref(profile.value.ads || []);
+                var showAdForm = ref(false);
+                var newAd = ref({ title: '', desc: '', image: 'images/img1.jpg' });
+
+                var submitAd = function() {
+                    if (!newAd.value.title.trim()) { showBrandAlert('أدخل عنوان الإعلان'); return; }
+                    myAds.value.push({ title: newAd.value.title, desc: newAd.value.desc, image: newAd.value.image || 'images/img1.jpg', status: 'قيد المراجعة' });
+                    var p = loadFromStorage('bunean-company-profile', {});
+                    p.ads = myAds.value;
+                    localStorage.setItem('bunean-company-profile', JSON.stringify(p));
+                    showAdForm.value = false;
+                    newAd.value = { title: '', desc: '', image: 'images/img1.jpg' };
+                    showBrandAlert('✅ تم إضافة الإعلان\nقيد المراجعة');
+                };
+
+                // Projects
+                var myProjects = ref(profile.value.projects || []);
+                var newProject = ref({ title: '', desc: '', category: '', image: '', date: '' });
+                var categories = ['بناء سكني', 'بناء تجاري', 'جسور وطرق', 'تشطيبات', 'خرسانة', 'أعمال صحية', 'أعمال كهربائية', 'دهانات', 'أرضيات', 'واجهات', 'حدائق', 'أخرى'];
+
+                var submitProject = function() {
+                    if (!newProject.value.title.trim()) { showBrandAlert('أدخل اسم المشروع'); return; }
+                    myProjects.value.push({
+                        title: newProject.value.title,
+                        desc: newProject.value.desc,
+                        category: newProject.value.category,
+                        image: newProject.value.image || 'images/img1.jpg',
+                        date: newProject.value.date || new Date().toISOString().split('T')[0],
+                        status: 'قيد المراجعة'
+                    });
+                    var p = loadFromStorage('bunean-company-profile', {});
+                    p.projects = myProjects.value;
+                    localStorage.setItem('bunean-company-profile', JSON.stringify(p));
+                    newProject.value = { title: '', desc: '', category: '', image: '', date: '' };
+                    showBrandAlert('✅ تم إضافة المشروع\nقيد المراجعة من قبل الدعم الفني');
+                };
+
+                // Edit profile
+                var editProfile = ref({
+                    name: profile.value.name || '',
+                    about: profile.value.about || '',
+                    specsStr: (profile.value.specs || []).join('\n'),
+                    location: profile.value.location || '',
+                    phone: profile.value.phone || '',
+                    email: profile.value.email || '',
+                    logo: profile.value.logo || '',
+                    cover: profile.value.cover || '',
+                    years: profile.value.years || '',
+                    workers: profile.value.workers || '',
+                    engineers: profile.value.engineers || '',
+                    done: profile.value.done || ''
+                });
+
+                var saveProfileEdit = function() {
+                    var p = loadFromStorage('bunean-company-profile', {});
+                    p.name = editProfile.value.name;
+                    p.about = editProfile.value.about;
+                    p.specs = editProfile.value.specsStr.split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
+                    p.location = editProfile.value.location;
+                    p.phone = editProfile.value.phone;
+                    p.email = editProfile.value.email;
+                    p.logo = editProfile.value.logo;
+                    p.cover = editProfile.value.cover;
+                    p.years = parseInt(editProfile.value.years) || 0;
+                    p.workers = parseInt(editProfile.value.workers) || 0;
+                    p.engineers = parseInt(editProfile.value.engineers) || 0;
+                    p.done = parseInt(editProfile.value.done) || 0;
+                    p.status = 'قيد المراجعة';
+                    localStorage.setItem('bunean-company-profile', JSON.stringify(p));
+                    companyName.value = p.name;
+                    showBrandAlert('✅ تم حفظ التعديلات\nقيد المراجعة من قبل الدعم الفني');
+                };
+
+                var handleLogout = function() {
+                    showBrandConfirm('تسجيل الخروج من حساب الشركة؟', function() {
+                        companyAuth.value = null;
+                        localStorage.removeItem('bunean-company-auth');
+                        activeSection.value = '';
+                    });
+                };
+
+                // ===== User profile edit =====
+                var editUser = ref({
+                    name: (myData && myData.name) || user.value.name,
+                    email: (myData && myData.email) || user.value.email || '',
+                    phone: (myData && myData.phone) || user.value.phone || '',
+                    governorate: (myData && myData.governorate) || '',
+                    address: (myData && myData.address) || ''
+                });
+
+                var saveUserProfile = function() {
+                    if (!editUser.value.name.trim()) { showBrandAlert('أدخل الاسم'); return; }
+                    var data = myData || {};
+                    data.name = editUser.value.name.trim();
+                    data.email = editUser.value.email.trim();
+                    data.phone = editUser.value.phone.trim();
+                    data.governorate = editUser.value.governorate;
+                    data.address = editUser.value.address.trim();
+                    localStorage.setItem('bunean-user-data', JSON.stringify(data));
+                    localStorage.setItem('bunean-user', data.name);
+                    user.value.name = data.name;
+                    user.value.email = data.email;
+                    user.value.phone = data.phone;
+                    editUser.value.name = data.name;
+                    editUser.value.email = data.email;
+                    editUser.value.phone = data.phone;
+                    editUser.value.governorate = data.governorate;
+                    editUser.value.address = data.address;
+                    showBrandAlert('✅ تم حفظ التعديلات بنجاح');
+                };
+
+                // ===== User sections =====
+                var activeUserSection = ref('');
+                var srForm = ref({ serviceType: '', gov: '', address: '', area: '', budget: '', desc: '', images: [] });
+                var serviceTypes = ref(['بناء', 'ترميم', 'تشطيب', 'ديكور', 'كهرباء', 'سباكة', 'دهانات', 'حدائق', 'أخرى']);
+                var governorates = ref(['بغداد', 'البصرة', 'نينوى', 'أربيل', 'كركوك', 'النجف', 'كربلاء', 'السليمانية', 'ديالى', 'واسط', 'ميسان', 'ذي قار', 'المثنى', 'القادسية', 'بابل', 'صلاح الدين', 'الأنبار', 'دهوك']);
+                var userOffers = ref(loadFromStorage('bunean-user-offers', []));
+
+                function submitServiceRequest() {
+                    if (!srForm.value.serviceType) { showBrandAlert('اختر نوع الخدمة'); return; }
+                    if (!srForm.value.gov) { showBrandAlert('اختر المحافظة'); return; }
+                    if (!srForm.value.desc.trim()) { showBrandAlert('اكتب وصف المشروع'); return; }
+                    var requests = JSON.parse(localStorage.getItem('bunean-service-requests') || '[]');
+                    requests.push({
+                        id: Date.now(),
+                        serviceType: srForm.value.serviceType,
+                        gov: srForm.value.gov,
+                        address: srForm.value.address,
+                        area: srForm.value.area,
+                        budget: srForm.value.budget,
+                        desc: srForm.value.desc.trim(),
+                        images: srForm.value.images,
+                        createdAt: new Date().toISOString()
+                    });
+                    localStorage.setItem('bunean-service-requests', JSON.stringify(requests));
+                    srForm.value = { serviceType: '', gov: '', address: '', area: '', budget: '', desc: '', images: [] };
+                    showBrandAlert('✅ تم إرسال طلب الخدمة بنجاح\nسيتم التواصل معك خلال 24 ساعة');
+                    activeUserSection.value = '';
+                }
+
+                return {
+                    user, menuItems, isLightMode, themeIcon, handleToggleTheme,
+                    companyAuth, companyName, companyStatus, activeSection, sections,
+                    quoteRequests, activeRequest, replyText, sendReply,
+                    myQuotes, getStatusStyle,
+                    myAds, showAdForm, newAd, submitAd,
+                    myProjects, newProject, submitProject, categories,
+                    editProfile, saveProfileEdit, handleLogout,
+                    activeUserSection, srForm, serviceTypes, governorates, userOffers, submitServiceRequest,
+                    editUser, saveUserProfile
+                };
             }
         }).mount('#app');
     </script>
     <script>
-        // Register Service Worker for PWA
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('SW registered'))
-                .catch(err => console.log('SW registration failed'));
+                .then(function() { console.log('SW registered'); })
+                .catch(function(err) { console.log('SW registration failed'); });
         }
     </script>
 </body>
 </html>
-

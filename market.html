@@ -35,7 +35,7 @@
                 <div v-if="!productDetailView">
 
                 <!-- ===== أقسام دائرية ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers" class="mkt-cats-scroll">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers" class="mkt-cats-scroll">
                     <div v-for="(cat, i) in categories" :key="i" class="mkt-cat" @click="selectCat(i)">
                         <div class="mkt-cat-circle">
                             <span class="material-symbols-outlined">{{ cat.icon }}</span>
@@ -45,7 +45,7 @@
                 </div>
 
                 <!-- ===== سلايدر صور ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers" class="mkt-slider"
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers" class="mkt-slider"
                      @touchstart.passive="sliderTouch.onTouchStart"
                      @touchend="sliderTouch.onTouchEnd">
                     <div class="mkt-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (mktSlide * 100) + '%)' }">
@@ -64,7 +64,7 @@
                 </div>
 
                 <!-- ===== حاسبة مواد البناء ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers" class="mkt-calc-compact">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers" class="mkt-calc-compact">
                     <div class="mkt-calc-compact-top">
                         <div class="mkt-calc-compact-icon">
                             <span class="material-symbols-outlined">calculate</span>
@@ -95,7 +95,7 @@
                 </div>
 
                 <!-- ===== المنتجات الأكثر طلباً ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers">
                     <div class="section-header">
                         <span class="section-title">المنتجات الأكثر طلباً</span>
                         <span class="section-link" @click="showAllView = true">عرض الكل</span>
@@ -145,10 +145,10 @@
                 </div>
 
                 <!-- ===== الموردون المعتمدون ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers">
                     <div class="section-header">
                         <span class="section-title">الموردون المعتمدون</span>
-                        <span class="section-link">عرض الكل</span>
+                        <span class="section-link" @click="showAllSuppliers = true">عرض الكل</span>
                     </div>
                     <div class="mkt-suppliers-scroll">
                          <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card" @click="openSupplier(s)">
@@ -173,8 +173,42 @@
                      </div>
                 </div>
 
+                <!-- ===== صفحة عرض كل الموردين ===== -->
+                <div v-if="showAllSuppliers" class="mkt-cat-view">
+                    <div class="exec-header">
+                        <button class="exec-back" @click="showAllSuppliers = false">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <div>
+                            <h2>جميع الموردين</h2>
+                            <p>{{ suppliers.length }} مورد</p>
+                        </div>
+                    </div>
+                    <div class="mkt-suppliers-scroll" style="padding:16px;flex-wrap:wrap;">
+                        <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card" @click="openSupplier(s)">
+                            <div class="mkt-supplier-logo">
+                                <img :src="s.logo" alt="">
+                            </div>
+                            <div class="mkt-supplier-info">
+                                <h4>{{ s.name }}</h4>
+                                <div class="mkt-supplier-meta">
+                                    <span class="mkt-supplier-meta-item">
+                                        <span class="material-symbols-outlined">engineering</span>
+                                        {{ s.projects }} مشروع
+                                    </span>
+                                    <span class="mkt-supplier-meta-item">
+                                        <span class="material-symbols-outlined">location_on</span>
+                                        {{ s.location }}
+                                    </span>
+                                </div>
+                            </div>
+                            <button class="mkt-supplier-btn">عرض الملف</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ===== عروض خاصة ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers">
                     <div class="section-header">
                         <span class="section-title">عروض خاصة</span>
                         <span class="section-link" @click="showAllOffers = true">عرض الكل</span>
@@ -214,10 +248,14 @@
                         <div v-for="(o, i) in offers" :key="i" class="mkt-grid-prod" @click="openProduct(o)">
                             <div class="mkt-grid-prod-img">
                                 <img :src="o.img" alt="">
+                                <span v-if="o.discount" class="mkt-offer-badge" style="position:absolute;top:8px;right:8px;font-size:11px;padding:4px 6px;">خصم {{ o.discount }}%</span>
                             </div>
                             <div class="mkt-grid-prod-info">
                                 <div class="mkt-grid-prod-name">{{ o.name }}</div>
-                                <div class="mkt-grid-prod-price">{{ fmt(o.price) }} د.ع</div>
+                                <div v-if="o.oldPrice" class="mkt-offer-prices" style="margin-bottom:6px;">
+                                    <span class="mkt-old-price" style="font-size:11px;">{{ o.oldPrice }} د.ع</span>
+                                    <span class="mkt-new-price" style="font-size:14px;">{{ o.price }} د.ع</span>
+                                </div>
                                 <button class="mkt-grid-add-btn" @click.stop="addToCart(o)">
                                     <span class="material-symbols-outlined">add_shopping_cart</span>
                                     أضف للسلة
@@ -416,20 +454,23 @@
                     </div>
 
                     <div v-else>
-                        <div v-for="(item, i) in cart" :key="i" class="mkt-cart-item">
+                        <div v-for="(item, i) in cart" :key="i" class="mkt-cart-item" @click="openFromCart(item)">
                             <div class="mkt-cart-item-img">
                                 <img :src="item.img" alt="">
                             </div>
                             <div class="mkt-cart-item-info">
                                 <h4>{{ item.name }}</h4>
-                                <div class="mkt-cart-item-price">{{ item.price }} د.ع</div>
-                                <div class="mkt-qty-control">
-                                    <button class="mkt-qty-btn" @click="item.qty = Math.max(1, item.qty - 1)">-</button>
+                                <div v-if="item.colorName" class="mkt-cart-item-opt" style="font-size:11px;color:var(--text-muted);margin:2px 0;">اللون: {{ item.colorName }}</div>
+                                <div v-if="item.finishName" class="mkt-cart-item-opt" style="font-size:11px;color:var(--text-muted);margin:2px 0;">التشطيب: {{ item.finishName }}</div>
+                                <div v-if="item.sizeName" class="mkt-cart-item-opt" style="font-size:11px;color:var(--text-muted);margin:2px 0;">الحجم: {{ item.sizeName }}</div>
+                                <div class="mkt-cart-item-price">{{ fmt(item.price * item.qty) }} د.ع</div>
+                                <div class="mkt-qty-control" @click.stop>
+                                    <button class="mkt-qty-btn" @click="item.qty = Math.max(1, item.qty - 1); saveCart()">-</button>
                                     <span class="mkt-qty-val">{{ item.qty }}</span>
-                                    <button class="mkt-qty-btn" @click="item.qty++">+</button>
+                                    <button class="mkt-qty-btn" @click="item.qty++; saveCart()">+</button>
                                 </div>
                             </div>
-                            <button class="mkt-cart-remove" @click="cart.splice(i, 1)">
+                            <button class="mkt-cart-remove" @click.stop="cart.splice(i, 1); saveCart()">
                                 <span class="material-symbols-outlined">delete</span>
                             </button>
                         </div>
@@ -450,6 +491,10 @@
                         </div>
 
                         <button class="mkt-checkout-btn" @click="checkoutView = true">إتمام الشراء</button>
+                        <button class="mkt-cancel-btn" @click="cancelCart" style="display:block;width:calc(100% - 32px);margin:8px 16px 20px;padding:12px;background:none;border:1px solid #e74c3c;border-radius:14px;color:#e74c3c;font-size:13px;font-weight:600;cursor:pointer;">
+                            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">delete_sweep</span>
+                            إلغاء السلة بالكامل
+                        </button>
                     </div>
                 </div>
 
@@ -509,7 +554,7 @@
                 </div>
                 </div>
 
-                <!-- ===== صفحة تفاصيل المنتج (تصميم جوتن) ===== -->
+                <!-- ===== صفحة تفاصيل المنتج ===== -->
                 <div v-if="productDetailView" class="prod-detail-page">
                     <div class="exec-header">
                         <button class="exec-back" @click="closeProductDetail">
@@ -556,7 +601,7 @@
                         </div>
                     </div>
 
-                    <!-- ===== الخيارات: صفوف (تسمية يمين / تحكم يسار) ===== -->
+                    <!-- ===== الخيارات: صفوف ===== -->
                     <div class="prod-options">
                         <div class="prod-opt-row">
                             <span class="prod-opt-label"><span class="material-symbols-outlined">palette</span> اختر اللون</span>
@@ -597,7 +642,7 @@
                             </div>
                         </div>
                         <div class="prod-opt-row">
-                            <span class="prod-opt-label"><span class="material-symbols-outlined">qty</span> الكمية</span>
+                            <span class="prod-opt-label"> الكمية</span>
                             <div class="prod-opt-value">
                                 <div class="prod-qty-box">
                                     <button class="prod-qty-btn" @click="selectedQty++">+</button>
@@ -605,38 +650,6 @@
                                     <button class="prod-qty-btn" @click="selectedQty = Math.max(1, selectedQty - 1)">-</button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- ===== التوصيل: شبكة 3 أعمدة ===== -->
-                    <div class="prod-delivery">
-                        <div class="prod-delivery-header">
-                            <span class="material-symbols-outlined">local_shipping</span>
-                            <span>معلومات التوصيل</span>
-                        </div>
-                        <div class="prod-delivery-grid">
-                            <div class="prod-del-field">
-                                <label>المحافظة</label>
-                                <select v-model="deliveryGov">
-                                    <option value="">اختر</option>
-                                    <option v-for="g in governorates" :key="g.name" :value="g.name">{{ g.name }}</option>
-                                </select>
-                            </div>
-                            <div class="prod-del-field">
-                                <label>المدينة</label>
-                                <select v-model="deliveryCity" :disabled="!deliveryGov">
-                                    <option value="">اختر</option>
-                                    <option v-for="city in (deliveryGov ? governorates.find(g => g.name === deliveryGov).cities : [])" :key="city" :value="city">{{ city }}</option>
-                                </select>
-                            </div>
-                            <div class="prod-del-field">
-                                <label>العنوان التفصيلي</label>
-                                <input type="text" v-model="deliveryAddress" placeholder="الشارع، المنطقة">
-                            </div>
-                        </div>
-                        <div class="prod-delivery-time">
-                            <span class="material-symbols-outlined">schedule</span>
-                            <span>التوصيل خلال 24–48 ساعة</span>
                         </div>
                     </div>
 
@@ -655,33 +668,38 @@
                                 </div>
                             </div>
                             <div class="prod-summary-row">
+                                <span class="prod-summary-label">اللون</span>
+                                <span>{{ (selectedProduct.colors[selectedColor] || { name: 'قياسي' }).name }}</span>
+                            </div>
+                            <div class="prod-summary-row">
+                                <span class="prod-summary-label">التشطيب</span>
+                                <span>{{ selectedProduct.finishTypes[selectedFinish] }}</span>
+                            </div>
+                            <div class="prod-summary-row">
+                                <span class="prod-summary-label">الحجم</span>
+                                <span>{{ selectedProduct.sizes[selectedSize] }}</span>
+                            </div>
+                            <div class="prod-summary-row">
                                 <span class="prod-summary-label">الكمية</span>
-                                <span>{{ selectedQty }} <span v-if="selectedProduct.sizes.length">× {{ selectedProduct.sizes[selectedSize] }}</span></span>
+                                <span>{{ selectedQty }}</span>
                             </div>
                             <div class="prod-summary-row">
-                                <span class="prod-summary-label">السعر</span>
-                                <span>{{ fmt(selectedProduct.price * selectedQty) }} د.ع</span>
-                            </div>
-                            <div class="prod-summary-row">
-                                <span class="prod-summary-label">أجور التوصيل</span>
-                                <span>5,000 د.ع</span>
+                                <span class="prod-summary-label">سعر القطعة</span>
+                                <span>{{ fmt(selectedProduct.price) }} د.ع</span>
                             </div>
                             <div class="prod-summary-divider"></div>
                             <div class="prod-summary-row prod-summary-total">
                                 <span class="prod-summary-label">الإجمالي</span>
-                                <span class="prod-total-price">{{ fmt(selectedProduct.price * selectedQty + 5000) }} د.ع</span>
+                                <span class="prod-total-price">{{ fmt(selectedProduct.price * selectedQty) }} د.ع</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ===== الأزرار ===== -->
+                    <!-- ===== الزر الموحد ===== -->
                     <div class="prod-actions">
                         <button class="prod-action-btn prod-add-cart" @click="addToCartFromDetail">
                             <span class="material-symbols-outlined">add_shopping_cart</span>
-                            أضف إلى السلة
-                        </button>
-                        <button class="prod-action-btn prod-order-now" @click="confirmOrderFromDetail">
-                            تأكيد الطلب
+                            تأكيد واضف الى السله
                         </button>
                     </div>
                 </div>
@@ -752,8 +770,8 @@
                 <div v-if="viewerImages.length > 1" class="viewer-counter">{{ viewerIndex + 1 }} / {{ viewerImages.length }}</div>
             </div>
 
-            <!-- زر السلة العائم - يسار فوق حسابي -->
-            <div v-if="cart.length > 0 && !cartView && !checkoutView && !productDetailView" class="mkt-floating-cart" @click="cartView = true">
+            <!-- زر السلة العائم -->
+            <div v-if="cart.length > 0 && !cartView && !checkoutView" class="mkt-floating-cart" @click="cartView = true">
                 <span class="material-symbols-outlined">shopping_cart</span>
                 <span class="mkt-cart-badge">{{ cartCount }}</span>
             </div>
@@ -764,21 +782,32 @@
 
     <script src="js/nav.js"></script>
     <script>
-        document.getElementById('header').innerHTML = renderHeader();
+        document.getElementById('header').innerHTML = renderHeader({ searchVModel: 'searchQuery' });
+        var hdrCart = document.getElementById('headerCartBtn');
+        if (hdrCart) {
+            hdrCart.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent('mkt-toggle-cart'));
+            });
+        }
+
+        var cartParam = new URLSearchParams(window.location.search).get('cart');
+        var autoOpenCart = cartParam === '1';
+
         document.getElementById('bottomNav').innerHTML = renderNav('market');
 
         var allImgs = [];
         for (var n = 1; n <= 31; n++) allImgs.push('images/img' + n + '.jpg');
         function rndImg(seed) { return allImgs[seed % 31]; }
 
-        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, computed, watch, onMounted, onUnmounted } = Vue;
 
         createApp({
             setup() {
                 initTheme();
 
                 var activeCatView = ref(null);
-                var cartView = ref(false);
+                var cartView = ref(autoOpenCart);
                 var calculatorView = ref(false);
                 var checkoutView = ref(false);
                 var searchQuery = ref('');
@@ -788,6 +817,7 @@
                 var mktSlide = ref(0);
                 var mktTimer = null;
                 var showAllView = ref(false);
+                var showAllSuppliers = ref(false);
 
                 var selectedProduct = ref(null);
                 var selectedColor = ref(0);
@@ -796,11 +826,6 @@
                 var selectedQty = ref(1);
                 var modalSlide = ref(0);
                 var productDetailView = ref(false);
-                var deliveryGov = ref('');
-                var deliveryCity = ref('');
-                var deliveryName = ref('');
-                var deliveryPhone = ref('');
-                var deliveryAddress = ref('');
 
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
@@ -818,17 +843,6 @@
                     { name: 'حدائق', icon: 'yard' },
                     { name: 'أدوات ومعدات', icon: 'handyman' }
                 ]);
-
-                var governorates = [
-                    { name: 'بغداد', cities: ['الكرادة', 'المنصور', 'الرصافة', 'اليرموك', 'الأعظمية', 'الكاظمية'] },
-                    { name: 'البصرة', cities: ['المركز', 'الزبير', 'أبو الخصيب', 'القرنة', 'المدينة'] },
-                    { name: 'نينوى', cities: ['الموصل', 'تلعفر', 'الحمدانية', 'القيارة', 'الشيخان'] },
-                    { name: 'أربيل', cities: ['المركز', 'شاندر', 'كويسنجق', 'الرواندز', 'شقلاوة'] },
-                    { name: 'كركوك', cities: ['المركز', 'داقوق', 'الحويجة', 'الدبس'] },
-                    { name: 'النجف', cities: ['المركز', 'الغري', 'المناذرة', 'الكوفة'] },
-                    { name: 'كربلاء', cities: ['المركز', 'الحر', 'الهندية', 'عين التمر'] },
-                    { name: 'السليمانية', cities: ['المركز', 'بينجوين', 'حلبجة', 'رانية', 'بشدر'] }
-                ];
 
                 var sliderImages = ref([
                     { img: 'images/img1.jpg', title: 'عروض مواد البناء', desc: 'خصومات تصل إلى 40% على جميع المنتجات' },
@@ -880,7 +894,7 @@
                     makeProduct('دهان نيبون ديكوري', 38000, 1, 5, 8, {
                         colors: [{ name: 'ذهبي', hex: '#c9a243' }, { name: 'نحاسي', hex: '#b87333' }, { name: 'فضي', hex: '#c0c0c0' }, { name: 'أبيض لامع', hex: '#f8f8f8' }],
                         boxes: 'دلو = 1 لتر',
-                        desc: 'دهان نيبون ديكوري بتأثيرات مetallic فاخرة.'
+                        desc: 'دهان نيبون ديكوري بتأثيرات ميتاليك فاخرة.'
                     }),
                     makeProduct('سيراميك حمام 30x60', 15000, 1, 4, 10, {
                         colors: [{ name: 'أبيض', hex: '#f5f5f5' }, { name: 'أزرق', hex: '#42a5f5' }, { name: 'أخضر', hex: '#66bb6a' }],
@@ -967,17 +981,69 @@
                 var showAllOffers = ref(false);
                 var selectedSupplier = ref(null);
                 var suppliers = ref([
-                    { name: 'مؤسسة البناء الحديث', logo: rndImg(3), projects: '1,200+', location: 'بغداد', rating: '4.8', phone: '07711223344', email: 'info@modernbuild.iq', specialties: ['حديد', 'إسمنت', 'مواد عازلة', 'بلاط'], desc: 'مؤسسة رائدة في توريد مواد البناء منذ 25 عاماً، نقدم أجود أنواع الحديد والإسمنت والمواد العازلة بأفضل الأسعار.' },
-                    { name: 'شركة البصرة للمواد', logo: rndImg(7), projects: '850+', location: 'البصرة', rating: '4.6', phone: '07755667788', email: 'sales@basramaterials.iq', specialties: ['خشب', 'دهانات', 'أدوات صحية', 'سيراميك'], desc: 'شركة متخصصة في توريد مواد البناء والدهانات والأدوات الصحية، معتمدون رسمياً من وزارة الإعمار والإسكان.' },
-                    { name: 'دير الصناعة', logo: rndImg(11), projects: '2,500+', location: 'أربيل', rating: '4.9', phone: '07501234567', email: 'info@deeralsenaa.iq', specialties: ['أدوات كهربائية', 'معدات بناء', 'عدد يدوية', 'إضاءة'], desc: 'الوكيل الحصري لأكبر العلامات التجارية في مجال الأدوات الكهربائية ومعدات البناء في إقليم كردستان.' }
+                    { name: 'مؤسسة البناء الحديث', logo: rndImg(3), projects: '1,200+', location: 'بغداد', rating: '4.8', phone: '07711223344', email: 'info@modernbuild.iq', specialties: ['حديد', 'إسمنت', 'مواد عازلة', 'بلاط'], desc: 'مؤسسة رائدة في توريد مواد البناء منذ 25 عاماً.' },
+                    { name: 'شركة البصرة للمواد', logo: rndImg(7), projects: '850+', location: 'البصرة', rating: '4.6', phone: '07755667788', email: 'sales@basramaterials.iq', specialties: ['خشب', 'دهانات', 'أدوات صحية', 'سيراميك'], desc: 'شركة متخصصة في توريد مواد البناء والدهانات.' },
+                    { name: 'دير الصناعة', logo: rndImg(11), projects: '2,500+', location: 'أربيل', rating: '4.9', phone: '07501234567', email: 'info@deeralsenaa.iq', specialties: ['أدوات كهربائية', 'معدات بناء', 'عدد يدوية', 'إضاءة'], desc: 'الوكيل الحصري لأكبر العلامات التجارية.' },
+                    { name: 'مجموعة الفرات للتجارة', logo: rndImg(15), projects: '1,800+', location: 'النجف', rating: '4.7', phone: '07801234567', email: 'info@alfurat.iq', specialties: ['سيراميك', 'بلاط', 'أدوات صحية', 'رخام'], desc: 'مجموعة رائدة في توريد السيراميك والرخام والأدوات الصحية.' },
+                    { name: 'شركة الشرق الأوسط للحديد', logo: rndImg(19), projects: '3,200+', location: 'كركوك', rating: '4.9', phone: '07799887766', email: 'info@middleeaststeel.iq', specialties: ['حديد', 'معادن', 'هياكل حديدية', 'أسياخ'], desc: 'أكبر مورد للحديد والمعادن في شمال العراق.' },
+                    { name: 'مؤسسة الرافدين للكهرباء', logo: rndImg(23), projects: '950+', location: 'بغداد', rating: '4.5', phone: '07655443322', email: 'info@rafidain.iq', specialties: ['أجهزة كهربائية', 'كابلات', 'مفاتيح', 'إضاءة'], desc: 'متخصصون في توريد الأجهزة الكهربائية والإضاءة.' },
+                    { name: 'شركة العمران للدهانات', logo: rndImg(27), projects: '1,500+', location: 'أربيل', rating: '4.8', phone: '07506667788', email: 'info@omranpaints.iq', specialties: ['دهانات', 'معاجين', 'عوازل', 'دهانات ديكورية'], desc: 'وكيل معتمد لأشهر ماركات الدهانات العالمية.' },
+                    { name: 'مكتبة البناء الخضراء', logo: rndImg(31), projects: '600+', location: 'السليمانية', rating: '4.4', phone: '07701234599', email: 'info@greenbuild.iq', specialties: ['مواد عازلة', 'طاقة شمسية', 'ألمنيوم', 'زجاج'], desc: 'متخصصون في مواد البناء الخضراء والطاقة المتجددة.' }
                 ]);
 
                 var offers = ref([
-                    { name: 'دهان جوتن 20 لتر', price: 35000, oldPrice: 50000, discount: 30, rating: 5, img: rndImg(4), cat: 1, images: [rndImg(4), rndImg(5), rndImg(6)] },
-                    { name: 'بلاط بورسلان 80x80', price: 28000, oldPrice: 40000, discount: 30, rating: 5, img: rndImg(10), cat: 1, images: [rndImg(10), rndImg(11), rndImg(12)] },
-                    { name: 'تكييف سبليت 1.5 طن', price: 750000, oldPrice: 950000, discount: 21, rating: 5, img: rndImg(15), cat: 5, images: [rndImg(15), rndImg(16), rndImg(17)] },
-                    { name: 'حوض استحمام فاخر', price: 280000, oldPrice: 400000, discount: 30, rating: 5, img: rndImg(20), cat: 2, images: [rndImg(20), rndImg(21), rndImg(22)] }
+                    { name: 'دهان جوتن 20 لتر', price: 35000, oldPrice: 50000, discount: 30, rating: 5, img: rndImg(4), cat: 1, images: [rndImg(4), rndImg(5), rndImg(6)], colors: [{ name: 'أبيض', hex: '#ffffff' }, { name: 'كريمي', hex: '#f5e6cc' }], sizes: ['4 لتر', '20 لتر'], finishTypes: ['مطفي', 'نصف لامع'], stock: true, reviewsCount: 0, supplierName: 'متجر بنيان', brand: '' },
+                    { name: 'بلاط بورسلان 80x80', price: 28000, oldPrice: 40000, discount: 30, rating: 5, img: rndImg(10), cat: 1, images: [rndImg(10), rndImg(11), rndImg(12)], colors: [{ name: 'أبيض', hex: '#f5f5f5' }, { name: 'رمادي', hex: '#9e9e9e' }], sizes: ['60x60', '80x80'], finishTypes: ['لامع', 'مطفي'], stock: true, reviewsCount: 0, supplierName: 'متجر بنيان', brand: '' },
+                    { name: 'تكييف سبليت 1.5 طن', price: 750000, oldPrice: 950000, discount: 21, rating: 5, img: rndImg(15), cat: 5, images: [rndImg(15), rndImg(16), rndImg(17)], colors: [{ name: 'أبيض', hex: '#ffffff' }], sizes: ['1 طن', '1.5 طن', '2 طن'], finishTypes: ['سبليت'], stock: true, reviewsCount: 0, supplierName: 'متجر بنيان', brand: '' },
+                    { name: 'حوض استحمام فاخر', price: 280000, oldPrice: 400000, discount: 30, rating: 5, img: rndImg(20), cat: 2, images: [rndImg(20), rndImg(21), rndImg(22)], colors: [{ name: 'أبيض', hex: '#ffffff' }, { name: 'كريمي', hex: '#f5e6cc' }], sizes: ['قياسي'], finishTypes: ['سيراميك'], stock: true, reviewsCount: 0, supplierName: 'متجر بنيان', brand: '' },
+                    { name: 'باب خشب زان فاخر', price: 380000, oldPrice: 500000, discount: 24, rating: 5, img: rndImg(0), cat: 4, images: [rndImg(0), rndImg(1), rndImg(2)], colors: [{ name: 'بني غامق', hex: '#5d4037' }, { name: 'بني فاتح', hex: '#8d6e63' }], sizes: ['90x210', '100x210'], finishTypes: ['مطفي', 'لامع'], stock: true, reviewsCount: 0, supplierName: 'متجر بنيان', brand: '' }
                 ]);
+
+                function saveCart() {
+                    cart.value = cart.value.filter(function(c) { return c && c.qty > 0; });
+                    var saveData = cart.value.map(function(item) {
+                        return {
+                            name: item.name,
+                            baseName: item.baseName,
+                            price: item.price,
+                            img: item.img,
+                            qty: item.qty,
+                            colorIdx: item.colorIdx,
+                            colorName: item.colorName,
+                            finishIdx: item.finishIdx,
+                            finishName: item.finishName,
+                            sizeIdx: item.sizeIdx,
+                            sizeName: item.sizeName,
+                            productName: item.productName
+                        };
+                    });
+                    if (!saveData.length) {
+                        localStorage.removeItem('bunean-market-cart');
+                    } else {
+                        localStorage.setItem('bunean-market-cart', JSON.stringify(saveData));
+                    }
+                }
+
+                function loadCart() {
+                    var saved = localStorage.getItem('bunean-market-cart');
+                    if (saved) {
+                        try { cart.value = JSON.parse(saved); } catch(e) { cart.value = []; }
+                    }
+                }
+
+                function findOriginalProduct(baseName) {
+                    for (var i = 0; i < allProducts.value.length; i++) {
+                        if (allProducts.value[i].name === baseName) return allProducts.value[i];
+                    }
+                    for (var j = 0; j < offers.value.length; j++) {
+                        if (offers.value[j].name === baseName) return offers.value[j];
+                    }
+                    return null;
+                }
+
+                watch(cart, function() {
+                    saveCart();
+                }, { deep: true });
 
                 function selectCat(i) {
                     activeCatView.value = i;
@@ -991,6 +1057,19 @@
                     selectedQty.value = 1;
                     modalSlide.value = 0;
                     productDetailView.value = true;
+                }
+
+                function openFromCart(item) {
+                    var orig = findOriginalProduct(item.productName || item.baseName || item.name);
+                    if (orig) {
+                        openProduct(orig);
+                        if (item.colorIdx !== undefined) selectedColor.value = item.colorIdx;
+                        if (item.sizeIdx !== undefined) selectedSize.value = item.sizeIdx;
+                        if (item.finishIdx !== undefined) selectedFinish.value = item.finishIdx;
+                        if (item.qty) selectedQty.value = item.qty;
+                    } else {
+                        showBrandAlert('لم نتمكن من فتح تفاصيل هذا المنتج');
+                    }
                 }
 
                 function openSupplier(s) {
@@ -1016,7 +1095,8 @@
                 function addToCart(p) {
                     var exists = cart.value.find(function(c) { return c.name === p.name; });
                     if (exists) { exists.qty++; }
-                    else { cart.value.push({ name: p.name, price: p.price, img: p.img, qty: 1 }); }
+                    else { cart.value.push({ name: p.name, baseName: p.name, price: p.price, img: p.img, qty: 1, productName: p.name }); }
+                    saveCart();
                 }
 
                 function closeProductDetail() {
@@ -1028,31 +1108,31 @@
                     var p = selectedProduct.value;
                     if (!p) return;
                     var label = p.name;
-                    if (p.colors && p.colors.length) label += ' - ' + p.colors[selectedColor.value].name;
-                    if (p.sizes && p.sizes.length) label += ' (' + p.sizes[selectedSize.value] + ')';
+                    var colorName = '';
+                    var finishName = '';
+                    var sizeName = '';
+                    if (p.colors && p.colors.length) { colorName = p.colors[selectedColor.value].name; label += ' - ' + colorName; }
+                    if (p.finishTypes && p.finishTypes.length) { finishName = p.finishTypes[selectedFinish.value]; label += ' (' + finishName + ')'; }
+                    if (p.sizes && p.sizes.length) { sizeName = p.sizes[selectedSize.value]; label += ' [' + sizeName + ']'; }
                     var exists = cart.value.find(function(c) { return c.name === label; });
-                    if (exists) { exists.qty += selectedQty.value; }
-                    else { cart.value.push({ name: label, price: p.price, img: p.img, qty: selectedQty.value }); }
-                    closeProductDetail();
+                    if (exists) { exists.qty += selectedQty.value; exists.price = p.price; }
+                    else {
+                        cart.value.push({
+                            name: label, baseName: p.name, price: p.price, img: p.img,
+                            qty: selectedQty.value, productName: p.name,
+                            colorIdx: selectedColor.value, colorName: colorName,
+                            finishIdx: selectedFinish.value, finishName: finishName,
+                            sizeIdx: selectedSize.value, sizeName: sizeName
+                        });
+                    }
+                    saveCart();
+                    showBrandAlert('تم إضافة المنتج إلى سلة المشتريات ✓');
                 }
 
-                function confirmOrderFromDetail() {
-                    var p = selectedProduct.value;
-                    if (!p) return;
-                    if (!deliveryName.value || !deliveryPhone.value || !deliveryGov.value || !deliveryCity.value || !deliveryAddress.value) {
-                        showBrandAlert('يرجى إكمال معلومات التوصيل');
-                        return;
-                    }
-                    var label = p.name;
-                    if (p.colors && p.colors.length) label += ' - ' + p.colors[selectedColor.value].name;
-                    if (p.sizes && p.sizes.length) label += ' (' + p.sizes[selectedSize.value] + ')';
-                    var exists = cart.value.find(function(c) { return c.name === label; });
-                    if (exists) { exists.qty += selectedQty.value; }
-                    else { cart.value.push({ name: label, price: p.price, img: p.img, qty: selectedQty.value }); }
-                    closeProductDetail();
-                    cartView.value = true;
-                    checkoutView.value = true;
-                }
+                var filteredCatProducts = computed(function() {
+                    if (activeCatView.value === null) return [];
+                    return allProducts.value.filter(function(p) { return p.cat === activeCatView.value; });
+                });
 
                 var prodGalleryTouch = (function() {
                     var sx = 0;
@@ -1121,21 +1201,18 @@
                     var floorArea = l * w;
                     var wallArea = 2 * (l + w) * h;
 
-                    // سيراميك: مساحة الأرضية + 10% هالك
                     var cArea = Math.ceil(floorArea * 1.1);
                     var cBoxes = Math.ceil(cArea / 3);
                     ceramicArea.value = cArea;
                     ceramicBoxes.value = cBoxes;
                     ceramicCost.value = fmt(cBoxes * 22000);
 
-                    // دهان: مساحة الجدران - 15% للنوافذ والأبواب، طبقة واحدة 1 م² ≈ 10 لتر، دلو 20 لتر
                     var pArea = Math.ceil(wallArea * 0.85);
                     var pBuckets = Math.ceil((pArea * 10) / 20);
                     paintArea.value = pArea;
                     paintBuckets.value = pBuckets;
                     paintCost.value = fmt(pBuckets * 45000);
 
-                    // واح جبس: مساحة السقف، لوح واحد = 1.2 × 2.4 = 2.88 م²
                     var gArea = Math.ceil(floorArea);
                     var gSheets = Math.ceil(gArea / 2.88);
                     gypsumArea.value = gArea;
@@ -1149,11 +1226,12 @@
 
                 function addCalcToCart() {
                     var t = selectedCalcType.value;
-                    if ((t === 'all' || t === 'ceramic' || !t) && ceramicBoxes.value > 0) cart.value.push({ name: 'سيراميك (بلاط)', price: 22000, img: rndImg(2), qty: ceramicBoxes.value });
-                    if ((t === 'all' || t === 'paint' || !t) && paintBuckets.value > 0) cart.value.push({ name: 'دهان داخلي', price: 45000, img: rndImg(4), qty: paintBuckets.value });
-                    if ((t === 'all' || t === 'gypsum' || !t) && gypsumSheets.value > 0) cart.value.push({ name: 'واح جبس بورد 1.2×2.4', price: 12000, img: rndImg(6), qty: gypsumSheets.value });
+                    if ((t === 'all' || t === 'ceramic' || !t) && ceramicBoxes.value > 0) cart.value.push({ name: 'سيراميك (بلاط)', price: 22000, img: rndImg(2), qty: ceramicBoxes.value, productName: 'بلاط بورسلان 60x60' });
+                    if ((t === 'all' || t === 'paint' || !t) && paintBuckets.value > 0) cart.value.push({ name: 'دهان داخلي', price: 45000, img: rndImg(4), qty: paintBuckets.value, productName: 'دهان جوتن داخلي' });
+                    if ((t === 'all' || t === 'gypsum' || !t) && gypsumSheets.value > 0) cart.value.push({ name: 'واح جبس بورد 1.2×2.4', price: 12000, img: rndImg(6), qty: gypsumSheets.value, productName: 'جبس بورد 1.2x2.4' });
                     calculatorView.value = false;
                     cartView.value = true;
+                    saveCart();
                 }
 
                 function openViewer(idx) {
@@ -1176,14 +1254,56 @@
                     };
                 })();
 
+                function cancelCart() {
+                    if (cart.value.length === 0) return;
+                    var existing = document.querySelector('.brand-alert-overlay');
+                    if (existing) existing.remove();
+                    var overlay = document.createElement('div');
+                    overlay.className = 'brand-alert-overlay';
+                    var modal = document.createElement('div');
+                    modal.className = 'brand-alert-modal';
+                    modal.setAttribute('onclick', 'event.stopPropagation()');
+                    var icon = document.createElement('div');
+                    icon.className = 'brand-alert-icon-wrap';
+                    icon.innerHTML = '<span class="material-symbols-outlined brand-alert-icon" style="color:#e74c3c;">warning</span>';
+                    var text = document.createElement('p');
+                    text.className = 'brand-alert-text';
+                    text.textContent = 'هل أنت متأكد من إلغاء السلة بالكامل؟';
+                    var btnRow = document.createElement('div');
+                    btnRow.style.cssText = 'display:flex;gap:10px;width:100%;';
+                    var cancelBtn = document.createElement('button');
+                    cancelBtn.className = 'brand-alert-btn';
+                    cancelBtn.textContent = 'إلغاء';
+                    cancelBtn.style.cssText = 'flex:1;background:none;border:1px solid var(--border-light);color:var(--text-light);';
+                    cancelBtn.setAttribute('onclick', 'this.closest(\'.brand-alert-overlay\').remove()');
+                    var confirmBtn = document.createElement('button');
+                    confirmBtn.className = 'brand-alert-btn';
+                    confirmBtn.textContent = 'نعم، إلغاء الكل';
+                    confirmBtn.style.cssText = 'flex:1;background:#e74c3c;';
+                    confirmBtn.setAttribute('onclick', 'this.closest(\'.brand-alert-overlay\').remove()');
+                    confirmBtn.onclick = function() {
+                        overlay.remove();
+                        cart.value = [];
+                        saveCart();
+                        showBrandAlert('تم إلغاء السلة بالكامل');
+                    };
+                    btnRow.appendChild(cancelBtn);
+                    btnRow.appendChild(confirmBtn);
+                    modal.appendChild(icon);
+                    modal.appendChild(text);
+                    modal.appendChild(btnRow);
+                    overlay.appendChild(modal);
+                    document.body.appendChild(overlay);
+                }
+
                 function confirmOrder() {
                     showBrandAlert('تم تأكيد طلبك بنجاح! سيتم التواصل معك قريباً.');
                     cart.value = [];
                     cartView.value = false;
                     checkoutView.value = false;
+                    saveCart();
                 }
 
-                /* Slider */
                 function resetMktTimer() {
                     if (mktTimer) clearInterval(mktTimer);
                     mktTimer = setInterval(function() { mktSlide.value = (mktSlide.value + 1) % sliderImages.value.length; }, 3000);
@@ -1204,26 +1324,39 @@
                     };
                 })();
 
-                onMounted(function() { resetMktTimer(); });
+                onMounted(function() {
+                    loadCart();
+                    resetMktTimer();
+                    window.addEventListener('mkt-toggle-cart', function() {
+                        if (cartView.value) {
+                            cartView.value = false;
+                        } else {
+                            cartView.value = true;
+                            productDetailView.value = false;
+                            calculatorView.value = false;
+                            checkoutView.value = false;
+                        }
+                    });
+                });
                 onUnmounted(function() { if (mktTimer) clearInterval(mktTimer); });
 
                 return {
                     categories, searchQuery, activeCatView, cartView, calculatorView, checkoutView,
                     sliderImages, mktSlide, sliderTouch, resetMktTimer,
-                    allProducts, topProducts, allTopProducts, suppliers, offers, showAllView, showAllOffers,
-                    catProducts, selectCat, openProduct, addToCart,
-                    cart, cartCount, cartSubtotal, cartTotal,
+                    allProducts, topProducts, allTopProducts, suppliers, offers, showAllView, showAllOffers, showAllSuppliers,
+                    catProducts, filteredCatProducts, selectCat, openProduct, addToCart,
+                    cart, cartCount, cartSubtotal, cartTotal, saveCart,
                     calcLength, calcWidth, calcHeight, calcDone, doCalc, selectedCalcType, goToCalc,
                     ceramicArea, ceramicBoxes, ceramicCost,
                     paintArea, paintBuckets, paintCost,
                     gypsumArea, gypsumSheets, gypsumCost,
-                    calcTotal, addCalcToCart, confirmOrder,
+                    calcTotal, addCalcToCart, confirmOrder, cancelCart,
                     selectedProduct, selectedColor, selectedSize, selectedFinish, selectedQty, modalSlide,
                     addToCartFromModal, openViewer, nextViewer, prevViewer,
                     viewerOpen, viewerImages, viewerIndex, viewerTouch,
                     selectedSupplier, openSupplier, closeSupplier,
-                    productDetailView, closeProductDetail, addToCartFromDetail, confirmOrderFromDetail, prodGalleryTouch,
-                    deliveryGov, deliveryCity, deliveryName, deliveryPhone, deliveryAddress, governorates,
+                    productDetailView, closeProductDetail, addToCartFromDetail, prodGalleryTouch,
+                    openFromCart,
                     fmt
                 };
             }

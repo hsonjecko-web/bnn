@@ -200,7 +200,7 @@
         }).mount('#app');
     </script>
     <script>
-        // Register Service Worker for PWA
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(() => console.log('SW registered'))

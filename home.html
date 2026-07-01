@@ -70,14 +70,14 @@
                 <!-- Ads -->
                 <div class="section-header">
                     <span class="section-title">إعلانات ممولة</span>
-                    <span class="section-link">احجز اعلانك</span>
+                    <span class="section-link" @click="showAdBooking = true" style="cursor:pointer;">احجز اعلانك</span>
                 </div>
                 <div class="ad-slider">
                     <div class="ad-slider-track" dir="ltr" :style="{ transform: `translateX(-${adSlide * 100}%)` }">
                         <div v-for="(ad, i) in ads" :key="i" class="ad-slider-slide" @click="openProject(ad)">
                             <div class="ad-slider-img">
                                 <img :src="ad.bg" alt="">
-                                <span class="ad-sponsor">ممول</span>
+                                <span class="ad-sponsor" style="background:var(--accent-gold);color:var(--primary-dark);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:800;">ممول</span>
                             </div>
                             <div class="ad-slider-info">
                                 <div class="ad-title">{{ ad.title }}</div>
@@ -189,6 +189,53 @@
                 </div>
             </div>
 
+            <!-- ===== مودال حجز إعلان ===== -->
+            <div v-if="showAdBooking" class="project-modal" @click.self="showAdBooking = false">
+                <div class="modal-content">
+                    <div class="modal-pull-bar"><span></span></div>
+                    <button class="modal-close" @click="showAdBooking = false">
+                        <span class="material-symbols-outlined close-icon">close</span>
+                        <span class="material-symbols-outlined arrow-icon">arrow_back</span>
+                    </button>
+                    <div style="padding:4px 16px 16px;">
+                        <div style="text-align:center;margin-bottom:16px;">
+                            <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--accent-gold),#d4b050);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
+                                <span class="material-symbols-outlined" style="font-size:24px;color:var(--primary-dark);">campaign</span>
+                            </div>
+                            <h3 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0;">حجز إعلان ممول</h3>
+                            <p style="color:var(--text-muted);font-size:12px;margin:4px 0 0;">أدخل معلوماتك وسيتواصل معك فريق بنيان</p>
+                        </div>
+                        <div class="mkt-checkout-form">
+                            <div class="mkt-form-group">
+                                <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">اسم الشركة</label>
+                                <input type="text" class="form-input" v-model="adBooking.company" placeholder="اسم الشركة" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                            </div>
+                            <div class="mkt-form-group">
+                                <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">رقم الهاتف</label>
+                                <input type="tel" class="form-input" v-model="adBooking.phone" placeholder="رقم الهاتف" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                            </div>
+                            <div class="mkt-form-group">
+                                <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">البريد الإلكتروني</label>
+                                <input type="email" class="form-input" v-model="adBooking.email" placeholder="البريد الإلكتروني" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                            </div>
+                            <div class="mkt-form-group">
+                                <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;">نوع الإعلان</label>
+                                <select class="form-input" v-model="adBooking.type" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
+                                    <option value="">اختر نوع الإعلان</option>
+                                    <option value="banner">إعلان بانر</option>
+                                    <option value="sponsored">إعلان ممول (شريط)</option>
+                                    <option value="premium">إعلان متميز</option>
+                                </select>
+                            </div>
+                            <button class="mkt-confirm-btn" @click="submitAdBooking" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+                                <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">send</span>
+                                إرسال طلب الحجز
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Full-Screen Image Viewer -->
             <div v-if="viewerOpen" class="image-viewer"
                  @touchstart.passive="viewerTouch.onTouchStart"
@@ -234,6 +281,8 @@
                 const modalClosing = ref(false);
                 const showAllWorks = ref(false);
                 const adSlide = ref(0);
+                const showAdBooking = ref(false);
+                const adBooking = ref({ company: '', phone: '', email: '', type: '' });
                 let slideTimer = null;
                 let adTimer = null;
                 let exitTimer = null;
@@ -391,7 +440,7 @@
                     {
                         title: 'مجمع النخيل السكني',
                         company: 'شركة البناء الحديث',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('شركة البناء الحديث'),
                         bg: 'images/img1.jpg',
                         images: [
                             'images/img1.jpg',
@@ -410,7 +459,7 @@
                     {
                         title: 'فيلا العندس السكنية',
                         company: 'مقاولون العرب',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('مقاولون العرب'),
                         bg: 'images/img6.jpg',
                         images: [
                             'images/img6.jpg',
@@ -429,7 +478,7 @@
                     {
                         title: 'مول بغداد التجاري',
                         company: 'شركة الإنشاءات الوطنية',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('شركة الإنشاءات الوطنية'),
                         bg: 'images/img11.jpg',
                         images: [
                             'images/img11.jpg',
@@ -451,7 +500,7 @@
                     {
                         title: 'قصر المنصور السكني',
                         company: 'شركة البناء الحديث',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('شركة البناء الحديث'),
                         bg: 'images/img16.jpg',
                         images: [
                             'images/img16.jpg',
@@ -468,7 +517,7 @@
                     {
                         title: 'مستشفى السلام',
                         company: 'مقاولون العرب',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('مقاولون العرب'),
                         bg: 'images/img20.jpg',
                         images: [
                             'images/img20.jpg',
@@ -485,7 +534,7 @@
                     {
                         title: 'برج الأعمال',
                         company: 'شركة الإنشاءات الوطنية',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('شركة الإنشاءات الوطنية'),
                         bg: 'images/img24.jpg',
                         images: [
                             'images/img24.jpg',
@@ -502,7 +551,7 @@
                     {
                         title: 'فلل الربيع',
                         company: 'شركة البناء الحديث',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('شركة البناء الحديث'),
                         bg: 'images/img28.jpg',
                         images: [
                             'images/img28.jpg',
@@ -519,7 +568,7 @@
                     {
                         title: 'مجمع النخيل التجاري',
                         company: 'شركة الإنشاءات الوطنية',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('شركة الإنشاءات الوطنية'),
                         bg: 'images/img1.jpg',
                         images: [
                             'images/img1.jpg',
@@ -536,7 +585,7 @@
                     {
                         title: 'عمارة سكنية فاخرة',
                         company: 'مقاولون العرب',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('مقاولون العرب'),
                         bg: 'images/img5.jpg',
                         images: [
                             'images/img5.jpg',
@@ -553,7 +602,7 @@
                     {
                         title: 'فيلا دوبلكس',
                         company: 'شركة البناء الحديث',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('شركة البناء الحديث'),
                         bg: 'images/img9.jpg',
                         images: [
                             'images/img9.jpg',
@@ -570,7 +619,7 @@
                     {
                         title: 'مكتب حديث',
                         company: 'شركة الإنشاءات الوطنية',
-                        companyLink: 'company.html',
+                        companyLink: 'company.html?id=' + encodeURIComponent('شركة الإنشاءات الوطنية'),
                         bg: 'images/img13.jpg',
                         images: [
                             'images/img13.jpg',
@@ -609,6 +658,18 @@
                     if (adTimer) { clearInterval(adTimer); adTimer = null; }
                 }
                 function resetAdTimer() { startAdTimer(); }
+
+                function submitAdBooking() {
+                    if (!adBooking.value.company.trim()) { showBrandAlert('أدخل اسم الشركة'); return; }
+                    if (!adBooking.value.phone.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
+                    if (!adBooking.value.type) { showBrandAlert('اختر نوع الإعلان'); return; }
+                    var bookings = JSON.parse(localStorage.getItem('bunean-ad-bookings') || '[]');
+                    bookings.push({ ...adBooking.value, createdAt: new Date().toISOString() });
+                    localStorage.setItem('bunean-ad-bookings', JSON.stringify(bookings));
+                    adBooking.value = { company: '', phone: '', email: '', type: '' };
+                    showAdBooking.value = false;
+                    showBrandAlert('✅ تم إرسال طلب الحجز بنجاح\nسيتم التواصل معك قريباً');
+                }
 
                 function openProject(project) {
                     stopSlideTimer();
@@ -672,12 +733,14 @@
                     openViewer, closeViewer, nextViewer, prevViewer,
                     heroSwipe, modalTouch, viewerTouch,
                     modalPullY, pullTransform, modalClosing,
-                    adSlide, resetAdTimer, showAllWorks
+                    adSlide, resetAdTimer, showAllWorks,
+                    showAdBooking, adBooking, submitAdBooking
                 };
             }
         }).mount('#app');
     </script>
     <script>
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(() => console.log('SW registered'))

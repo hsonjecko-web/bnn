@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b1a2e">
-    <title>بنيان - شركة مقاولات</title>
+    <title>بنيان - مقاولون العرب</title>
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -30,43 +30,64 @@
     <div id="app">
         <div class="app-container">
             <div id="header"></div>
+
             <div class="page-content" style="padding-bottom:0;">
-                <!-- صورة الغلاف -->
+                <!-- الغلاف والشعار -->
                 <div style="position:relative;">
-                    <div class="company-cover"></div>
+                    <img :src="company.cover" class="company-cover" alt="cover" style="display:block;width:100%;">
                     <div class="company-logo">
-                        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e4068,#0b1a2e);display:flex;align-items:center;justify-content:center;">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                            </svg>
-                        </div>
+                        <img :src="company.logo" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:14px;">
                     </div>
                 </div>
 
-                <!-- معلومات الشركة -->
+                <!-- اسم الشركة -->
                 <div class="company-info">
                     <div class="company-name">
                         {{ company.name }}
                         <svg class="verified" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                         </svg>
                     </div>
-                    <div class="company-type">{{ company.type }} - {{ company.city }}</div>
+                    <div class="company-type">مقاولات عامة - {{ company.location }}</div>
                 </div>
 
-                <!-- الإحصائيات -->
-                <div class="stats-row" style="padding:0 16px 16px;">
-                    <div class="stat-box">
-                        <div class="stat-number">{{ company.projects }}</div>
-                        <div class="stat-label">مشروع منجز</div>
+                <!-- وصف مختصر -->
+                <div style="padding:0 16px 16px;">
+                    <p style="font-size:13px;color:var(--text-light);line-height:1.7;text-align:center;">{{ company.about.slice(0, 120) }}...</p>
+                </div>
+
+                <!-- الإحصائيات: صفين × 4 -->
+                <div style="padding:0 16px 16px;">
+                    <div style="display:flex;gap:10px;margin-bottom:10px;">
+                        <div class="stat-box">
+                            <div class="stat-number">{{ company.done }}</div>
+                            <div class="stat-label">مشروع منجز</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">{{ company.years }}</div>
+                            <div class="stat-label">سنة خبرة</div>
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-number">{{ company.rating }}</div>
-                        <div class="stat-label">التقييم</div>
+                    <div style="display:flex;gap:10px;">
+                        <div class="stat-box">
+                            <div class="stat-number">{{ company.engineers }}</div>
+                            <div class="stat-label">مهندس</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">{{ company.workers }}</div>
+                            <div class="stat-label">عامل</div>
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-number">{{ company.experience }}</div>
-                        <div class="stat-label">سنة خبرة</div>
+                </div>
+
+                <!-- التخصصات -->
+                <div style="padding:0 16px 16px;">
+                    <h3 style="font-size:14px;font-weight:700;color:var(--text-white);margin-bottom:10px;">التخصصات</h3>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <span v-for="(spec, i) in company.specs" :key="i"
+                              style="padding:6px 14px;background:rgba(201,162,67,0.1);border:1px solid rgba(201,162,67,0.2);border-radius:50px;font-size:12px;color:#c9a243;cursor:pointer;">
+                            {{ spec }}
+                        </span>
                     </div>
                 </div>
 
@@ -84,22 +105,11 @@
                 <div style="padding:16px;">
                     <!-- نبذة عنا -->
                     <div v-if="activeTab === 0">
-                        <p style="font-size:14px;color:#8a9bb0;line-height:1.8;margin-bottom:16px;">
-                            {{ company.about }}
-                        </p>
-
-                        <!-- الخدمات -->
-                        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">خدماتنا</h3>
-                        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
-                            <span v-for="(service, index) in company.services" :key="index"
-                                  style="padding:6px 14px;background:rgba(201,162,67,0.1);border:1px solid rgba(201,162,67,0.2);border-radius:50px;font-size:12px;color:#c9a243;">
-                                {{ service }}
-                            </span>
-                        </div>
-
-                        <!-- معلومات التواصل -->
-                        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;">تواصل معنا</h3>
                         <div class="order-info-card">
+                            <p style="font-size:14px;color:var(--text-light);line-height:1.8;margin-bottom:16px;">
+                                {{ company.about }}
+                            </p>
+                            <h3 style="font-size:15px;font-weight:700;color:var(--text-white);margin-bottom:12px;">معلومات التواصل</h3>
                             <div class="order-info-row">
                                 <span class="order-info-label">الهاتف</span>
                                 <span class="order-info-value" style="direction:ltr;">{{ company.phone }}</span>
@@ -110,41 +120,39 @@
                             </div>
                             <div class="order-info-row">
                                 <span class="order-info-label">العنوان</span>
-                                <span class="order-info-value">{{ company.address }}</span>
+                                <span class="order-info-value">{{ company.location }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- المشاريع -->
                     <div v-if="activeTab === 1">
-                        <div v-for="(project, index) in company.projectsList" :key="index" class="project-card" style="margin-bottom:12px;">
-                            <div class="card-image" :style="{ background: project.bg }">
-                                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5">
-                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                        <polyline points="9 22 9 12 15 12 15 22"/>
-                                    </svg>
+                        <div class="projects-grid" style="padding:0;">
+                            <div v-for="(project, i) in company.projects" :key="i" class="project-card">
+                                <div class="card-image">
+                                    <img :src="project.image" alt="" style="width:100%;height:100%;object-fit:cover;">
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-title">{{ project.name }}</div>
-                                <div class="card-author">{{ project.year }}</div>
+                                <div class="card-body">
+                                    <div class="card-title">{{ project.name }}</div>
+                                    <div class="card-author">{{ project.desc.slice(0, 40) }}{{ project.desc.length > 40 ? '...' : '' }}</div>
+                                    <div style="font-size:11px;color:var(--accent-gold);font-weight:600;">{{ project.year }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- التقييمات -->
                     <div v-if="activeTab === 2">
-                        <div v-for="(review, index) in company.reviews" :key="index"
+                        <div v-for="(review, i) in company.reviews" :key="i"
                              style="background:rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:12px;">
                             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
                                 <div style="display:flex;align-items:center;gap:8px;">
                                     <div style="width:36px;height:36px;background:#1e4068;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#c9a243;font-size:14px;font-weight:700;">
-                                        {{ review.initial }}
+                                        {{ review.name.charAt(0) }}
                                     </div>
                                     <div>
-                                        <div style="font-size:14px;font-weight:600;color:#fff;">{{ review.name }}</div>
-                                        <div style="font-size:11px;color:#5a7088;">{{ review.time }}</div>
+                                        <div style="font-size:14px;font-weight:600;color:var(--text-white);">{{ review.name }}</div>
+                                        <div style="font-size:11px;color:var(--text-muted);">{{ review.time }}</div>
                                     </div>
                                 </div>
                                 <div style="display:flex;gap:2px;">
@@ -154,15 +162,15 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p style="font-size:13px;color:#8a9bb0;line-height:1.6;">{{ review.text }}</p>
+                            <p style="font-size:13px;color:var(--text-light);line-height:1.6;">{{ review.text }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- أزرار الإجراءات -->
                 <div style="padding:16px;display:flex;gap:12px;padding-bottom:30px;">
-                    <a href="service-request.html" class="btn-primary" style="text-decoration:none;flex:1;">طلب خدمة</a>
-                    <a href="quotes.html" class="btn-outline" style="text-decoration:none;flex:1;color:#c9a243;">عرض الأسعار</a>
+                    <a href="service-request.html" class="btn-primary" style="text-decoration:none;flex:1;text-align:center;">طلب خدمة</a>
+                    <a href="quotes.html" class="btn-outline" style="text-decoration:none;flex:1;text-align:center;color:var(--accent-gold);">عرض الأسعار</a>
                 </div>
             </div>
 
@@ -173,50 +181,75 @@
     <script src="js/nav.js"></script>
     <script>
         document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
-        document.getElementById('bottomNav').innerHTML = renderNav('home');
+        document.getElementById('bottomNav').innerHTML = renderNav('execute');
 
         const { createApp, ref } = Vue;
+
+        const defaultProfile = {
+            name: 'مقاولون العرب',
+            about: 'شركة مقاولات رائدة في العراق، نقدم خدمات البناء والتشييد بأعلى معايير الجودة والإتقان. تأسست شركتنا منذ 15 عاماً، وخلال هذه المسيرة الطويلة استطعنا بناء سمعة مرموقة في السوق العراقي بفضل التزامنا بالمواعيد ودقة التنفيذ واستخدام أفضل المواد. نمتلك فريقاً متكاملاً من المهندسين والكوادر الفنية ذات الخبرة العالية في جميع مجالات البناء والتشييد. نؤمن بأن النجاح الحقيقي يكمن في رضا عملائنا، لذلك نضع احتياجاتهم في المقام الأول ونسعى دائماً لتجاوز توقعاتهم. نفتخر بأننا ساهمنا في بناء أكثر من 200 مشروع متنوع بين الفلل السكنية والمباني التجارية والمجمعات السكنية الكبرى. نعدكم بالجودة والإتقان والالتزام بكل ما يضمن راحتكم ويحقق طموحاتكم.',
+            specs: ['بناء فلل', 'مباني تجارية', 'تشطيبات', 'ديكور داخلي', 'خرسانة', 'أعمال صحية', 'واجهات زجاجية', 'أعمال حديد'],
+            location: 'بغداد - الكرادة',
+            phone: '+964 770 123 4567',
+            email: 'info@arabcontractors.com',
+            logo: 'images/img1.jpg',
+            cover: 'images/img2.jpg',
+            years: 15,
+            workers: 120,
+            engineers: 25,
+            done: 200,
+            projects: [
+                { name: 'فيلا النخيل الفاخرة', desc: 'فيلا سكنية فاخرة بمساحة 500 متر مربع مع حديقة ومسبح', image: 'images/img1.jpg', year: '2024' },
+                { name: 'مبنى الكرادة التجاري', desc: 'مبنى تجاري متكامل من 7 طوابق في قلب بغداد', image: 'images/img2.jpg', year: '2023' },
+                { name: 'مجمع الزهور السكني', desc: 'مجمع سكني يضم 40 وحدة سكنية بمواصفات عالية', image: 'construction_small.jpg', year: '2023' },
+                { name: 'فيلا الأندلس', desc: 'قصر سكني على الطراز الأندلسي بمساحة 800 متر', image: '1.jpg', year: '2022' },
+                { name: 'مستشفى السلام', desc: 'مستشفى بسعة 100 سرير مع أحدث التجهيزات الطبية', image: 'images/img1.jpg', year: '2022' },
+                { name: 'قصر بابل للأفراح', desc: 'قاعة أفراح فاخرة تستوعب 1000 ضيف', image: 'images/img2.jpg', year: '2021' }
+            ],
+            reviews: [
+                { name: 'أحمد محمد', rating: 5, text: 'شركة ممتازة ومحترفة. أنجزوا مشروعي في الوقت المحدد وبجودة عالية جداً. أنصح بالتعامل معهم.', time: 'قبل أسبوع' },
+                { name: 'سارة جاسم', rating: 5, text: 'فريق عمل رائع ومبدع. التصاميم الداخلية كانت أجمل مما توقعت. شكراً لكم.', time: 'قبل أسبوعين' },
+                { name: 'خالد العلي', rating: 4, text: 'عمل جيد بشكل عام. الالتزام بالمواعيد كان جيداً والتشطيب ممتاز. أنصح بالتعامل.', time: 'قبل شهر' },
+                { name: 'نور الهدى', rating: 5, text: 'أفضل شركة مقاولات تعاملت معها. احترافية في العمل ودقة في التنفيذ. تجربة رائعة.', time: 'قبل شهرين' },
+                { name: 'عمران عبد', rating: 4, text: 'جودة البناء ممتازة والأسعار منافسة. فريق العمل متعاون ومتفهم.', time: 'قبل 3 أشهر' }
+            ],
+            ads: [
+                { title: 'عرض خاص على التشطيبات', desc: 'خصم 20% على جميع أعمال التشطيب والديكور', image: 'images/img1.jpg' },
+                { title: 'بناء الفلل الفاخرة', desc: 'تصاميم عصرية بأسعار تنافسية مع ضمان 10 سنوات', image: 'images/img2.jpg' }
+            ]
+        };
+
+        let profileData;
+        try {
+            const stored = localStorage.getItem('bunean-company-profile');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                profileData = Object.assign({}, defaultProfile, parsed);
+            } else {
+                profileData = defaultProfile;
+            }
+        } catch (e) {
+            profileData = defaultProfile;
+        }
 
         createApp({
             setup() {
                 initTheme();
                 const activeTab = ref(0);
                 const tabs = ref(['نبذة عنا', 'المشاريع', 'التقييمات']);
-
-                const company = ref({
-                    name: 'شركة البناء الحديث',
-                    type: 'مقاولات عامة',
-                    city: 'بغداد',
-                    projects: 150,
-                    rating: 4.8,
-                    experience: 12,
-                    about: 'شركة البناء الحديث هي إحدى الشركات الرائدة في مجال المقاولات العامة في العراق. تأسست الشركة عام 2014 وحققت منذ ذلك الحين سجلاً حافلاً من المشاريع الناجحة. نقدم خدمات متكاملة تشمل التصميم والبناء والتشطيبات الداخلية والخارجية مع الحفاظ على أعلى معايير الجودة والسلامة.',
-                    services: ['بناء فلل', 'مباني تجارية', 'تشطيبات', 'ديكور داخلي'],
-                    phone: '+964 770 123 4567',
-                    email: 'info@albinaa.com',
-                    address: 'بغداد - الكرادة',
-                    projectsList: [
-                        { name: 'فيلا النرجس - تم الإنجاز', year: '2024', bg: 'linear-gradient(135deg, #2c5f8a, #1a3a5c)' },
-                        { name: 'مبنى الكرادة التجاري - تم الإنجاز', year: '2023', bg: 'linear-gradient(135deg, #3d6b99, #1a3a5c)' }
-                    ],
-                    reviews: [
-                        { name: 'أحمد محمد', initial: 'أ', time: 'قبل أسبوع', rating: 5, text: 'شركة ممتازة ومحترفة. أنجزوا مشروعي في الوقت المحدد وبجودة عالية. أنصح بالتعامل معهم.' },
-                        { name: 'خالد العلي', initial: 'خ', time: 'قبل شهر', rating: 4, text: 'عمل جيد لكن التأخير قليلاً في موعد التسليم. بشكل عام راضي عن النتيجة النهائية.' }
-                    ]
-                });
+                const company = ref(profileData);
 
                 return { activeTab, tabs, company };
             }
         }).mount('#app');
     </script>
     <script>
-        // Register Service Worker for PWA
+        initFloatingCart();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('SW registered'))
-                .catch(err => console.log('SW registration failed'));
+                .then(function() { console.log('SW registered'); })
+                .catch(function(err) { console.log('SW registration failed: ' + err); });
         }
     </script>
 </body>
 </html>
-

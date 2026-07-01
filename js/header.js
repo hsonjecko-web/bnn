@@ -22,9 +22,7 @@ function renderHeader(options) {
         userNameHtml = '<div style="font-size:12px;color:var(--text-light);line-height:1.3;" id="userNameDisplay">' + getUserName() + '</div>';
     }
 
-    var cartHtml = cartBadge
-        ? '<button class="nav-icon" style="position:relative;"><span class="material-symbols-outlined">shopping_cart</span><span v-if="cartCount > 0" class="badge">{{ cartCount }}</span></button>'
-        : '<a href="market.html" class="nav-icon material-symbols-outlined">shopping_cart</a>';
+    var notifHtml = '<a href="notifications.html" class="nav-icon material-symbols-outlined" id="headerNotifBtn">notifications</a>';
 
     return '<header class="top-nav">'
         + backBtn
@@ -39,7 +37,7 @@ function renderHeader(options) {
         + searchInput
         + '</div>'
         + '<div class="nav-actions">'
-        + cartHtml
+        + notifHtml
         + '</div>'
         + '</header>';
 }

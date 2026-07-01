@@ -37,6 +37,12 @@ function getThemeIcon() {
 }
 
 function getUserName() {
+    var auth = localStorage.getItem('bunean-user-auth');
+    if (auth) {
+        var data = localStorage.getItem('bunean-user-data');
+        if (data) { try { var d = JSON.parse(data); if (d.name) return d.name; } catch(e) {} }
+        return auth;
+    }
     return localStorage.getItem('bunean-user') || 'مستخدم';
 }
 
@@ -71,4 +77,76 @@ function showBrandAlert(message) {
     modal.appendChild(btn);
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
+}
+
+// ===== رسالة تأكيد موحدة =====
+function showBrandConfirm(message, callback) {
+    var existing = document.querySelector('.brand-alert-overlay');
+    if (existing) existing.remove();
+
+    var overlay = document.createElement('div');
+    overlay.className = 'brand-alert-overlay';
+
+    var modal = document.createElement('div');
+    modal.className = 'brand-alert-modal';
+    modal.setAttribute('onclick', 'event.stopPropagation()');
+
+    var icon = document.createElement('div');
+    icon.className = 'brand-alert-icon-wrap';
+    icon.innerHTML = '<span class="material-symbols-outlined brand-alert-icon" style="color:#e74c3c;">warning</span>';
+
+    var text = document.createElement('p');
+    text.className = 'brand-alert-text';
+    text.textContent = message;
+
+    var btnWrap = document.createElement('div');
+    btnWrap.style.cssText = 'display:flex;gap:8px;width:100%;';
+
+    var cancelBtn = document.createElement('button');
+    cancelBtn.className = 'brand-alert-btn';
+    cancelBtn.textContent = 'إلغاء';
+    cancelBtn.style.cssText = 'flex:1;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:transparent;color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;';
+    cancelBtn.setAttribute('onclick', 'this.closest(\'.brand-alert-overlay\').remove()');
+
+    var confirmBtn = document.createElement('button');
+    confirmBtn.className = 'brand-alert-btn';
+    confirmBtn.textContent = 'تأكيد';
+    confirmBtn.style.cssText = 'flex:1;padding:10px;border-radius:10px;border:none;background:#e74c3c;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;';
+    confirmBtn.addEventListener('click', function(e) {
+        overlay.remove();
+        if (typeof callback === 'function') callback();
+    });
+
+    btnWrap.appendChild(cancelBtn);
+    btnWrap.appendChild(confirmBtn);
+
+    modal.appendChild(icon);
+    modal.appendChild(text);
+    modal.appendChild(btnWrap);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+}
+
+// ===== السلة العائمة عبر الصفحات =====
+function initFloatingCart() {
+    if (document.querySelector('.mkt-floating-cart')) return;
+    var saved = localStorage.getItem('bunean-market-cart');
+    if (!saved) return;
+    try {
+        var cart = JSON.parse(saved);
+        if (!cart || !cart.length) return;
+        var valid = cart.filter(function(c) { return c && c.qty > 0; });
+        if (!valid.length) {
+            localStorage.removeItem('bunean-market-cart');
+            return;
+        }
+        var count = valid.reduce(function(s, c) { return s + (c.qty || 0); }, 0);
+        if (count < 1) { localStorage.removeItem('bunean-market-cart'); return; }
+        var div = document.createElement('div');
+        div.className = 'mkt-floating-cart';
+        div.style.cssText = 'position:fixed;bottom:calc(80px + env(safe-area-inset-bottom, 0px));left:16px;width:56px;height:56px;background:#3a6a95;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 20px rgba(58,106,149,0.4);cursor:pointer;z-index:90;';
+        div.innerHTML = '<span class="material-symbols-outlined" style="font-size:26px;">shopping_cart</span><span class="mkt-cart-badge" style="position:absolute;top:-2px;right:-2px;width:20px;height:20px;background:#e74c3c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;">' + count + '</span>';
+        div.addEventListener('click', function() { window.location.href = 'market.html?cart=1'; });
+        document.body.appendChild(div);
+    } catch(e) {}
 }

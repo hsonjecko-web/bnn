@@ -261,7 +261,7 @@ input, textarea, select {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: calc(105px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
   -ms-overflow-style: none;
   scrollbar-width: none;
   transition: opacity 0.2s ease;
