@@ -279,6 +279,39 @@
                 </div>
             </div>
 
+            <!-- Invoice Modal -->
+            <div v-if="showInvoiceModal" class="modal-overlay" @click.self="showInvoiceModal = false">
+                <div class="modal-box" style="text-align:right;">
+                    <h3 style="text-align:center;margin-bottom:16px;">
+                        <span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;color:var(--accent-gold);">receipt</span>
+                        فاتورة الطلب
+                    </h3>
+                    <div style="background:var(--bg-input);border-radius:12px;padding:14px;margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                            <span style="color:var(--text-muted);font-size:13px;">{{ product.name }}</span>
+                            <span style="color:var(--text-white);font-size:13px;font-weight:600;">{{ fmt(product.price) }} د.ع</span>
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:13px;">أجور التوصيل</span>
+                            <span style="color:var(--text-white);font-size:13px;">{{ fmt(deliveryFee) }} د.ع</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;">
+                            <span style="color:var(--text-muted);font-size:13px;">الخصم</span>
+                            <span style="color:#2ecc71;font-size:13px;">{{ fmt(discount) }} د.ع-</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px dashed var(--border-light);">
+                            <span style="color:var(--text-white);font-size:15px;font-weight:700;">المجموع الكلي</span>
+                            <span style="color:var(--accent-gold);font-size:18px;font-weight:800;">{{ fmt(total) }} د.ع</span>
+                        </div>
+                    </div>
+                    <div style="margin-top:16px;">
+                        <button class="modal-btn-cancel" style="width:100%;padding:12px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;border:none;background:var(--accent-gold);color:var(--primary-dark);" @click="showInvoiceModal = false">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Toast -->
             <div class="toast-message" :class="{ show: toastVisible }">{{ toastText }}</div>
 
@@ -333,6 +366,7 @@
 
                 var showCancelModal = ref(false);
                 var cancelReason = ref('');
+                var showInvoiceModal = ref(false);
                 var toastVisible = ref(false);
                 var toastText = ref('');
 
@@ -362,14 +396,14 @@
                 }
 
                 function viewInvoice() {
-                    showToast('عرض الفاتورة قيد التطوير');
+                    showInvoiceModal.value = true;
                 }
 
                 return {
                     steps, order, product,
                     deliveryFee, discount, total,
                     delivery,
-                    showCancelModal, cancelReason,
+                    showCancelModal, cancelReason, showInvoiceModal,
                     toastVisible, toastText,
                     fmt, openCancelModal, submitCancel, contactSupport, viewInvoice
                 };
