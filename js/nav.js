@@ -2,12 +2,19 @@
 
 // ===== إعادة تعيين السكرول عند فتح الصفحة (يمنع بقاء التمرير بين الصفحات) =====
 (function() {
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    window.addEventListener('pageshow', function() {
+    document.documentElement.style.scrollBehavior = 'auto';
+    function resetScroll() {
         var el = document.querySelector('.page-content');
         if (el) el.scrollTop = 0;
-        else window.scrollTo(0, 0);
-    });
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+    }
+    resetScroll();
+    window.addEventListener('pageshow', resetScroll);
+    window.addEventListener('load', function() { setTimeout(resetScroll, 50); });
+    if (document.readyState !== 'loading') resetScroll();
+    else document.addEventListener('DOMContentLoaded', resetScroll);
 })();
 
 // ===== ضبط ارتفاع الشاشة لمختلف الأجهزة (حل مشكلة 100vh في الموبايل) =====
