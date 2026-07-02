@@ -1,5 +1,15 @@
 // ===== ملف مشترك - التنقل والوظائف المشتركة =====
 
+// ===== إعادة تعيين السكرول عند فتح الصفحة (يمنع بقاء التمرير بين الصفحات) =====
+(function() {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.addEventListener('pageshow', function() {
+        var el = document.querySelector('.page-content');
+        if (el) el.scrollTop = 0;
+        else window.scrollTo(0, 0);
+    });
+})();
+
 // ===== ضبط ارتفاع الشاشة لمختلف الأجهزة (حل مشكلة 100vh في الموبايل) =====
 (function() {
     function setHeight() {

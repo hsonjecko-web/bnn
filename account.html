@@ -531,6 +531,42 @@
                 var companyAuthData = loadFromStorage('bunean-company-auth', null);
                 var companyStatus = ref(companyAuthData ? companyAuthData.status : 'قيد المراجعة');
 
+                // ===== بيانات تجريبية للمستخدمين الجدد =====
+                (function seedDemoData() {
+                    if (!localStorage.getItem('bunean-quote-requests') || JSON.parse(localStorage.getItem('bunean-quote-requests')).length === 0) {
+                        localStorage.setItem('bunean-quote-requests', JSON.stringify([
+                            { id: 1, name: 'أحمد علي', phone: '07701234567', projectName: 'بناء فيلا سكنية', location: 'بغداد', category: 'بناء سكني', details: 'أريد بناء فيلا بمساحة 300 متر مربع، طابقين مع سرداب', createdAt: '2026-06-28', replied: false },
+                            { id: 2, name: 'محمد حسن', phone: '07707654321', projectName: 'تشطيب شقة', location: 'أربيل', category: 'تشطيبات', details: 'تشطيب كامل لشقة 150 متر', createdAt: '2026-06-30', replied: false },
+                            { id: 3, name: 'سعد جاسم', phone: '07801239999', projectName: 'بناء مجمع تجاري', location: 'البصرة', category: 'بناء تجاري', details: 'مجمع تجاري من 3 طوابق بمساحة 1000 متر', createdAt: '2026-06-25', replied: true, replyMessage: 'نشكركم على تواصلكم، يسعدنا تقديم عرض سعر مناسب. يرجى التواصل معنا.' }
+                        ]));
+                    }
+                    if (!localStorage.getItem('bunean-company-quotes') || JSON.parse(localStorage.getItem('bunean-company-quotes')).length === 0) {
+                        localStorage.setItem('bunean-company-quotes', JSON.stringify([
+                            { client: 'عمارة الفيحاء السكنية', project: 'بناء 12 وحدة سكنية', amount: '450,000,000 د.ع', status: 'قيد المراجعة' },
+                            { client: 'مشروع مول بغداد', project: 'تشطيب واجهات', amount: '125,000,000 د.ع', status: 'مقبول' },
+                            { client: 'فيلا خاصة - كربلاء', project: 'بناء فيلا', amount: '95,000,000 د.ع', status: 'مرفوض' }
+                        ]));
+                    }
+                    var compProfile = loadFromStorage('bunean-company-profile', {});
+                    var changed = false;
+                    if (!compProfile.ads || compProfile.ads.length === 0) {
+                        compProfile.ads = [
+                            { title: 'تشطيبات فاخرة بأسعار منافسة', desc: 'نقدم أفضل خدمات التشطيب بكفاءة عالية', image: 'images/img2.jpg', status: 'قيد المراجعة' },
+                            { title: 'بناء فلل وقصور', desc: 'خبرة 15 عاماً في بناء الفلل', image: 'images/img1.jpg', status: 'قيد المراجعة' }
+                        ];
+                        changed = true;
+                    }
+                    if (!compProfile.projects || compProfile.projects.length === 0) {
+                        compProfile.projects = [
+                            { title: 'مجمع السكني النموذجي', desc: 'بناء مجمع سكني متكامل من 50 وحدة', category: 'بناء سكني', image: 'images/img3.jpg', date: '2026-05-15', status: 'مكتمل' },
+                            { title: 'مول بغداد الجديد', desc: 'تشطيب واجهات وأعمال داخلية', category: 'بناء تجاري', image: 'images/img4.jpg', date: '2026-03-20', status: 'مكتمل' },
+                            { title: 'جسر الزوار', desc: 'أعمال خرسانية وإنشائية', category: 'جسور وطرق', image: 'images/img5.jpg', date: '2026-01-10', status: 'قيد المراجعة' }
+                        ];
+                        changed = true;
+                    }
+                    if (changed) localStorage.setItem('bunean-company-profile', JSON.stringify(compProfile));
+                })();
+
                 // Quote requests
                 var quoteRequests = ref(loadFromStorage('bunean-quote-requests', []));
                 var activeRequest = ref(null);
