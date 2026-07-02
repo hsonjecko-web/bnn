@@ -266,7 +266,7 @@
                                 </div>
                             </div>
                             <div v-if="activeRequest" class="project-modal" @click.self="activeRequest=null">
-                                <div class="modal-content">
+                                <div class="modal-content" style="padding-bottom:calc(24px + env(safe-area-inset-bottom));">
                                     <div class="modal-pull-bar"><span></span></div>
                                     <button class="modal-close" @click="activeRequest=null"><span class="material-symbols-outlined close-icon">close</span><span class="material-symbols-outlined arrow-icon">arrow_back</span></button>
                                     <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">تفاصيل الطلب</h3>
@@ -276,11 +276,11 @@
                                     <div class="mkt-detail-row"><span class="mkt-detail-label">القسم</span><span class="mkt-detail-value">{{ activeRequest.category }}</span></div>
                                     <div class="mkt-detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
                                         <span class="mkt-detail-label">التفاصيل</span>
-                                        <span class="mkt-detail-value">{{ activeRequest.details }}</span>
+                                        <span class="mkt-detail-value" style="word-break:break-word;line-height:1.7;">{{ activeRequest.details }}</span>
                                     </div>
                                     <div v-if="activeRequest.replyMessage" class="mkt-detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;border-top:1px solid var(--border-light);padding-top:10px;">
                                         <span class="mkt-detail-label" style="color:#2ecc71;">ردك</span>
-                                        <span class="mkt-detail-value">{{ activeRequest.replyMessage }}</span>
+                                        <span class="mkt-detail-value" style="word-break:break-word;line-height:1.7;">{{ activeRequest.replyMessage }}</span>
                                     </div>
                                     <div v-if="!activeRequest.replied" style="margin-top:12px;">
                                         <textarea class="form-textarea" v-model="replyText" placeholder="اكتب ردك على هذا الطلب..." rows="3" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;font-family:Cairo,sans-serif;resize:none;box-sizing:border-box;"></textarea>
