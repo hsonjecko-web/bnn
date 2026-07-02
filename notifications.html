@@ -49,7 +49,6 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
 
                 <!-- Tabs (above header) -->
                 <div style="display:flex;gap:6px;padding:12px 16px 8px;overflow-x:auto;">
-                    <button class="notif-tab" data-tab="all" @click="switchTab('all')">الكل</button>
                     <button class="notif-tab" data-tab="support" @click="switchTab('support')">الدعم الفني</button>
                     <button class="notif-tab" data-tab="offer" @click="switchTab('offer')">العروض</button>
                     <button class="notif-tab" data-tab="service" @click="switchTab('service')">طلبات الخدمة</button>
@@ -102,7 +101,7 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
             setup() {
                 initTheme();
 
-                var activeTab = ref('all');
+                var activeTab = ref('support');
                 var userData = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
                 var isCompany = userData.role === 'company';
 
@@ -151,7 +150,6 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                 });
 
                 var filtered = computed(function() {
-                    if (activeTab.value === 'all') return notifications.value;
                     return notifications.value.filter(function(n) { return n.type === activeTab.value; });
                 });
 
