@@ -283,9 +283,6 @@ function initFloatingCart() {
 
     document.addEventListener('touchstart', function(e) {
         if (isAtTop() && !hasOverlay() && !released) {
-            // Don't activate PTR if touch is inside .page-content (to prevent scroll interference)
-            var pc = e.target.closest('.page-content');
-            if (pc) return;
             startY = e.touches[0].clientY;
             pulling = true;
         }
