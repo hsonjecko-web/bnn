@@ -92,7 +92,7 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
     <script src="js/nav.js"></script>
     <script>
         initTheme();
-        document.getElementById('header').innerHTML = renderHeader({});
+        document.getElementById('header').innerHTML = renderHeader({ title: 'الإشعارات' });
         document.getElementById('bottomNav').innerHTML = renderNav('account');
 
         const { createApp, ref, computed, nextTick } = Vue;
