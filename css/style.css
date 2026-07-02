@@ -422,7 +422,7 @@ input, textarea, select {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 16px 0 max(90px, calc(70px + env(safe-area-inset-bottom)));
+  padding: 16px 0 max(100px, calc(80px + env(safe-area-inset-bottom)));
   -ms-overflow-style: none;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -5874,7 +5874,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
   .banner::before { width: 80px; height: 80px; }
   .banner { padding: 14px; }
   .banner-title { font-size: 15px; }
-  .page-content { padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
+  .page-content { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ===== منع hover على أجهزة اللمس ===== */
