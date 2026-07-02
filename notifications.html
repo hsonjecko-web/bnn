@@ -56,11 +56,11 @@ html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; bor
 
                 <!-- Tabs -->
                 <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
-                    <button class="notif-tab" :class="{ active: activeTab === 'all' }" @click="activeTab='all'">الكل</button>
-                    <button class="notif-tab" :class="{ active: activeTab === 'support' }" @click="activeTab='support'">الدعم الفني</button>
-                    <button class="notif-tab" :class="{ active: activeTab === 'offer' }" @click="activeTab='offer'">العروض</button>
-                    <button class="notif-tab" :class="{ active: activeTab === 'service' }" @click="activeTab='service'">طلبات الخدمة</button>
-                    <button v-if="isCompany" class="notif-tab" :class="{ active: activeTab === 'quote_request' }" @click="activeTab='quote_request'">طلبات العروض</button>
+                    <button class="notif-tab" :class="tabClass('all')" @click="activeTab='all'">الكل</button>
+                    <button class="notif-tab" :class="tabClass('support')" @click="activeTab='support'">الدعم الفني</button>
+                    <button class="notif-tab" :class="tabClass('offer')" @click="activeTab='offer'">العروض</button>
+                    <button class="notif-tab" :class="tabClass('service')" @click="activeTab='service'">طلبات الخدمة</button>
+                    <button v-if="isCompany" class="notif-tab" :class="tabClass('quote_request')" @click="activeTab='quote_request'">طلبات العروض</button>
                 </div>
 
                 <!-- Notifications List -->
@@ -164,6 +164,7 @@ html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; bor
                     }
                 ];
 
+                var tabClass = function(t) { return activeTab.value === t ? 'active' : ''; };
                 function loadQuoteRequestNotifs() {
                     var list = [];
                     if (!isCompany) return list;
@@ -356,7 +357,7 @@ html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; bor
                     document.body.appendChild(overlay);
                 }
 
-                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif };
+                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif, tabClass };
             }
         }).mount('#app');
 
