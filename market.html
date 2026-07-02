@@ -32,11 +32,11 @@
         <div class="app-container">
             <div id="header"></div>
 
-            <div class="page-content">
+            <div class="page-content" style="padding-top:0;">
                 <div v-if="!productDetailView">
 
                 <!-- ===== أقسام دائرية ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers" class="mkt-cats-scroll">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers" class="mkt-cats-scroll" style="margin-top:16px;">
                     <div v-for="(cat, i) in categories" :key="i" class="mkt-cat" @click="selectCat(i)">
                         <div class="mkt-cat-circle">
                             <span class="material-symbols-outlined">{{ cat.icon }}</span>

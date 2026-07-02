@@ -32,10 +32,10 @@
         <div class="app-container">
             <div id="header"></div>
 
-            <div class="page-content">
+            <div class="page-content" style="padding-top:0;">
 
                 <!-- Hero Slider -->
-                <div v-if="!activeCategory && !selectedCompany" class="exec-slider"
+                <div v-if="!activeCategory && !selectedCompany" class="exec-slider" style="margin-top:16px;"
                      @touchstart.passive="execSwipe.onTouchStart"
                      @touchend="execSwipe.onTouchEnd">
                     <div class="exec-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (execSlide * 100) + '%)' }">
