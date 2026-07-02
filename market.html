@@ -813,16 +813,20 @@
         for (var n = 1; n <= 31; n++) allImgs.push('images/img' + n + '.jpg');
         function rndImg(seed) { return allImgs[seed % 31]; }
 
-        const { createApp, ref, computed, watch, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, computed, watch, nextTick, onMounted, onUnmounted } = Vue;
 
         createApp({
             setup() {
                 initTheme();
 
                 var activeCatView = ref(null);
+                watch(activeCatView, function(v) { if (v !== null && v !== undefined) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var cartView = ref(autoOpenCart);
+                watch(cartView, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var calculatorView = ref(false);
+                watch(calculatorView, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var checkoutView = ref(false);
+                watch(checkoutView, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var searchQuery = ref('');
                 var cart = ref([]);
                 loadCart();
@@ -831,7 +835,9 @@
                 var mktSlide = ref(0);
                 var mktTimer = null;
                 var showAllView = ref(false);
+                watch(showAllView, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var showAllSuppliers = ref(false);
+                watch(showAllSuppliers, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
 
                 window.__openCart = function() {
                     cartView.value = true;
@@ -852,6 +858,7 @@
                 var selectedQty = ref(1);
                 var modalSlide = ref(0);
                 var productDetailView = ref(false);
+                watch(productDetailView, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
 
                 var viewerOpen = ref(false);
                 var viewerImages = ref([]);
@@ -1005,6 +1012,7 @@
                 });
 
                 var showAllOffers = ref(false);
+                watch(showAllOffers, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var selectedSupplier = ref(null);
                 var suppliers = ref([
                     { name: 'مؤسسة البناء الحديث', logo: rndImg(3), projects: '1,200+', location: 'بغداد', rating: '4.8', phone: '07711223344', email: 'info@modernbuild.iq', specialties: ['حديد', 'إسمنت', 'مواد عازلة', 'بلاط'], desc: 'مؤسسة رائدة في توريد مواد البناء منذ 25 عاماً.' },

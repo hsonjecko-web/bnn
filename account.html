@@ -472,7 +472,7 @@
         document.getElementById('header').innerHTML = renderHeader({ userNameVue: true });
         document.getElementById('bottomNav').innerHTML = renderNav('account');
 
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, computed, watch, nextTick } = Vue;
 
         function loadFromStorage(key, def) {
             try { var v = JSON.parse(localStorage.getItem(key)); return v !== null ? v : def; } catch(e) { return def; }
@@ -742,6 +742,7 @@
 
                 // ===== User sections =====
                 var activeUserSection = ref('');
+                watch(activeUserSection, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var supportMessage = ref('');
 
                 function submitSupport() {

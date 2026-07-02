@@ -184,7 +184,7 @@
         document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
         document.getElementById('bottomNav').innerHTML = renderNav('execute');
 
-        const { createApp, ref } = Vue;
+        const { createApp, ref, watch, nextTick } = Vue;
 
         const defaultProfile = {
             name: 'مقاولون العرب',
@@ -237,6 +237,7 @@
             setup() {
                 initTheme();
                 const activeTab = ref(0);
+                watch(activeTab, function() { nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 const tabs = ref(['نبذة عنا', 'المشاريع', 'التقييمات']);
                 const company = ref(profileData);
 

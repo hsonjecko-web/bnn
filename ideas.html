@@ -393,7 +393,7 @@
         document.getElementById('header').innerHTML = renderHeader({ searchVModel: 'searchQuery', searchPlaceholder: 'ابحث عن أفكار ومشاريع...' });
         document.getElementById('bottomNav').innerHTML = renderNav('ideas');
 
-        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, computed, watch, nextTick, onMounted, onUnmounted } = Vue;
 
         function img(n) { return 'images/img' + n + '.jpg'; }
 
@@ -445,6 +445,7 @@
                 initTheme();
                 var searchQuery = ref('');
                 var activeCategory = ref(null);
+                watch(activeCategory, function(v) { nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var selectedProject = ref(null);
                 var activeFilter = ref(null);
                 var sortLatest = ref(false);

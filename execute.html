@@ -410,7 +410,7 @@
             }
         ];
 
-        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, computed, watch, nextTick, onMounted, onUnmounted } = Vue;
 
         createApp({
             setup() {
@@ -418,7 +418,9 @@
 
                 var categories = ref(categoriesData);
                 var activeCategory = ref(null);
+                watch(activeCategory, function(v) { if (v !== null) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var selectedCompany = ref(null);
+                watch(selectedCompany, function(v) { if (v !== null) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var selectedProject = ref(null);
                 var modalSlide = ref(0);
                 var viewerOpen = ref(false);
@@ -427,6 +429,7 @@
                 var modalPullY = ref(0);
                 var modalClosing = ref(false);
                 var showAllProjects = ref(false);
+                watch(showAllProjects, function(v) { if (v) nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
                 var workSlide = ref(0);
                 var workTimer = null;
                 var execSlide = ref(0);
