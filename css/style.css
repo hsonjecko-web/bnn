@@ -4049,24 +4049,29 @@ html:not(.light-mode) .exec-cat-divider {
 .exec-header {
   display: flex;
   align-items: center;
-  padding: 8px 16px 12px;
+  padding: 8px 12px 12px;
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--primary-dark);
+  background: var(--bg-card);
+  border-radius: 14px;
+  margin: 0 12px 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
 
 .exec-back {
   width: 44px;
   height: 44px;
-  background: transparent;
-  border: none;
+  background: var(--bg-card-light);
+  border: 1px solid var(--border-input);
+  border-radius: 50%;
   color: var(--text-white);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .exec-back .material-symbols-outlined {
@@ -5874,21 +5879,20 @@ html.light-mode .mkt-modal-desc { color: #666; }
   border-radius: 12px;
   margin: 0 12px 12px;
 }
-.prod-detail-page > div:first-of-type {
+.prod-detail-page .prod-hero {
   margin-top: 0;
-  border-radius: 0;
-  border: none;
-  background: transparent;
-}
 /* --- الهيدر --- */
 .prod-detail-page .exec-header {
-  padding: 8px 16px 12px;
+  padding: 8px 12px 12px;
   display: flex;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--primary-dark);
+  background: var(--bg-card);
+  border-radius: 14px;
+  margin: 0 12px 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
 /* --- الهيرو: صف بعمودين --- */
 .prod-hero {
