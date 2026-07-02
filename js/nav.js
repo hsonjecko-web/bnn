@@ -199,7 +199,8 @@ function initFloatingCart() {
         indicator = document.createElement('div');
         indicator.id = 'ptr-indicator';
         indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none;';
-        indicator.innerHTML = '<div class="ptr-inner" style="display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;transform:scale(0.3);transition:transform 1.5s cubic-bezier(0.34,1.56,0.64,1),opacity 1.2s;">'
+        indicator.innerHTML = '<div class="ptr-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0.35);opacity:0;transition:opacity 1.2s ease;"></div>'
+            + '<div class="ptr-inner" style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;transform:scale(0.3);transition:transform 1.5s cubic-bezier(0.34,1.56,0.64,1),opacity 1.2s;">'
             + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:64px;height:64px;">'
             + '<div style="width:80px;height:4px;background:rgba(201,162,67,0.12);border-radius:4px;overflow:hidden;" class="ptr-track">'
             + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:4px;"></div>'
@@ -211,22 +212,29 @@ function initFloatingCart() {
     function showIndicator(dist) {
         if (!indicator) createIndicator();
         innerEl.style.transition = 'none';
+        var backdrop = indicator.querySelector('.ptr-backdrop');
+        if (backdrop) backdrop.style.transition = 'none';
         if (dist < 50) {
             innerEl.style.opacity = '0';
             innerEl.style.transform = 'scale(0.3)';
+            if (backdrop) backdrop.style.opacity = '0';
             return;
         }
         var pct = Math.min((dist - 50) / 100, 1);
         innerEl.style.opacity = '' + Math.min(pct * 1.5, 1);
         innerEl.style.transform = 'scale(' + (0.3 + pct * 0.7) + ')';
+        if (backdrop) backdrop.style.opacity = '' + Math.min(pct * 1.2, 0.45);
         var bar = indicator.querySelector('.ptr-bar');
         if (bar) bar.style.width = (pct * 100) + '%';
     }
 
     function hideIndicator() {
-        if (innerEl) {
-            innerEl.style.transition = 'opacity 0.3s ease';
-            innerEl.style.opacity = '0';
+        if (indicator) {
+            var els = indicator.querySelectorAll('.ptr-inner, .ptr-backdrop');
+            els.forEach(function(el) {
+                el.style.transition = 'opacity 0.3s ease';
+                el.style.opacity = '0';
+            });
         }
         pulling = false;
         released = false;
@@ -239,6 +247,11 @@ function initFloatingCart() {
         innerEl.style.transition = 'none';
         innerEl.style.opacity = '1';
         innerEl.style.transform = 'scale(1)';
+        var backdrop = indicator.querySelector('.ptr-backdrop');
+        if (backdrop) {
+            backdrop.style.transition = 'none';
+            backdrop.style.opacity = '0.45';
+        }
         var bar = indicator.querySelector('.ptr-bar');
         // Reset bar to 0 then animate to 100
         if (bar) {
@@ -249,9 +262,12 @@ function initFloatingCart() {
         }
         // After bar completes, quick fade then reload
         setTimeout(function() {
-            if (innerEl) {
-                innerEl.style.transition = 'opacity 0.2s ease';
-                innerEl.style.opacity = '0';
+            if (indicator) {
+                var els = indicator.querySelectorAll('.ptr-inner, .ptr-backdrop');
+                els.forEach(function(el) {
+                    el.style.transition = 'opacity 0.2s ease';
+                    el.style.opacity = '0';
+                });
             }
             setTimeout(function() { location.reload(); }, 200);
         }, 1550);
