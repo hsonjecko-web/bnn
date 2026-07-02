@@ -4049,19 +4049,17 @@ html:not(.light-mode) .exec-cat-divider {
 .exec-header {
   display: flex;
   align-items: center;
-  padding: 8px 12px 12px;
+  padding: 4px 16px 4px;
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--bg-card);
-  border-radius: 14px;
-  margin: 0 12px 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  background: var(--primary-dark);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .exec-back {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background: var(--bg-card-light);
   border: 1px solid var(--border-input);
   border-radius: 50%;
@@ -4075,7 +4073,7 @@ html:not(.light-mode) .exec-cat-divider {
 }
 
 .exec-back .material-symbols-outlined {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .exec-header > div:last-child {
@@ -5883,16 +5881,14 @@ html.light-mode .mkt-modal-desc { color: #666; }
   margin-top: 0;
 /* --- الهيدر --- */
 .prod-detail-page .exec-header {
-  padding: 8px 12px 12px;
+  padding: 4px 16px 4px;
   display: flex;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--bg-card);
-  border-radius: 14px;
-  margin: 0 12px 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  background: var(--primary-dark);
+  border-bottom: 1px solid var(--border-light);
 }
 /* --- الهيرو: صف بعمودين --- */
 .prod-hero {
