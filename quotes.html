@@ -196,7 +196,7 @@
     <script src="js/nav.js"></script>
     <script>
         initTheme();
-        document.getElementById('header').innerHTML = renderHeader({});
+        document.getElementById('header').innerHTML = renderHeader({ title: 'الاستشارات' });
         document.getElementById('bottomNav').innerHTML = renderNav('home');
 
         const { createApp, ref } = Vue;
