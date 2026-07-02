@@ -225,8 +225,6 @@ function initFloatingCart() {
         innerEl.style.opacity = '' + Math.min(pct * 1.5, 1);
         innerEl.style.transform = 'scale(' + (0.3 + pct * 0.7) + ')';
         if (backdrop) backdrop.style.opacity = '' + Math.min(pct * 1.2, 0.55);
-        var ring = indicator.querySelector('.ptr-ring-bar');
-        if (ring) ring.style.strokeDashoffset = '' + (276.46 * (1 - pct));
     }
 
     function hideIndicator() {
