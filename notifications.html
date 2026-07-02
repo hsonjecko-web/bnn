@@ -46,20 +46,21 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
     <div id="app" v-cloak>
         <div class="app-container">
             <div id="header"></div>
-            <div class="page-content" style="padding-right:0;padding-left:0;display:flex;flex-direction:column;">
 
-                <!-- Back + Tabs row -->
-                <div style="display:flex;align-items:center;gap:6px;padding:12px 16px 12px;border-bottom:1px solid var(--border-light);">
-                    <a href="javascript:history.back()" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;color:var(--text-white);text-decoration:none;">
-                        <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
-                    </a>
-                    <div style="display:flex;gap:6px;overflow-x:auto;flex:1;">
-                        <button class="notif-tab" data-tab="support" @click="switchTab('support')">الدعم الفني</button>
-                        <button class="notif-tab" data-tab="offer" @click="switchTab('offer')">العروض</button>
-                        <button class="notif-tab" data-tab="service" @click="switchTab('service')">الاستشارات</button>
-                        <button class="notif-tab" data-tab="quote_request" id="tab-quote-request" style="display:none;" @click="switchTab('quote_request')">طلبات العروض</button>
-                    </div>
+            <!-- Back + Tabs row (outside page-content, flush with header) -->
+            <div style="background:var(--primary-blue);border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:6px;padding:8px 16px 8px;flex-shrink:0;">
+                <a href="javascript:history.back()" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;color:var(--text-white);text-decoration:none;flex-shrink:0;background:rgba(255,255,255,0.06);">
+                    <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                </a>
+                <div style="display:flex;gap:6px;overflow-x:auto;flex:1;">
+                    <button class="notif-tab" data-tab="support" @click="switchTab('support')">الدعم الفني</button>
+                    <button class="notif-tab" data-tab="offer" @click="switchTab('offer')">العروض</button>
+                    <button class="notif-tab" data-tab="service" @click="switchTab('service')">الاستشارات</button>
+                    <button class="notif-tab" data-tab="quote_request" id="tab-quote-request" style="display:none;" @click="switchTab('quote_request')">طلبات العروض</button>
                 </div>
+            </div>
+
+            <div class="page-content" style="padding-right:0;padding-left:0;display:flex;flex-direction:column;">
 
                 <!-- Notifications List -->
                 <div v-if="filtered.length" style="flex:1;padding:20px 16px 16px;display:flex;flex-direction:column;gap:10px;">

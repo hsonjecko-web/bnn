@@ -31,16 +31,16 @@
         <div class="app-container">
             <div id="header"></div>
 
+            <!-- Card outside page-content, flush with header -->
+            <div style="background:var(--primary-blue);border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:4px;padding:8px 16px 8px;flex-shrink:0;">
+                <a href="account.html" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;color:var(--text-white);text-decoration:none;flex-shrink:0;background:rgba(255,255,255,0.06);">
+                    <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                </a>
+                <h2 style="color:var(--text-white);font-size:17px;font-weight:700;margin:0;">الملف الشخصي</h2>
+            </div>
+
             <div class="page-content">
                 <div class="profile-edit-page">
-                    <!-- Header -->
-                    <div class="profile-edit-header">
-                        <a href="account.html" class="profile-edit-back">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </a>
-                        <h2>الملف الشخصي</h2>
-                    </div>
-
                     <!-- Avatar -->
                     <div class="profile-edit-avatar">
                         <div class="profile-edit-avatar-circle">{{ user.name.charAt(0) || '?' }}</div>
