@@ -245,6 +245,9 @@ input, textarea, select { font-family: 'Cairo', sans-serif; }
     padding-bottom: 75px;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
 }
 
 .page-content::-webkit-scrollbar { display: none; }
@@ -257,9 +260,9 @@ input, textarea, select { font-family: 'Cairo', sans-serif; }
     padding: 12px 16px;
     padding-top: env(safe-area-inset-top, 12px);
     background: var(--primary-dark);
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 50;
+    flex-shrink: 0;
 }
 
 .top-nav .nav-back {

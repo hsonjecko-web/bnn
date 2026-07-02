@@ -425,6 +425,9 @@ input, textarea, select {
   padding: 16px 0 max(90px, calc(70px + env(safe-area-inset-bottom)));
   -ms-overflow-style: none;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 @keyframes pageEnter {
@@ -444,9 +447,9 @@ input, textarea, select {
   padding: 12px 16px;
   padding-top: env(safe-area-inset-top, 12px);
   background: var(--primary-dark);
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 50;
+  flex-shrink: 0;
 }
 
 .top-nav .nav-back {
@@ -5861,6 +5864,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
 /* ===== الوضع الأفقي (Landscape) للهواتف ===== */
 @media (orientation: landscape) and (max-height: 500px) {
   .app-container { height: auto; min-height: 100dvh; }
+  .top-nav { position: sticky; top: 0; }
   .hero-slider { height: 140px; }
   .exec-slider { height: 140px; }
   .mkt-slider { height: 130px; }
