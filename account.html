@@ -46,416 +46,385 @@
 
             <div class="page-content">
 
-                <!-- ==================== ضيف / مستخدم ==================== -->
-                <template v-if="!companyAuth">
-                    <!-- الملف الشخصي + القائمة (تختفي عند فتح قسم) -->
-                    <template v-if="!activeUserSection">
-                        <!-- الملف الشخصي -->
-                        <div class="profile-section">
-                            <div class="profile-avatar">{{ user.name.charAt(0) }}</div>
-                            <div class="profile-name">{{ user.name }}</div>
-                            <div class="profile-phone-row">
-                                <a :href="'tel:' + user.phone" class="profile-phone">{{ user.phone }}</a>
-                            </div>
-                            <div v-if="user.governorate || user.address" class="profile-info-row">
-                                <span v-if="user.governorate" class="profile-info-tag">
-                                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">location_on</span>
-                                    {{ user.governorate }}
-                                </span>
-                                <span v-if="user.address" class="profile-info-tag">
-                                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">home</span>
-                                    {{ user.address }}
-                                </span>
-                            </div>
+                <!-- ===== الملف الشخصي + القائمة (تختفي عند فتح قسم) ===== -->
+                <template v-if="!activeUserSection">
+                    <!-- الملف الشخصي -->
+                    <div class="profile-section">
+                        <div class="profile-avatar">{{ user.name.charAt(0) }}</div>
+                        <div class="profile-name">{{ user.name }}</div>
+                        <div v-if="isCompany" class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:11px;margin:4px auto 0;width:fit-content;">{{ companyStatus }}</div>
+                        <div class="profile-phone-row">
+                            <a :href="'tel:' + user.phone" class="profile-phone">{{ user.phone }}</a>
                         </div>
+                        <div v-if="user.governorate || user.address" class="profile-info-row">
+                            <span v-if="user.governorate" class="profile-info-tag">
+                                <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">location_on</span>
+                                {{ user.governorate }}
+                            </span>
+                            <span v-if="user.address" class="profile-info-tag">
+                                <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">home</span>
+                                {{ user.address }}
+                            </span>
+                        </div>
+                    </div>
 
-                        <!-- القائمة -->
-                        <div class="menu-section">
-                            <template v-for="(item, index) in menuItems" :key="index">
-                                <a v-if="!item.section" :href="item.link" class="menu-item">
-                                    <div class="menu-item-left">
-                                        <div class="menu-item-icon" v-html="item.icon"></div>
-                                        <span class="menu-item-label" :style="{ color: item.color || '' }">{{ item.label }}</span>
-                                    </div>
-                                    <svg class="menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                                </a>
-                                <div v-else class="menu-item" @click="activeUserSection = item.section" style="cursor:pointer;">
-                                    <div class="menu-item-left">
-                                        <div class="menu-item-icon" v-html="item.icon"></div>
-                                        <span class="menu-item-label" :style="{ color: item.color || '' }">{{ item.label }}</span>
-                                    </div>
-                                    <svg class="menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    <!-- القائمة -->
+                    <div class="menu-section">
+                        <template v-for="(item, index) in menuItems" :key="index">
+                            <a v-if="!item.section" :href="item.link" class="menu-item">
+                                <div class="menu-item-left">
+                                    <div class="menu-item-icon" v-html="item.icon"></div>
+                                    <span class="menu-item-label" :style="{ color: item.color || '' }">{{ item.label }}</span>
                                 </div>
-                            </template>
-
-                            <!-- Theme Toggle -->
-                            <div class="theme-toggle-item" @click="handleToggleTheme">
-                                <div class="toggle-left">
-                                    <div class="toggle-icon" v-html="themeIcon"></div>
-                                    <span class="toggle-label">{{ isLightMode ? 'الوضع النهاري' : 'الوضع الليلي' }}</span>
+                                <svg class="menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                            </a>
+                            <div v-else class="menu-item" @click="activeUserSection = item.section" style="cursor:pointer;">
+                                <div class="menu-item-left">
+                                    <div class="menu-item-icon" v-html="item.icon"></div>
+                                    <span class="menu-item-label" :style="{ color: item.color || '' }">{{ item.label }}</span>
                                 </div>
-                                <div class="toggle-switch" :class="{ active: isLightMode }"></div>
+                                <svg class="menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                             </div>
-                        </div>
-                    </template>
+                        </template>
 
-                    <!-- ===== قسم عروض الأسعار (تصميم الكارد) ===== -->
-                    <template v-if="activeUserSection === 'user-offers'">
-                        <!-- Header + Stats -->
-                        <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
-                            <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
-                                <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
-                            </button>
-                            <div style="flex:1;">
-                                <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0 0 2px;">عروض الأسعار</h2>
-                                <div style="color:var(--accent-gold);font-size:13px;font-weight:600;">{{ userOffers.length }} عروض متاحة</div>
+                        <!-- Theme Toggle -->
+                        <div class="theme-toggle-item" @click="handleToggleTheme">
+                            <div class="toggle-left">
+                                <div class="toggle-icon" v-html="themeIcon"></div>
+                                <span class="toggle-label">{{ isLightMode ? 'الوضع النهاري' : 'الوضع الليلي' }}</span>
                             </div>
+                            <div class="toggle-switch" :class="{ active: isLightMode }"></div>
                         </div>
-
-                        <!-- Offers List -->
-                        <div style="padding:8px 16px 20px;display:flex;flex-direction:column;gap:12px;">
-                            <div v-for="(off, i) in userOffers" :key="i" :id="'offer-' + off.id" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid var(--border-light);transition:all .2s;"
-                                :style="off.accepted ? { borderColor:'var(--accent-gold)', background:'rgba(201,162,67,0.06)' } : {}">
-                                <!-- Top Row -->
-                                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
-                                    <div>
-                                        <div style="color:var(--accent-gold);font-size:20px;font-weight:800;">{{ off.price }}</div>
-                                        <div style="color:var(--text-muted);font-size:11px;">السعر الإجمالي</div>
-                                        <div style="color:#2ecc71;font-size:12px;font-weight:600;margin-top:4px;">مدة التنفيذ: {{ off.duration }}</div>
-                                    </div>
-                                    <div style="text-align:left;display:flex;flex-direction:column;align-items:flex-end;">
-                                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                                            <span style="color:var(--text-white);font-size:13px;font-weight:700;">{{ off.company }}</span>
-                                            <div style="width:36px;height:36px;border-radius:10px;background:var(--bg-input);display:flex;align-items:center;justify-content:center;overflow:hidden;">
-                                                <span class="material-symbols-outlined" style="font-size:18px;color:var(--accent-gold);">business</span>
-                                            </div>
-                                        </div>
-                                        <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
-                                            <span style="color:var(--text-light);font-size:10px;">({{ off.reviews }})</span>
-                                            <div style="display:flex;">
-                                                <span v-for="s in 5" :key="s" class="material-symbols-outlined" :style="{ fontSize:'12px', color:'var(--accent-gold)', opacity: s > off.rating ? 0.3 : 1 }">star</span>
-                                            </div>
-                                            <span style="color:var(--accent-gold);font-size:11px;font-weight:700;">{{ off.rating }}</span>
-                                        </div>
-                                        <div style="color:var(--text-light);font-size:11px;margin-top:2px;">{{ off.location }}</div>
-                                    </div>
-                                </div>
-
-                                <!-- Accepted Badge -->
-                                <div v-if="off.accepted" style="display:flex;align-items:center;gap:6px;margin-bottom:10px;padding:8px 12px;border-radius:8px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.25);">
-                                    <span class="material-symbols-outlined" style="font-size:18px;color:#2ecc71;">check_circle</span>
-                                    <span style="color:#2ecc71;font-size:12px;font-weight:700;">تم اختيار هذا العرض</span>
-                                </div>
-
-                                <!-- Actions -->
-                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                                    <button @click="viewOfferDetail(off)" style="padding:10px;border-radius:10px;border:1px solid var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:12px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">visibility</span>
-                                        عرض التفاصيل
-                                    </button>
-                                    <button v-if="!off.accepted" @click="acceptOffer(off)" style="padding:10px;border-radius:10px;border:none;background:var(--accent-gold);color:var(--primary-dark);font-size:12px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">check</span>
-                                        اختيار العرض
-                                    </button>
-                                    <button v-else disabled style="padding:10px;border-radius:10px;border:none;background:rgba(46,204,113,0.15);color:#2ecc71;font-size:12px;font-weight:700;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;cursor:default;">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">check_circle</span>
-                                        تم الاختيار
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Offer Detail Modal (مثل شكل الإشعارات) -->
-                        <div v-if="selectedOffer" class="notif-overlay" @click.self="selectedOffer = null">
-                            <div class="notif-modal" @click.stop style="position:relative;">
-                                <button @click="selectedOffer = null" style="position:sticky;top:10px;z-index:20;float:inline-start;width:32px;height:32px;border-radius:50%;border:none;background:var(--bg-input);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:Cairo,sans-serif;">
-                                    <span class="material-symbols-outlined" style="font-size:16px;">close</span>
-                                </button>
-                                <div style="padding:20px 16px;text-align:center;border-bottom:1px solid var(--border-light);">
-                                    <div style="width:48px;height:48px;border-radius:14px;background:var(--accent-gold);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
-                                        <span class="material-symbols-outlined" style="font-size:24px;color:var(--primary-dark);">request_quote</span>
-                                    </div>
-                                    <h3 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0;">عرض جديد</h3>
-                                    <p style="color:var(--text-muted);font-size:11px;margin:4px 0 0;">
-                                        {{ selectedOffer.company }}
-                                        <span v-if="selectedOffer.rating" style="margin-right:6px;">
-                                            <span style="color:var(--accent-gold);font-weight:600;">{{ selectedOffer.rating }}</span>
-                                            <span style="color:var(--text-muted);">({{ selectedOffer.reviews }})</span>
-                                        </span>
-                                    </p>
-                                </div>
-
-                                <div style="padding:16px;">
-                                    <!-- Company info card -->
-                                    <div style="background:var(--bg-input);border-radius:12px;padding:14px;margin-bottom:12px;">
-                                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                                            <span style="color:var(--text-white);font-size:14px;font-weight:700;">{{ selectedOffer.company }}</span>
-                                            <svg width="20" height="20" fill="var(--accent-gold)" viewBox="0 0 24 24"><path d="M19,2L14,6.5V9H10V6L5,10.5V22H9V18H15V22H19V2M7,20V12L10,9.3V11H14V8.3L17,5.6V20H15V16H9V16H7V20Z"></path></svg>
-                                        </div>
-                                        <!-- Rating stars inline -->
-                                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
-                                            <span v-for="s in 5" :key="s" class="material-symbols-outlined" :style="{ fontSize:'12px', color:'var(--accent-gold)', opacity: s > Math.round(selectedOffer.rating) ? 0.3 : 1 }">star</span>
-                                            <span style="color:var(--accent-gold);font-size:12px;font-weight:600;margin-right:4px;">{{ selectedOffer.rating }}</span>
-                                            <span style="color:var(--text-muted);font-size:10px;">({{ selectedOffer.reviews }})</span>
-                                        </div>
-                                        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border-light);">
-                                            <span style="color:var(--text-muted);font-size:12px;">السعر الإجمالي</span>
-                                            <span style="color:var(--accent-gold);font-size:18px;font-weight:700;">{{ selectedOffer.price }}</span>
-                                        </div>
-                                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-                                            <span style="color:var(--text-muted);font-size:12px;">مدة التنفيذ</span>
-                                            <span style="color:#4caf50;font-size:13px;font-weight:600;">{{ selectedOffer.duration }}</span>
-                                        </div>
-                                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-                                            <span style="color:var(--text-muted);font-size:12px;">الموقع</span>
-                                            <span style="color:var(--text-white);font-size:13px;">{{ selectedOffer.location }}</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Company Reply -->
-                                    <div v-if="selectedOffer.reply" style="background:rgba(201,162,67,0.08);border:1px solid rgba(201,162,67,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">
-                                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-                                            <span class="material-symbols-outlined" style="font-size:16px;color:var(--accent-gold);">forum</span>
-                                            <span style="color:var(--accent-gold);font-size:12px;font-weight:600;">رد الشركة</span>
-                                        </div>
-                                        <p style="color:var(--text-white);font-size:13px;line-height:1.7;margin:0;">{{ selectedOffer.reply }}</p>
-                                    </div>
-
-                                    <!-- Accept indicator inline -->
-                                    <div v-if="selectedOffer.accepted" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.25);margin-bottom:12px;">
-                                        <span class="material-symbols-outlined" style="font-size:18px;color:#2ecc71;">check_circle</span>
-                                        <span style="color:#2ecc71;font-size:13px;font-weight:700;">تم اختيار هذا العرض</span>
-                                    </div>
-                                </div>
-
-                                <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;">
-                                    <a :href="selectedOffer.companyLink || '#'" style="display:block;text-align:center;padding:10px;border-radius:12px;border:1px solid var(--border-light);color:var(--text-white);font-size:13px;font-weight:600;text-decoration:none;font-family:Cairo,sans-serif;">
-                                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">open_in_new</span> عرض ملف الشركة
-                                    </a>
-                                    <button v-if="!selectedOffer.accepted" @click="acceptOffer(selectedOffer)" style="width:100%;padding:10px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:13px;font-weight:700;font-family:Cairo,sans-serif;cursor:pointer;">
-                                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">check</span> اختيار هذا العرض
-                                    </button>
-                                    <button v-else @click="selectedOffer = null" style="width:100%;padding:10px;border:none;border-radius:12px;background:rgba(46,204,113,0.15);color:#2ecc71;font-size:13px;font-weight:700;font-family:Cairo,sans-serif;cursor:pointer;">
-                                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">check_circle</span> تم الاختيار
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-
-                    <!-- ===== قسم الدعم الفني ===== -->
-                    <template v-if="activeUserSection === 'support'">
-                        <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
-                            <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
-                                <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
-                            </button>
-                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">الدعم الفني</h2>
-                        </div>
-                        <div style="padding:8px 16px 20px;">
-                            <div class="section-card">
-                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-                                    <div style="width:44px;height:44px;border-radius:12px;background:rgba(201,162,67,0.15);display:flex;align-items:center;justify-content:center;">
-                                        <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);">support_agent</span>
-                                    </div>
-                                    <div>
-                                        <div style="color:var(--text-white);font-size:14px;font-weight:700;">تواصل مع فريق الدعم</div>
-                                        <div style="color:var(--text-muted);font-size:11px;">نحن هنا لمساعدتك، اكتب رسالتك وسنرد عليك قريباً</div>
-                                    </div>
-                                </div>
-                                <textarea v-model="supportMessage" placeholder="اكتب رسالتك هنا..." rows="5" style="width:100%;padding:12px;border-radius:12px;background:var(--bg-input);border:1px solid var(--border-input);color:var(--text-white);font-size:13px;font-family:Cairo,sans-serif;resize:vertical;box-sizing:border-box;outline:none;"></textarea>
-                                <button @click="submitSupport" style="width:100%;padding:12px;margin-top:10px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">send</span>
-                                    إرسال
-                                </button>
-                            </div>
-                        </div>
-                    </template>
-
+                    </div>
                 </template>
 
-                <!-- ==================== شركة ==================== -->
-                <template v-if="companyAuth">
-                    <!-- رأس -->
-                    <div style="padding:16px;border-bottom:1px solid var(--border-light);">
-                        <div style="display:flex;align-items:center;gap:12px;">
-                            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#003399,#FF8800);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;">{{ companyName.charAt(0) }}</div>
-                            <div>
-                                <div style="color:var(--text-white);font-size:15px;font-weight:700;">{{ companyName }}</div>
-                                <div class="status-badge" :style="{ background: 'rgba(255,136,0,0.1)', color: '#FF8800', border: '1px solid rgba(255,136,0,0.2)' }">{{ companyStatus }}</div>
-                            </div>
-                            <div style="margin-right:auto;">
-                                <button @click="handleLogout" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:20px;font-family:Cairo,sans-serif;">
-                                    <span class="material-symbols-outlined">logout</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- أزرار الأقسام -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px;">
-                        <button v-for="sec in sections" :key="sec.id" @click="activeSection = sec.id"
-                            style="padding:14px 8px;border-radius:12px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-white);font-size:12px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:Cairo,sans-serif;"
-                            :style="activeSection === sec.id ? { borderColor: 'var(--accent-gold)', background: 'rgba(201,162,67,0.08)' } : {}">
-                            <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);">{{ sec.icon }}</span>
-                            {{ sec.label }}
+                <!-- ===== عروض الأسعار ===== -->
+                <template v-if="activeUserSection === 'user-offers'">
+                    <!-- (same offers template - left unchanged) -->
+                    <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
+                        <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                            <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
                         </button>
-                    </div>
-
-                    <!-- ===== طلبات العروض ===== -->
-                    <template v-if="activeSection === 'quotes'">
-                        <div class="section-title">طلبات العروض ({{ quoteRequests.length }})</div>
-                        <div v-if="quoteRequests.length === 0" style="text-align:center;padding:30px 16px;color:var(--text-muted);font-size:13px;">
-                            لا توجد طلبات عروض حتى الآن
+                        <div style="flex:1;">
+                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0 0 2px;">عروض الأسعار</h2>
+                            <div style="color:var(--accent-gold);font-size:13px;font-weight:600;">{{ userOffers.length }} عروض متاحة</div>
                         </div>
-                        <div v-for="(qr, i) in quoteRequests" :key="i" class="section-card" style="cursor:pointer;" @click="activeRequest = qr">
-                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                    </div>
+                    <div style="padding:8px 16px 20px;display:flex;flex-direction:column;gap:12px;">
+                        <div v-for="(off, i) in userOffers" :key="i" :id="'offer-' + off.id" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid var(--border-light);transition:all .2s;"
+                            :style="off.accepted ? { borderColor:'var(--accent-gold)', background:'rgba(201,162,67,0.06)' } : {}">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
                                 <div>
-                                    <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ qr.name }}</div>
-                                    <div style="color:var(--text-muted);font-size:11px;">{{ qr.projectName }}</div>
-                                    <div style="color:var(--text-muted);font-size:11px;">{{ qr.createdAt }}</div>
+                                    <div style="color:var(--accent-gold);font-size:20px;font-weight:800;">{{ off.price }}</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">السعر الإجمالي</div>
+                                    <div style="color:#2ecc71;font-size:12px;font-weight:600;margin-top:4px;">مدة التنفيذ: {{ off.duration }}</div>
                                 </div>
-                                <div v-if="qr.replied" class="status-badge" style="background:rgba(46,204,113,0.1);color:#2ecc71;border:1px solid rgba(46,204,113,0.2);font-size:10px;">تم الرد</div>
-                                <div v-else class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;">جديد</div>
+                                <div style="text-align:left;display:flex;flex-direction:column;align-items:flex-end;">
+                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                                        <span style="color:var(--text-white);font-size:13px;font-weight:700;">{{ off.company }}</span>
+                                        <div style="width:36px;height:36px;border-radius:10px;background:var(--bg-input);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                            <span class="material-symbols-outlined" style="font-size:18px;color:var(--accent-gold);">business</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+                                        <span style="color:var(--text-light);font-size:10px;">({{ off.reviews }})</span>
+                                        <div style="display:flex;">
+                                            <span v-for="s in 5" :key="s" class="material-symbols-outlined" :style="{ fontSize:'12px', color:'var(--accent-gold)', opacity: s > off.rating ? 0.3 : 1 }">star</span>
+                                        </div>
+                                        <span style="color:var(--accent-gold);font-size:11px;font-weight:700;">{{ off.rating }}</span>
+                                    </div>
+                                    <div style="color:var(--text-light);font-size:11px;margin-top:2px;">{{ off.location }}</div>
+                                </div>
+                            </div>
+                            <div v-if="off.accepted" style="display:flex;align-items:center;gap:6px;margin-bottom:10px;padding:8px 12px;border-radius:8px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.25);">
+                                <span class="material-symbols-outlined" style="font-size:18px;color:#2ecc71;">check_circle</span>
+                                <span style="color:#2ecc71;font-size:12px;font-weight:700;">تم اختيار هذا العرض</span>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                                <button @click="viewOfferDetail(off)" style="padding:10px;border-radius:10px;border:1px solid var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:12px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;">visibility</span> عرض التفاصيل
+                                </button>
+                                <button v-if="!off.accepted" @click="acceptOffer(off)" style="padding:10px;border-radius:10px;border:none;background:var(--accent-gold);color:var(--primary-dark);font-size:12px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;">check</span> اختيار العرض
+                                </button>
+                                <button v-else disabled style="padding:10px;border-radius:10px;border:none;background:rgba(46,204,113,0.15);color:#2ecc71;font-size:12px;font-weight:700;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;cursor:default;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;">check_circle</span> تم الاختيار
+                                </button>
                             </div>
                         </div>
-
-                        <!-- مودال تفاصيل الطلب -->
-                        <div v-if="activeRequest" class="project-modal" @click.self="activeRequest=null">
-                            <div class="modal-content">
-                                <div class="modal-pull-bar"><span></span></div>
-                                <button class="modal-close" @click="activeRequest=null">
-                                    <span class="material-symbols-outlined close-icon">close</span>
-                                    <span class="material-symbols-outlined arrow-icon">arrow_back</span>
+                    </div>
+                    <div v-if="selectedOffer" class="notif-overlay" @click.self="selectedOffer = null">
+                        <div class="notif-modal" @click.stop style="position:relative;">
+                            <button @click="selectedOffer = null" style="position:sticky;top:10px;z-index:20;float:inline-start;width:32px;height:32px;border-radius:50%;border:none;background:var(--bg-input);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:Cairo,sans-serif;">
+                                <span class="material-symbols-outlined" style="font-size:16px;">close</span>
+                            </button>
+                            <div style="padding:20px 16px;text-align:center;border-bottom:1px solid var(--border-light);">
+                                <div style="width:48px;height:48px;border-radius:14px;background:var(--accent-gold);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
+                                    <span class="material-symbols-outlined" style="font-size:24px;color:var(--primary-dark);">request_quote</span>
+                                </div>
+                                <h3 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0;">عرض جديد</h3>
+                                <p style="color:var(--text-muted);font-size:11px;margin:4px 0 0;">{{ selectedOffer.company }}<span v-if="selectedOffer.rating" style="margin-right:6px;"><span style="color:var(--accent-gold);font-weight:600;">{{ selectedOffer.rating }}</span> <span style="color:var(--text-muted);">({{ selectedOffer.reviews }})</span></span></p>
+                            </div>
+                            <div style="padding:16px;">
+                                <div style="background:var(--bg-input);border-radius:12px;padding:14px;margin-bottom:12px;">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                                        <span style="color:var(--text-white);font-size:14px;font-weight:700;">{{ selectedOffer.company }}</span>
+                                        <svg width="20" height="20" fill="var(--accent-gold)" viewBox="0 0 24 24"><path d="M19,2L14,6.5V9H10V6L5,10.5V22H9V18H15V22H19V2M7,20V12L10,9.3V11H14V8.3L17,5.6V20H15V16H9V16H7V20Z"/></svg>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
+                                        <span v-for="s in 5" :key="s" class="material-symbols-outlined" :style="{ fontSize:'12px', color:'var(--accent-gold)', opacity: s > Math.round(selectedOffer.rating) ? 0.3 : 1 }">star</span>
+                                        <span style="color:var(--accent-gold);font-size:12px;font-weight:600;margin-right:4px;">{{ selectedOffer.rating }}</span>
+                                        <span style="color:var(--text-muted);font-size:10px;">({{ selectedOffer.reviews }})</span>
+                                    </div>
+                                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border-light);">
+                                        <span style="color:var(--text-muted);font-size:12px;">السعر الإجمالي</span>
+                                        <span style="color:var(--accent-gold);font-size:18px;font-weight:700;">{{ selectedOffer.price }}</span>
+                                    </div>
+                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                                        <span style="color:var(--text-muted);font-size:12px;">مدة التنفيذ</span>
+                                        <span style="color:#4caf50;font-size:13px;font-weight:600;">{{ selectedOffer.duration }}</span>
+                                    </div>
+                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                                        <span style="color:var(--text-muted);font-size:12px;">الموقع</span>
+                                        <span style="color:var(--text-white);font-size:13px;">{{ selectedOffer.location }}</span>
+                                    </div>
+                                </div>
+                                <div v-if="selectedOffer.reply" style="background:rgba(201,162,67,0.08);border:1px solid rgba(201,162,67,0.15);border-radius:10px;padding:12px;margin-bottom:12px;">
+                                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                        <span class="material-symbols-outlined" style="font-size:16px;color:var(--accent-gold);">forum</span>
+                                        <span style="color:var(--accent-gold);font-size:12px;font-weight:600;">رد الشركة</span>
+                                    </div>
+                                    <p style="color:var(--text-white);font-size:13px;line-height:1.7;margin:0;">{{ selectedOffer.reply }}</p>
+                                </div>
+                                <div v-if="selectedOffer.accepted" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.25);margin-bottom:12px;">
+                                    <span class="material-symbols-outlined" style="font-size:18px;color:#2ecc71;">check_circle</span>
+                                    <span style="color:#2ecc71;font-size:13px;font-weight:700;">تم اختيار هذا العرض</span>
+                                </div>
+                            </div>
+                            <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;">
+                                <a :href="selectedOffer.companyLink || '#'" style="display:block;text-align:center;padding:10px;border-radius:12px;border:1px solid var(--border-light);color:var(--text-white);font-size:13px;font-weight:600;text-decoration:none;font-family:Cairo,sans-serif;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">open_in_new</span> عرض ملف الشركة
+                                </a>
+                                <button v-if="!selectedOffer.accepted" @click="acceptOffer(selectedOffer)" style="width:100%;padding:10px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:13px;font-weight:700;font-family:Cairo,sans-serif;cursor:pointer;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">check</span> اختيار هذا العرض
                                 </button>
-                                <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">تفاصيل الطلب</h3>
-                                <div class="mkt-detail-row"><span class="mkt-detail-label">الاسم</span><span class="mkt-detail-value">{{ activeRequest.name }}</span></div>
-                                <div class="mkt-detail-row"><span class="mkt-detail-label">الهاتف</span><span class="mkt-detail-value">{{ activeRequest.phone }}</span></div>
-                                <div class="mkt-detail-row"><span class="mkt-detail-label">المشروع</span><span class="mkt-detail-value">{{ activeRequest.projectName }}</span></div>
-                                <div class="mkt-detail-row"><span class="mkt-detail-label">الموقع</span><span class="mkt-detail-value">{{ activeRequest.location }}</span></div>
-                                <div class="mkt-detail-row"><span class="mkt-detail-label">القسم</span><span class="mkt-detail-value">{{ activeRequest.category }}</span></div>
-                                <div class="mkt-detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-                                    <span class="mkt-detail-label">التفاصيل</span>
-                                    <span class="mkt-detail-value">{{ activeRequest.details }}</span>
+                                <button v-else @click="selectedOffer = null" style="width:100%;padding:10px;border:none;border-radius:12px;background:rgba(46,204,113,0.15);color:#2ecc71;font-size:13px;font-weight:700;font-family:Cairo,sans-serif;cursor:pointer;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">check_circle</span> تم الاختيار
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- ===== الدعم الفني ===== -->
+                <template v-if="activeUserSection === 'support'">
+                    <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
+                        <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                            <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                        </button>
+                        <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">الدعم الفني</h2>
+                    </div>
+                    <div style="padding:8px 16px 20px;">
+                        <div class="section-card">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                                <div style="width:44px;height:44px;border-radius:12px;background:rgba(201,162,67,0.15);display:flex;align-items:center;justify-content:center;">
+                                    <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);">support_agent</span>
                                 </div>
-                                <div v-if="activeRequest.replyMessage" class="mkt-detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;border-top:1px solid var(--border-light);padding-top:10px;">
-                                    <span class="mkt-detail-label" style="color:#2ecc71;">ردك</span>
-                                    <span class="mkt-detail-value">{{ activeRequest.replyMessage }}</span>
+                                <div>
+                                    <div style="color:var(--text-white);font-size:14px;font-weight:700;">تواصل مع فريق الدعم</div>
+                                    <div style="color:var(--text-muted);font-size:11px;">نحن هنا لمساعدتك، اكتب رسالتك وسنرد عليك قريباً</div>
                                 </div>
-                                <div v-if="!activeRequest.replied" style="margin-top:12px;">
-                                    <textarea class="form-textarea" v-model="replyText" placeholder="اكتب ردك على هذا الطلب..." rows="3" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;font-family:Cairo,sans-serif;resize:none;box-sizing:border-box;"></textarea>
-                                    <button @click="sendReply" style="width:100%;padding:10px;margin-top:8px;border-radius:10px;border:none;background:var(--accent-gold);color:var(--primary-dark);font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">إرسال الرد</button>
+                            </div>
+                            <textarea v-model="supportMessage" placeholder="اكتب رسالتك هنا..." rows="5" style="width:100%;padding:12px;border-radius:12px;background:var(--bg-input);border:1px solid var(--border-input);color:var(--text-white);font-size:13px;font-family:Cairo,sans-serif;resize:vertical;box-sizing:border-box;outline:none;"></textarea>
+                            <button @click="submitSupport" style="width:100%;padding:12px;margin-top:10px;border:none;border-radius:12px;background:var(--accent-gold);color:var(--primary-dark);font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <span class="material-symbols-outlined" style="font-size:18px;">send</span> إرسال
+                            </button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- ==================== أقسام الشركة (فقط لحساب الشركة) ==================== -->
+                <template v-if="isCompany">
+                    <!-- ===== طلبات العروض (الواصلة) ===== -->
+                    <template v-if="activeUserSection === 'company-quotes'">
+                        <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
+                            <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                            </button>
+                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">طلبات العروض ({{ quoteRequests.length }})</h2>
+                        </div>
+                        <div style="padding:8px 16px 20px;">
+                            <div v-if="quoteRequests.length === 0" style="text-align:center;padding:30px 16px;color:var(--text-muted);font-size:13px;">لا توجد طلبات عروض حتى الآن</div>
+                            <div v-for="(qr, i) in quoteRequests" :key="i" class="section-card" style="cursor:pointer;" @click="activeRequest = qr">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <div>
+                                        <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ qr.name }}</div>
+                                        <div style="color:var(--text-muted);font-size:11px;">{{ qr.createdAt }}</div>
+                                    </div>
+                                    <div v-if="qr.replied" class="status-badge" style="background:rgba(46,204,113,0.1);color:#2ecc71;border:1px solid rgba(46,204,113,0.2);font-size:10px;">تم الرد</div>
+                                    <div v-else class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;">جديد</div>
+                                </div>
+                            </div>
+                            <div v-if="activeRequest" class="project-modal" @click.self="activeRequest=null">
+                                <div class="modal-content">
+                                    <div class="modal-pull-bar"><span></span></div>
+                                    <button class="modal-close" @click="activeRequest=null"><span class="material-symbols-outlined close-icon">close</span><span class="material-symbols-outlined arrow-icon">arrow_back</span></button>
+                                    <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">تفاصيل الطلب</h3>
+                                    <div class="mkt-detail-row"><span class="mkt-detail-label">الاسم</span><span class="mkt-detail-value">{{ activeRequest.name }}</span></div>
+                                    <div class="mkt-detail-row"><span class="mkt-detail-label">الهاتف</span><span class="mkt-detail-value">{{ activeRequest.phone }}</span></div>
+                                    <div class="mkt-detail-row"><span class="mkt-detail-label">الموقع</span><span class="mkt-detail-value">{{ activeRequest.location }}</span></div>
+                                    <div class="mkt-detail-row"><span class="mkt-detail-label">القسم</span><span class="mkt-detail-value">{{ activeRequest.category }}</span></div>
+                                    <div class="mkt-detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+                                        <span class="mkt-detail-label">التفاصيل</span>
+                                        <span class="mkt-detail-value">{{ activeRequest.details }}</span>
+                                    </div>
+                                    <div v-if="activeRequest.replyMessage" class="mkt-detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;border-top:1px solid var(--border-light);padding-top:10px;">
+                                        <span class="mkt-detail-label" style="color:#2ecc71;">ردك</span>
+                                        <span class="mkt-detail-value">{{ activeRequest.replyMessage }}</span>
+                                    </div>
+                                    <div v-if="!activeRequest.replied" style="margin-top:12px;">
+                                        <textarea class="form-textarea" v-model="replyText" placeholder="اكتب ردك على هذا الطلب..." rows="3" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;font-family:Cairo,sans-serif;resize:none;box-sizing:border-box;"></textarea>
+                                        <button @click="sendReply" style="width:100%;padding:10px;margin-top:8px;border-radius:10px;border:none;background:var(--accent-gold);color:var(--primary-dark);font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">إرسال الرد</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </template>
 
                     <!-- ===== عروضي المقدمة ===== -->
-                    <template v-if="activeSection === 'my-quotes'">
-                        <div class="section-title">عروضي المقدمة</div>
-                        <div v-if="myQuotes.length === 0" style="text-align:center;padding:30px 16px;color:var(--text-muted);font-size:13px;">
-                            لم تقدم أي عروض بعد
+                    <template v-if="activeUserSection === 'my-quotes'">
+                        <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
+                            <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                            </button>
+                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">عروضي المقدمة</h2>
                         </div>
-                        <div v-for="(mq, i) in myQuotes" :key="i" class="section-card">
-                            <div style="display:flex;justify-content:space-between;align-items:center;">
-                                <div>
-                                    <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ mq.client }}</div>
-                                    <div style="color:var(--text-muted);font-size:11px;">{{ mq.project }}</div>
-                                    <div style="color:var(--accent-gold);font-size:13px;font-weight:700;">{{ mq.amount }}</div>
+                        <div style="padding:8px 16px 20px;">
+                            <div v-if="myQuotes.length === 0" style="text-align:center;padding:30px 16px;color:var(--text-muted);font-size:13px;">لم تقدم أي عروض بعد</div>
+                            <div v-for="(mq, i) in myQuotes" :key="i" class="section-card">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <div>
+                                        <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ mq.client }}</div>
+                                        <div style="color:var(--text-muted);font-size:11px;">{{ mq.project }}</div>
+                                        <div style="color:var(--accent-gold);font-size:13px;font-weight:700;">{{ mq.amount }}</div>
+                                    </div>
+                                    <div class="status-badge" :style="getStatusStyle(mq.status)">{{ mq.status }}</div>
                                 </div>
-                                <div class="status-badge" :style="getStatusStyle(mq.status)">{{ mq.status }}</div>
                             </div>
                         </div>
                     </template>
 
-                    <!-- ===== حجز إعلاناتي ===== -->
-                    <template v-if="activeSection === 'ads'">
-                        <div class="section-title">إعلاناتي</div>
-                        <button @click="showAdForm = true" style="margin:0 16px 12px;padding:10px 16px;border-radius:10px;border:none;background:var(--accent-gold);color:var(--primary-dark);font-size:12px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
-                            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">add</span> إضافة إعلان
-                        </button>
-                        <div v-if="myAds.length === 0" style="text-align:center;padding:20px 16px;color:var(--text-muted);font-size:13px;">لا توجد إعلانات</div>
-                        <div v-for="(ad, i) in myAds" :key="i" class="section-card">
-                            <div style="display:flex;gap:10px;">
-                                <div class="img-preview"><img :src="ad.image" alt=""></div>
-                                <div>
-                                    <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ ad.title }}</div>
-                                    <div style="color:var(--text-muted);font-size:11px;">{{ ad.desc }}</div>
-                                    <div class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;margin-top:4px;">قيد المراجعة</div>
+                    <!-- ===== إعلاناتي ===== -->
+                    <template v-if="activeUserSection === 'company-ads'">
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 4px;">
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                    <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                                </button>
+                                <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">إعلاناتي</h2>
+                            </div>
+                            <button @click="showAdForm = true" style="padding:10px 16px;border-radius:10px;border:none;background:var(--accent-gold);color:var(--primary-dark);font-size:12px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;">
+                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">add</span> إضافة
+                            </button>
+                        </div>
+                        <div style="padding:8px 16px 20px;">
+                            <div v-if="myAds.length === 0" style="text-align:center;padding:20px 16px;color:var(--text-muted);font-size:13px;">لا توجد إعلانات</div>
+                            <div v-for="(ad, i) in myAds" :key="i" class="section-card">
+                                <div style="display:flex;gap:10px;">
+                                    <div class="img-preview"><img :src="ad.image" alt=""></div>
+                                    <div>
+                                        <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ ad.title }}</div>
+                                        <div style="color:var(--text-muted);font-size:11px;">{{ ad.desc }}</div>
+                                        <div class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;margin-top:4px;">قيد المراجعة</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- مودال إضافة إعلان -->
-                        <div v-if="showAdForm" class="project-modal" @click.self="showAdForm = false">
-                            <div class="modal-content">
-                                <div class="modal-pull-bar"><span></span></div>
-                                <button class="modal-close" @click="showAdForm = false"><span class="material-symbols-outlined close-icon">close</span><span class="material-symbols-outlined arrow-icon">arrow_back</span></button>
-                                <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">إضافة إعلان</h3>
-                                <div class="mkt-checkout-form">
-                                    <div class="mkt-form-group"><label>عنوان الإعلان</label><input class="form-input" v-model="newAd.title"></div>
-                                    <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="newAd.desc" rows="3"></textarea></div>
-                                    <div class="mkt-form-group"><label>رابط الصورة</label><input class="form-input" v-model="newAd.image"></div>
-                                    <button class="mkt-confirm-btn" @click="submitAd">إضافة</button>
+                            <div v-if="showAdForm" class="project-modal" @click.self="showAdForm = false">
+                                <div class="modal-content">
+                                    <div class="modal-pull-bar"><span></span></div>
+                                    <button class="modal-close" @click="showAdForm = false"><span class="material-symbols-outlined close-icon">close</span><span class="material-symbols-outlined arrow-icon">arrow_back</span></button>
+                                    <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">إضافة إعلان</h3>
+                                    <div class="mkt-checkout-form">
+                                        <div class="mkt-form-group"><label>عنوان الإعلان</label><input class="form-input" v-model="newAd.title"></div>
+                                        <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="newAd.desc" rows="3"></textarea></div>
+                                        <div class="mkt-form-group"><label>رابط الصورة</label><input class="form-input" v-model="newAd.image"></div>
+                                        <button class="mkt-confirm-btn" @click="submitAd">إضافة</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </template>
 
                     <!-- ===== إضافة مشروع ===== -->
-                    <template v-if="activeSection === 'add-project'">
-                        <div class="section-title">إضافة مشروع جديد</div>
-                        <div class="section-card">
-                            <div class="mkt-checkout-form">
-                                <div class="mkt-form-group"><label>اسم المشروع</label><input class="form-input" v-model="newProject.title"></div>
-                                <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="newProject.desc" rows="3"></textarea></div>
-                                <div class="mkt-form-group"><label>التصنيف</label>
-                                    <select class="form-input" v-model="newProject.category">
-                                        <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
-                                    </select>
-                                </div>
-                                <div class="mkt-form-group"><label>رابط الصورة</label><input class="form-input" v-model="newProject.image"></div>
-                                <div class="mkt-form-group"><label>تاريخ الإنجاز</label><input class="form-input" type="date" v-model="newProject.date"></div>
-                                <button class="mkt-confirm-btn" @click="submitProject">إضافة المشروع</button>
-                            </div>
-                            <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
-                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الإضافة سيتم مراجعة المشروع من قبل الدعم الفني
-                            </div>
+                    <template v-if="activeUserSection === 'add-project'">
+                        <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
+                            <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                            </button>
+                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">إضافة مشروع</h2>
                         </div>
-
-                        <div class="section-title">المشاريع المضافة ({{ myProjects.length }})</div>
-                        <div v-for="(p, i) in myProjects" :key="i" class="section-card">
-                            <div style="display:flex;gap:10px;">
-                                <div class="img-preview"><img :src="p.image" alt=""></div>
-                                <div style="flex:1;">
-                                    <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ p.title }}</div>
-                                    <div style="color:var(--text-muted);font-size:11px;">{{ p.category }} • {{ p.date }}</div>
-                                    <div class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;margin-top:4px;">قيد المراجعة</div>
+                        <div style="padding:8px 16px 20px;">
+                            <div class="section-card">
+                                <div class="mkt-checkout-form">
+                                    <div class="mkt-form-group"><label>اسم المشروع</label><input class="form-input" v-model="newProject.title"></div>
+                                    <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="newProject.desc" rows="3"></textarea></div>
+                                    <div class="mkt-form-group"><label>التصنيف</label>
+                                        <select class="form-input" v-model="newProject.category">
+                                            <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="mkt-form-group"><label>رابط الصورة</label><input class="form-input" v-model="newProject.image"></div>
+                                    <div class="mkt-form-group"><label>تاريخ الإنجاز</label><input class="form-input" type="date" v-model="newProject.date"></div>
+                                    <button class="mkt-confirm-btn" @click="submitProject">إضافة المشروع</button>
+                                </div>
+                                <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الإضافة سيتم مراجعة المشروع من قبل الدعم الفني
+                                </div>
+                            </div>
+                            <div style="margin-top:16px;">
+                                <div style="color:var(--accent-gold);font-size:13px;font-weight:700;margin-bottom:8px;">المشاريع المضافة ({{ myProjects.length }})</div>
+                                <div v-for="(p, i) in myProjects" :key="i" class="section-card">
+                                    <div style="display:flex;gap:10px;">
+                                        <div class="img-preview"><img :src="p.image" alt=""></div>
+                                        <div style="flex:1;">
+                                            <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ p.title }}</div>
+                                            <div style="color:var(--text-muted);font-size:11px;">{{ p.category }} • {{ p.date }}</div>
+                                            <div class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;margin-top:4px;">قيد المراجعة</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </template>
 
-                    <!-- ===== تعديل البروفايل ===== -->
-                    <template v-if="activeSection === 'edit-profile'">
-                        <div class="section-title">تعديل ملف الشركة</div>
-                        <div class="section-card">
-                            <div class="mkt-checkout-form">
-                                <div class="mkt-form-group"><label>اسم الشركة</label><input class="form-input" v-model="editProfile.name"></div>
-                                <div class="mkt-form-group"><label>نبذة عن الشركة</label><textarea class="form-input" v-model="editProfile.about" rows="3"></textarea></div>
-                                <div class="mkt-form-group"><label>التخصصات (كل تخصص بسطر)</label><textarea class="form-input" v-model="editProfile.specsStr" rows="3"></textarea></div>
-                                <div class="mkt-form-group"><label>الموقع</label><input class="form-input" v-model="editProfile.location"></div>
-                                <div class="mkt-form-group"><label>رقم الهاتف</label><input class="form-input" v-model="editProfile.phone"></div>
-                                <div class="mkt-form-group"><label>البريد الإلكتروني</label><input class="form-input" v-model="editProfile.email"></div>
-                                <div class="mkt-form-group"><label>رابط الشعار</label><input class="form-input" v-model="editProfile.logo"></div>
-                                <div class="mkt-form-group"><label>رابط الغلاف</label><input class="form-input" v-model="editProfile.cover"></div>
-                                <div class="mkt-form-group"><label>سنوات الخبرة</label><input class="form-input" type="number" v-model="editProfile.years"></div>
-                                <div class="mkt-form-group"><label>عدد العمال</label><input class="form-input" type="number" v-model="editProfile.workers"></div>
-                                <div class="mkt-form-group"><label>عدد المهندسين</label><input class="form-input" type="number" v-model="editProfile.engineers"></div>
-                                <div class="mkt-form-group"><label>المشاريع المنفذة</label><input class="form-input" type="number" v-model="editProfile.done"></div>
-                                <button class="mkt-confirm-btn" @click="saveProfileEdit">حفظ التعديلات</button>
-                            </div>
-                            <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
-                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الحفظ سيتم مراجعة التعديلات من قبل الدعم الفني
+                    <!-- ===== تعديل ملف الشركة ===== -->
+                    <template v-if="activeUserSection === 'edit-company-profile'">
+                        <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
+                            <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
+                                <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                            </button>
+                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">تعديل ملف الشركة</h2>
+                        </div>
+                        <div style="padding:8px 16px 20px;">
+                            <div class="section-card">
+                                <div class="mkt-checkout-form">
+                                    <div class="mkt-form-group"><label>اسم الشركة</label><input class="form-input" v-model="editProfile.name"></div>
+                                    <div class="mkt-form-group"><label>نبذة عن الشركة</label><textarea class="form-input" v-model="editProfile.about" rows="3"></textarea></div>
+                                    <div class="mkt-form-group"><label>التخصصات (كل تخصص بسطر)</label><textarea class="form-input" v-model="editProfile.specsStr" rows="3"></textarea></div>
+                                    <div class="mkt-form-group"><label>الموقع</label><input class="form-input" v-model="editProfile.location"></div>
+                                    <div class="mkt-form-group"><label>رقم الهاتف</label><input class="form-input" v-model="editProfile.phone"></div>
+                                    <div class="mkt-form-group"><label>البريد الإلكتروني</label><input class="form-input" v-model="editProfile.email"></div>
+                                    <div class="mkt-form-group"><label>رابط الشعار</label><input class="form-input" v-model="editProfile.logo"></div>
+                                    <div class="mkt-form-group"><label>رابط الغلاف</label><input class="form-input" v-model="editProfile.cover"></div>
+                                    <div class="mkt-form-group"><label>سنوات الخبرة</label><input class="form-input" type="number" v-model="editProfile.years"></div>
+                                    <div class="mkt-form-group"><label>عدد العمال</label><input class="form-input" type="number" v-model="editProfile.workers"></div>
+                                    <div class="mkt-form-group"><label>عدد المهندسين</label><input class="form-input" type="number" v-model="editProfile.engineers"></div>
+                                    <div class="mkt-form-group"><label>المشاريع المنفذة</label><input class="form-input" type="number" v-model="editProfile.done"></div>
+                                    <button class="mkt-confirm-btn" @click="saveProfileEdit">حفظ التعديلات</button>
+                                </div>
+                                <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الحفظ سيتم مراجعة التعديلات من قبل الدعم الفني
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -483,15 +452,16 @@
                 initTheme();
 
                 // ===== Auth detection =====
-                var companyAuth = ref(loadFromStorage('bunean-company-auth', null));
                 var myAuth = loadFromStorage('bunean-user-auth', null);
                 var myData = loadFromStorage('bunean-user-data', null);
+                var isCompany = ref(myData && myData.role === 'company');
 
                 var user = ref(myData ? {
                     name: myData.name,
                     phone: myData.phone || '+964 770 123 4567',
                     governorate: myData.governorate || '',
-                    address: myData.address || ''
+                    address: myData.address || '',
+                    role: myData.role || 'user'
                 } : {
                     name: 'أحمد محمد علي',
                     phone: '+964 770 123 4567',
@@ -506,18 +476,37 @@
                     localStorage.setItem('bunean-user', user.value.name);
                 }
 
-                var menuItems = ref([
-                    { label: 'طلباتي', link: 'order-tracking.html',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
-                    { label: 'عروض الأسعار', section: 'user-offers',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
-                    { label: 'الدعم الفني', section: 'support',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
-                    { label: 'الملف الشخصي', link: 'profile.html',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
-                    { label: 'تسجيل الخروج', link: 'index.html', color: '#e74c3c',
-                        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' }
-                ]);
+                var menuItems = computed(function() {
+                    var items = [
+                        { label: 'طلباتي', link: 'order-tracking.html',
+                            icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
+                        { label: 'عروض الأسعار', section: 'user-offers',
+                            icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+                        { label: 'الدعم الفني', section: 'support',
+                            icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
+                        { label: 'الملف الشخصي', link: 'profile.html',
+                            icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
+                    ];
+                    if (isCompany.value) {
+                        items.push(
+                            { label: 'طلبات العروض (الواصلة)', section: 'company-quotes',
+                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
+                            { label: 'عروضي المقدمة', section: 'my-quotes',
+                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+                            { label: 'إعلاناتي', section: 'company-ads',
+                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
+                            { label: 'إضافة مشروع', section: 'add-project',
+                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
+                            { label: 'تعديل ملف الشركة', section: 'edit-company-profile',
+                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' }
+                        );
+                    }
+                    items.push(
+                        { label: 'تسجيل الخروج', link: 'index.html', color: '#e74c3c',
+                            icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' }
+                    );
+                    return items;
+                });
 
                 var isLightMode = ref(document.documentElement.classList.contains('light-mode'));
 
@@ -533,18 +522,9 @@
                     localStorage.setItem('bunean-theme', isLightMode.value ? 'light' : 'dark');
                 };
 
-                // ===== Company dashboard =====
-                var companyName = ref(companyAuth.value ? companyAuth.value.name : '');
-                var companyStatus = ref(companyAuth.value ? companyAuth.value.status : '');
-                var activeSection = ref('');
-
-                var sections = [
-                    { id: 'quotes', label: 'طلبات العروض', icon: 'request_quote' },
-                    { id: 'my-quotes', label: 'عروضي المقدمة', icon: 'description' },
-                    { id: 'ads', label: 'حجز إعلاناتي', icon: 'campaign' },
-                    { id: 'add-project', label: 'إضافة مشروع', icon: 'add_circle' },
-                    { id: 'edit-profile', label: 'تعديل البروفايل', icon: 'edit' }
-                ];
+                // ===== Company status =====
+                var companyAuthData = loadFromStorage('bunean-company-auth', null);
+                var companyStatus = ref(companyAuthData ? companyAuthData.status : 'قيد المراجعة');
 
                 // Quote requests
                 var quoteRequests = ref(loadFromStorage('bunean-quote-requests', []));
@@ -646,15 +626,14 @@
                     p.done = parseInt(editProfile.value.done) || 0;
                     p.status = 'قيد المراجعة';
                     localStorage.setItem('bunean-company-profile', JSON.stringify(p));
-                    companyName.value = p.name;
                     showBrandAlert('✅ تم حفظ التعديلات\nقيد المراجعة من قبل الدعم الفني');
                 };
 
                 var handleLogout = function() {
-                    showBrandConfirm('تسجيل الخروج من حساب الشركة؟', function() {
-                        companyAuth.value = null;
-                        localStorage.removeItem('bunean-company-auth');
-                        activeSection.value = '';
+                    showBrandConfirm('تسجيل الخروج؟', function() {
+                        localStorage.removeItem('bunean-user-auth');
+                        localStorage.removeItem('bunean-user-data');
+                        window.location.href = 'index.html';
                     });
                 };
 
@@ -732,8 +711,8 @@
                 })();
 
                 return {
-                    user, menuItems, isLightMode, themeIcon, handleToggleTheme,
-                    companyAuth, companyName, companyStatus, activeSection, sections,
+                    user, menuItems, isCompany, isLightMode, themeIcon, handleToggleTheme,
+                    companyStatus,
                     quoteRequests, activeRequest, replyText, sendReply,
                     myQuotes, getStatusStyle,
                     myAds, showAdForm, newAd, submitAd,

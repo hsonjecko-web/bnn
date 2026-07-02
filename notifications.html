@@ -101,7 +101,8 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                 initTheme();
 
                 var activeTab = ref('all');
-                var isCompany = localStorage.getItem('bunean-company-auth') !== null;
+                var userData = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
+                var isCompany = userData.role === 'company';
 
                 var staticNotifications = [
                     {

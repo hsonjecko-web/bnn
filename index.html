@@ -827,20 +827,19 @@
                         if (acct) {
                             successMsg.value = 'تم تسجيل الدخول بنجاح!';
                             setTimeout(() => {
-                                if (acct.role === 'user') {
-                                    var userData = { name: acct.name, phone: acct.phone || '', governorate: acct.governorate || '', address: acct.address || '' };
-                                    localStorage.setItem('bunean-user-data', JSON.stringify(userData));
-                                    localStorage.setItem('bunean-user-auth', uname);
-                                    window.location.href = 'home.html';
-                                } else {
+                                var userData = { name: acct.name, phone: acct.phone || '', governorate: acct.governorate || '', address: acct.address || '', role: acct.role || 'user' };
+                                localStorage.setItem('bunean-user-data', JSON.stringify(userData));
+                                localStorage.setItem('bunean-user-auth', uname);
+                                // إذا كان شركة، تأكد من وجود bunean-company-auth
+                                if (acct.role === 'company') {
                                     var saved = JSON.parse(localStorage.getItem('bunean-company-profile'));
                                     if (saved) {
                                         localStorage.setItem('bunean-company-auth', JSON.stringify({ name: saved.name, status: saved.status }));
                                     } else {
                                         localStorage.setItem('bunean-company-auth', JSON.stringify({ name: acct.name || 'شركة البناء الحديث', status: 'قيد المراجعة' }));
                                     }
-                                    window.location.href = 'account.html';
                                 }
+                                window.location.href = 'home.html';
                             }, 800);
                         } else {
                             errorMsg.value = 'اسم المستخدم أو كلمة المرور غير صحيحة';
@@ -899,12 +898,10 @@
                     accounts[uid] = entry;
                     localStorage.setItem('bunean-accounts', JSON.stringify(accounts));
 
-                    if (type === 'user') {
-                        var userData = { name: regFullName.value.trim(), phone: regPhone.value.trim(), governorate: regGovernorate.value, address: regAddress.value.trim() };
-                        localStorage.setItem('bunean-user-data', JSON.stringify(userData));
-                        localStorage.setItem('bunean-user-auth', uid);
-                        window.location.href = 'home.html';
-                    } else {
+                    var userData = { name: type === 'company' ? regCompanyName.value.trim() : regFullName.value.trim(), phone: regPhone.value.trim(), governorate: regGovernorate.value, address: regAddress.value.trim(), role: type };
+                    localStorage.setItem('bunean-user-data', JSON.stringify(userData));
+                    localStorage.setItem('bunean-user-auth', uid);
+                    if (type === 'company') {
                         var profile = {
                             name: regCompanyName.value.trim(), about: '', specs: [], location: regGovernorate.value,
                             phone: regPhone.value.trim(), email: '', logo: 'images/img3.jpg', cover: 'images/img16.jpg',
@@ -914,8 +911,8 @@
                         };
                         localStorage.setItem('bunean-company-profile', JSON.stringify(profile));
                         localStorage.setItem('bunean-company-auth', JSON.stringify({ name: profile.name, status: profile.status }));
-                        window.location.href = 'account.html';
                     }
+                    window.location.href = 'home.html';
                 };
 
                 const handleResetPassword = () => {
