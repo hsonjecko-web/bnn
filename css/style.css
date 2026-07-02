@@ -509,12 +509,13 @@ input, textarea, select {
 
 /* Header title */
 .header-title {
-  padding: 4px 16px;
+  padding: 6px 24px;
   background: var(--bg-card);
   border-radius: 20px;
   border: 1px solid var(--border-light);
   color: var(--accent-gold);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 /* ===== شريط البحث ===== */

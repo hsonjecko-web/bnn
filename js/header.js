@@ -12,7 +12,7 @@ function renderHeader(options) {
         : '';
 
     var searchHtml = title
-        ? '<span class="header-title" style="flex:1;font-size:16px;font-weight:700;text-align:center;font-family:Cairo,sans-serif;">' + title + '</span>'
+        ? '<div style="flex:1;display:flex;align-items:center;justify-content:center;"><span class="header-title" style="font-size:16px;font-weight:700;font-family:Cairo,sans-serif;">' + title + '</span></div>'
         : '<div class="search-bar"><span class="material-symbols-outlined">search</span>'
         + (searchVModel
             ? '<input type="text" v-model="' + searchVModel + '" placeholder="' + searchPlaceholder + '">'
