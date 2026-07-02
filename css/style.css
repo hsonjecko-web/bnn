@@ -483,6 +483,7 @@ input, textarea, select {
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .top-nav .nav-icon {
