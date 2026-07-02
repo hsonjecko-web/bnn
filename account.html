@@ -301,7 +301,7 @@
                         </div>
                         <div style="padding:8px 16px 20px;">
                             <div v-if="myQuotes.length === 0" style="text-align:center;padding:30px 16px;color:var(--text-muted);font-size:13px;">لم تقدم أي عروض بعد</div>
-                            <div v-for="(mq, i) in myQuotes" :key="i" class="section-card">
+                            <div v-for="(mq, i) in myQuotes" :key="i" class="section-card" style="cursor:pointer;" @click="editMyQuote(mq)">
                                 <div style="display:flex;justify-content:space-between;align-items:center;">
                                     <div>
                                         <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ mq.client }}</div>
@@ -309,6 +309,28 @@
                                         <div style="color:var(--accent-gold);font-size:13px;font-weight:700;">{{ mq.amount }}</div>
                                     </div>
                                     <div class="status-badge" :style="getStatusStyle(mq.status)">{{ mq.status }}</div>
+                                </div>
+                            </div>
+                            <!-- مودال عرض/تعديل العرض -->
+                            <div v-if="selectedMyQuote" class="project-modal" @click.self="selectedMyQuote=null">
+                                <div class="modal-content" style="padding-bottom:calc(24px + env(safe-area-inset-bottom));">
+                                    <div class="modal-pull-bar"><span></span></div>
+                                    <button class="modal-close" @click="selectedMyQuote=null"><span class="material-symbols-outlined close-icon">close</span><span class="material-symbols-outlined arrow-icon">arrow_back</span></button>
+                                    <h3 style="color:var(--text-white);font-size:16px;margin:0 0 12px;">تفاصيل العرض</h3>
+                                    <div class="mkt-checkout-form">
+                                        <div class="mkt-form-group"><label>اسم العميل</label><input class="form-input" v-model="myQuoteEdit.client"></div>
+                                        <div class="mkt-form-group"><label>المشروع</label><input class="form-input" v-model="myQuoteEdit.project"></div>
+                                        <div class="mkt-form-group"><label>المبلغ</label><input class="form-input" v-model="myQuoteEdit.amount"></div>
+                                        <div class="mkt-form-group"><label>الملاحظات</label><textarea class="form-input" v-model="myQuoteEdit.notes" rows="3"></textarea></div>
+                                        <div class="mkt-form-group"><label>الحالة</label>
+                                            <select class="form-input" v-model="myQuoteEdit.status">
+                                                <option value="قيد المراجعة">قيد المراجعة</option>
+                                                <option value="مقبول">مقبول</option>
+                                                <option value="مرفوض">مرفوض</option>
+                                            </select>
+                                        </div>
+                                        <button class="mkt-confirm-btn" @click="saveMyQuote">حفظ التعديلات</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -542,9 +564,9 @@
                     }
                     if (!localStorage.getItem('bunean-company-quotes') || JSON.parse(localStorage.getItem('bunean-company-quotes')).length === 0) {
                         localStorage.setItem('bunean-company-quotes', JSON.stringify([
-                            { client: 'عمارة الفيحاء السكنية', project: 'بناء 12 وحدة سكنية', amount: '450,000,000 د.ع', status: 'قيد المراجعة' },
-                            { client: 'مشروع مول بغداد', project: 'تشطيب واجهات', amount: '125,000,000 د.ع', status: 'مقبول' },
-                            { client: 'فيلا خاصة - كربلاء', project: 'بناء فيلا', amount: '95,000,000 د.ع', status: 'مرفوض' }
+                            { id: 1, client: 'عمارة الفيحاء السكنية', project: 'بناء 12 وحدة سكنية', amount: '450,000,000 د.ع', notes: 'يشمل كافة المواد والعمالة، مدة التنفيذ 8 أشهر.', status: 'قيد المراجعة' },
+                            { id: 2, client: 'مشروع مول بغداد', project: 'تشطيب واجهات', amount: '125,000,000 د.ع', notes: 'تشطيب واجهات زجاجية وألمنيوم', status: 'مقبول' },
+                            { id: 3, client: 'فيلا خاصة - كربلاء', project: 'بناء فيلا', amount: '95,000,000 د.ع', notes: 'عرض سعر أولي قابل للتفاوض', status: 'مرفوض' }
                         ]));
                     }
                     var compProfile = loadFromStorage('bunean-company-profile', {});
@@ -594,6 +616,37 @@
                     if (s === 'مقبول') return 'background:rgba(46,204,113,0.1);color:#2ecc71;border:1px solid rgba(46,204,113,0.2)';
                     if (s === 'مرفوض') return 'background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)';
                     return 'background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2)';
+                };
+
+                // My Quotes edit
+                var selectedMyQuote = ref(null);
+                var myQuoteEdit = ref({ client: '', project: '', amount: '', notes: '', status: '' });
+                var editMyQuote = function(mq) {
+                    selectedMyQuote.value = mq;
+                    myQuoteEdit.value = {
+                        client: mq.client || '',
+                        project: mq.project || '',
+                        amount: mq.amount || '',
+                        notes: mq.notes || '',
+                        status: mq.status || 'قيد المراجعة'
+                    };
+                };
+                var saveMyQuote = function() {
+                    var ed = myQuoteEdit.value;
+                    if (!ed.client.trim() || !ed.project.trim() || !ed.amount.trim()) { showBrandAlert('املأ الحقول المطلوبة'); return; }
+                    var qs = loadFromStorage('bunean-company-quotes', []);
+                    var idx = qs.findIndex(function(q) { return q.id === selectedMyQuote.value.id; });
+                    if (idx !== -1) {
+                        qs[idx].client = ed.client.trim();
+                        qs[idx].project = ed.project.trim();
+                        qs[idx].amount = ed.amount.trim();
+                        qs[idx].notes = ed.notes.trim();
+                        qs[idx].status = ed.status;
+                        localStorage.setItem('bunean-company-quotes', JSON.stringify(qs));
+                        myQuotes.value = qs;
+                        selectedMyQuote.value = null;
+                        showBrandAlert('✅ تم حفظ التعديلات');
+                    }
                 };
 
                 // Ads
