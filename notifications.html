@@ -53,13 +53,13 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                     <p style="color:var(--text-muted);font-size:13px;margin:2px 0 0;">آخر التحديثات والردود</p>
                 </div>
 
-                <!-- Tabs (static HTML, no Vue bindings) -->
+                <!-- Tabs (static HTML, @click only) -->
                 <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
-                    <button class="notif-tab" data-tab="all">الكل</button>
-                    <button class="notif-tab" data-tab="support">الدعم الفني</button>
-                    <button class="notif-tab" data-tab="offer">العروض</button>
-                    <button class="notif-tab" data-tab="service">طلبات الخدمة</button>
-                    <button class="notif-tab" data-tab="quote_request" id="tab-quote-request" style="display:none;">طلبات العروض</button>
+                    <button class="notif-tab" data-tab="all" @click="switchTab('all')">الكل</button>
+                    <button class="notif-tab" data-tab="support" @click="switchTab('support')">الدعم الفني</button>
+                    <button class="notif-tab" data-tab="offer" @click="switchTab('offer')">العروض</button>
+                    <button class="notif-tab" data-tab="service" @click="switchTab('service')">طلبات الخدمة</button>
+                    <button class="notif-tab" data-tab="quote_request" id="tab-quote-request" style="display:none;" @click="switchTab('quote_request')">طلبات العروض</button>
                 </div>
 
                 <!-- Notifications List -->
@@ -96,39 +96,13 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
         document.getElementById('header').innerHTML = renderHeader({});
         document.getElementById('bottomNav').innerHTML = renderNav('account');
 
-        // ===== Tab management (pure JS, outside Vue) =====
-        var activeTabRef = null;
-
-        function switchTab(t) {
-            document.querySelectorAll('.notif-tab').forEach(function(el) {
-                el.classList.remove('zactive');
-                if (el.dataset.tab === t) el.classList.add('zactive');
-            });
-            if (activeTabRef) activeTabRef.value = t;
-        }
-
-        // Initial tab state (activeTabRef will be set by Vue app)
-        document.querySelectorAll('.notif-tab').forEach(function(el) {
-            el.addEventListener('click', function() { switchTab(el.dataset.tab); });
-        });
-
-        // Company check
-        (function() {
-            var ud = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
-            if (ud.role === 'company') {
-                var qr = document.getElementById('tab-quote-request');
-                if (qr) qr.style.display = '';
-            }
-        })();
-
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, computed, nextTick } = Vue;
 
         createApp({
             setup() {
                 initTheme();
 
                 var activeTab = ref('all');
-                activeTabRef = activeTab;
                 var userData = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
                 var isCompany = userData.role === 'company';
 
@@ -333,12 +307,30 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                     document.body.appendChild(overlay);
                 }
 
-                // Initial tab style
-                document.querySelectorAll('.notif-tab').forEach(function(el) {
-                    if (el.dataset.tab === activeTab.value) el.classList.add('zactive');
+                function switchTab(t) {
+                    activeTab.value = t;
+                    document.querySelectorAll('.notif-tab').forEach(function(el) {
+                        el.classList.toggle('zactive', el.dataset.tab === t);
+                    });
+                }
+
+                // Initial tab state
+                Vue.onMounted(function() {
+                    document.querySelectorAll('.notif-tab').forEach(function(el) {
+                        el.classList.toggle('zactive', el.dataset.tab === activeTab.value);
+                    });
                 });
 
-                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif };
+                // Company check
+                Vue.onMounted(function() {
+                    var ud = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
+                    if (ud.role === 'company') {
+                        var qr = document.getElementById('tab-quote-request');
+                        if (qr) qr.style.display = '';
+                    }
+                });
+
+                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif, switchTab };
             }
         }).mount('#app');
 
