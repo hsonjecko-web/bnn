@@ -28,7 +28,7 @@
         body { -webkit-tap-highlight-color: transparent; }
         ::-webkit-scrollbar { display: none; }
         .notif-dot { width:8px; height:8px; border-radius:50%; min-width:8px; }
-.notif-tab { padding:6px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#c8d6e5; white-space:nowrap; font-family:Cairo,sans-serif; border:1px solid rgba(255,255,255,0.15); }
+.notif-tab { padding:6px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#c8d6e5; white-space:nowrap; font-family:Cairo,sans-serif; border:1px solid rgba(255,255,255,0.15); text-rendering:auto !important; -webkit-font-smoothing:auto !important; }
 html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; border-color:rgba(44,95,138,0.2); }
 
         .notif-card { background:var(--bg-card); border:1px solid var(--border-light); border-radius:14px; padding:14px; cursor:pointer; transition:all .2s; display:flex; gap:12px; align-items:flex-start; }
@@ -54,7 +54,7 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
 
                 <!-- Tabs -->
                 <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
-                    <button class="notif-tab" data-tab="all" @click="setTab('all')">الكل</button>
+                    <button class="notif-tab" data-tab="all" @click="setTab('all')"><span style="font-family:sans-serif;">●</span> الكل</button>
                     <button class="notif-tab" data-tab="support" @click="setTab('support')">الدعم الفني</button>
                     <button class="notif-tab" data-tab="offer" @click="setTab('offer')">العروض</button>
                     <button class="notif-tab" data-tab="service" @click="setTab('service')">طلبات الخدمة</button>
@@ -95,29 +95,38 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
         document.getElementById('header').innerHTML = renderHeader({});
         document.getElementById('bottomNav').innerHTML = renderNav('account');
 
-        const { createApp, ref, computed, watch } = Vue;
+        const { createApp, ref, computed, onMounted, nextTick } = Vue;
 
         createApp({
             setup() {
                 initTheme();
 
                 var activeTab = ref('all');
-                var setTab = function(t) { activeTab.value = t; };
-                watch(activeTab, function(val) {
+                var applyTab = function(val) {
                     document.querySelectorAll('.notif-tab').forEach(function(el) {
                         if (el.dataset.tab === val) {
-                            el.style.background = '#c9a243';
-                            el.style.color = '#0a1628';
-                            el.style.borderColor = '#c9a243';
+                            el.style.setProperty('background', '#c9a243', 'important');
+                            el.style.setProperty('color', '#0a1628', 'important');
+                            el.style.setProperty('border-color', '#c9a243', 'important');
                             el.style.fontWeight = '700';
+                            el.style.opacity = '1';
+                            el.style.visibility = 'visible';
+                            el.style.display = '';
                         } else {
                             el.style.background = '';
                             el.style.color = '';
                             el.style.borderColor = '';
                             el.style.fontWeight = '';
+                            el.style.opacity = '';
+                            el.style.visibility = '';
                         }
                     });
-                }, { immediate: true });
+                };
+                var setTab = function(t) {
+                    activeTab.value = t;
+                    nextTick(function() { applyTab(t); });
+                };
+                onMounted(function() { applyTab(activeTab.value); });
                 var userData = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
                 var isCompany = userData.role === 'company';
 
