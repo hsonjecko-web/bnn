@@ -192,77 +192,69 @@ function initFloatingCart() {
 
 // ===== السحب للتحديث (Pull-to-Refresh) =====
 (function() {
-    var startY = 0, pulling = false, released = false, locked = false;
-    var indicator = null;
+    var startY = 0, pulling = false, released = false;
+    var indicator = null, innerEl = null;
 
     function createIndicator() {
         indicator = document.createElement('div');
         indicator.id = 'ptr-indicator';
-        indicator.style.cssText = 'position:fixed;top:56px;left:0;right:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;height:0;overflow:hidden;';
-        indicator.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:12px;">'
-            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:64px;height:64px;opacity:0;transform:translateY(24px) scale(0.4);transition:transform 1.5s cubic-bezier(0.34,1.56,0.64,1),opacity 1.2s;">'
-            + '<div style="width:80px;height:4px;background:rgba(201,162,67,0.12);border-radius:4px;overflow:hidden;opacity:0;transition:opacity 1.2s;" class="ptr-track">'
-            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:4px;transition:width 0.1s linear;"></div>'
+        indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none;';
+        indicator.innerHTML = '<div class="ptr-inner" style="display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;transform:scale(0.3);transition:transform 1.5s cubic-bezier(0.34,1.56,0.64,1),opacity 1.2s;">'
+            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:64px;height:64px;">'
+            + '<div style="width:80px;height:4px;background:rgba(201,162,67,0.12);border-radius:4px;overflow:hidden;" class="ptr-track">'
+            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:4px;"></div>'
             + '</div></div>';
         document.body.appendChild(indicator);
+        innerEl = indicator.querySelector('.ptr-inner');
     }
 
     function showIndicator(dist) {
         if (!indicator) createIndicator();
-        indicator.style.transition = 'none';
+        innerEl.style.transition = 'none';
         if (dist < 50) {
-            indicator.style.height = '0';
+            innerEl.style.opacity = '0';
+            innerEl.style.transform = 'scale(0.3)';
             return;
         }
-        var adjusted = dist - 50;
-        var maxAdj = 150 - 50;
-        var pct = Math.min(adjusted / maxAdj, 1);
-        var h = Math.min(adjusted * 1.4 + 10, 200);
-        indicator.style.height = h + 'px';
-        var logo = indicator.querySelector('.ptr-logo');
+        var pct = Math.min((dist - 50) / 100, 1);
+        innerEl.style.opacity = '' + Math.min(pct * 1.5, 1);
+        innerEl.style.transform = 'scale(' + (0.3 + pct * 0.7) + ')';
         var bar = indicator.querySelector('.ptr-bar');
-        var track = indicator.querySelector('.ptr-track');
-        if (logo) {
-            logo.style.opacity = Math.min(pct * 1.5, 1);
-            logo.style.transform = 'translateY(' + (24 - pct * 24) + 'px) scale(' + (0.4 + pct * 0.6) + ')';
-        }
-        if (track) track.style.opacity = Math.min(pct * 2, 1);
         if (bar) bar.style.width = (pct * 100) + '%';
     }
 
     function hideIndicator() {
-        if (indicator) {
-            indicator.style.transition = 'height 1.2s cubic-bezier(0.34,1.56,0.64,1)';
-            indicator.style.height = '0';
+        if (innerEl) {
+            innerEl.style.transition = 'opacity 0.3s ease';
+            innerEl.style.opacity = '0';
         }
-        released = false;
         pulling = false;
+        released = false;
     }
 
     function doRefresh() {
         released = true;
-        if (!indicator) return;
-        // Lock indicator at full height
-        indicator.style.transition = 'none';
-        indicator.style.height = '200px';
-        var logo = indicator.querySelector('.ptr-logo');
+        if (!indicator || !innerEl) return;
+        // Lock fully visible
+        innerEl.style.transition = 'none';
+        innerEl.style.opacity = '1';
+        innerEl.style.transform = 'scale(1)';
         var bar = indicator.querySelector('.ptr-bar');
-        var track = indicator.querySelector('.ptr-track');
-        // Logo fully visible
-        if (logo) {
-            logo.style.opacity = '1';
-            logo.style.transform = 'translateY(0px) scale(1)';
-        }
-        if (track) track.style.opacity = '1';
         // Reset bar to 0 then animate to 100
         if (bar) {
             bar.style.width = '0%';
-            // Force layout then animate
             void bar.offsetWidth;
             bar.style.transition = 'width 1.5s cubic-bezier(0.34,1.56,0.64,1)';
             bar.style.width = '100%';
         }
-        setTimeout(function() { location.reload(); }, 1800);
+        // After bar completes, quick fade then reload
+        setTimeout(function() {
+            if (innerEl) {
+                innerEl.style.transition = 'opacity 0.2s ease';
+                innerEl.style.opacity = '0';
+            }
+            setTimeout(function() { location.reload(); }, 200);
+        }, 1550);
     }
 
     // Inject animations once
