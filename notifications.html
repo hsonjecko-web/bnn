@@ -30,8 +30,9 @@
         .notif-dot { width:8px; height:8px; border-radius:50%; min-width:8px; }
 .notif-tab { padding:6px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#c8d6e5; white-space:nowrap; transition:all .2s; font-family:Cairo,sans-serif; border:1px solid rgba(255,255,255,0.15); }
 html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; border-color:rgba(44,95,138,0.2); }
-.notif-tab.active { background:#c9a243 !important; color:#0a1628 !important; border-color:#c9a243 !important; font-weight:700 !important; }
-html.light-mode .notif-tab.active { background:#c9a243 !important; color:#0a1628 !important; border-color:#c9a243 !important; }
+button.notif-tab.active { background:#c9a243; color:#ffffff; border-color:#c9a243; font-weight:700; }
+button.notif-tab { transition:none; }
+html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; border-color:#c9a243; }
         .notif-card { background:var(--bg-card); border:1px solid var(--border-light); border-radius:14px; padding:14px; cursor:pointer; transition:all .2s; display:flex; gap:12px; align-items:flex-start; }
         .notif-card:active { opacity:.8; }
         .notif-card.read { opacity:.6; }
