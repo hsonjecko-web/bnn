@@ -209,8 +209,14 @@ function initFloatingCart() {
 
     function showIndicator(dist) {
         if (!indicator) createIndicator();
-        var pct = Math.min(dist / 120, 1);
-        var h = Math.min(dist * 0.7, 90);
+        if (dist < 25) {
+            indicator.style.height = '0';
+            return;
+        }
+        var adjusted = dist - 25;
+        var maxAdj = 120 - 25;
+        var pct = Math.min(adjusted / maxAdj, 1);
+        var h = Math.min(adjusted * 0.7 + 10, 90);
         indicator.style.height = h + 'px';
         var logo = indicator.querySelector('.ptr-logo');
         var bar = indicator.querySelector('.ptr-bar');
