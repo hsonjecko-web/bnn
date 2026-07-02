@@ -313,7 +313,14 @@
                 const modalClosing = ref(false);
                 const showAllWorks = ref(false);
                 watch(showAllWorks, function(v) {
-                    if (v) nextTick(function() { window.scrollTo(0, 0); });
+                    if (v) {
+                        nextTick(function() {
+                            var el = document.querySelector('.all-works-view');
+                            if (el) el.scrollIntoView({ block: 'start' });
+                            var pc = document.querySelector('.page-content');
+                            if (pc) pc.scrollTop = 0;
+                        });
+                    }
                 });
                 const adSlide = ref(0);
                 const showAdBooking = ref(false);

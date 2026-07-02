@@ -5,7 +5,7 @@
     document.documentElement.style.scrollBehavior = 'auto';
     function resetScroll() {
         var el = document.querySelector('.page-content');
-        if (el) el.scrollTop = 0;
+        if (el) { el.scrollTop = 0; return; }
         window.scrollTo(0, 0);
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
