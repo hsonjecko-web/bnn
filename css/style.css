@@ -2648,7 +2648,7 @@ html.light-mode .project-modal .modal-close {
 .ad-booking-close {
   position: absolute;
   top: 8px;
-  left: 0;
+  left: 8px;
   width: 32px;
   height: 32px;
   border-radius: 50%;

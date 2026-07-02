@@ -221,6 +221,13 @@
                         <div class="mkt-checkout-form">
                             <div class="mkt-form-group">
                                 <label class="ad-booking-label">
+                                    <span class="material-symbols-outlined">person</span>
+                                    الاسم
+                                </label>
+                                <input type="text" class="form-input" v-model="adBooking.name" placeholder="الاسم الكامل">
+                            </div>
+                            <div class="mkt-form-group">
+                                <label class="ad-booking-label">
                                     <span class="material-symbols-outlined">business</span>
                                     اسم الشركة
                                 </label>
@@ -236,10 +243,10 @@
                             <div class="mkt-form-group">
                                 <label class="ad-booking-label">
                                     <span class="material-symbols-outlined">category</span>
-                                    قسم الإعلان
+                                    نوع الإعلان
                                 </label>
                                 <select class="form-input" v-model="adBooking.type">
-                                    <option value="">اختر قسم الإعلان</option>
+                                    <option value="">اختر نوع الإعلان</option>
                                     <option value="بناء وإنشاء">بناء وإنشاء</option>
                                     <option value="تشطيبات داخلية">تشطيبات داخلية</option>
                                     <option value="حدائق ولاندسكيب">حدائق ولاندسكيب</option>
@@ -306,7 +313,7 @@
                 const showAllWorks = ref(false);
                 const adSlide = ref(0);
                 const showAdBooking = ref(false);
-                const adBooking = ref({ company: '', phone: '', type: '' });
+                const adBooking = ref({ name: '', company: '', phone: '', type: '' });
                 const adBookingPullY = ref(0);
                 const adBookingClosing = ref(false);
                 const adBookingPullStyle = computed(() => {
@@ -740,13 +747,14 @@
                 function resetAdTimer() { startAdTimer(); }
 
                 function submitAdBooking() {
+                    if (!adBooking.value.name.trim()) { showBrandAlert('أدخل الاسم'); return; }
                     if (!adBooking.value.company.trim()) { showBrandAlert('أدخل اسم الشركة'); return; }
                     if (!adBooking.value.phone.trim()) { showBrandAlert('أدخل رقم الهاتف'); return; }
                     if (!adBooking.value.type) { showBrandAlert('اختر نوع الإعلان'); return; }
                     var bookings = JSON.parse(localStorage.getItem('bunean-ad-bookings') || '[]');
                     bookings.push({ ...adBooking.value, createdAt: new Date().toISOString() });
                     localStorage.setItem('bunean-ad-bookings', JSON.stringify(bookings));
-                    adBooking.value = { company: '', phone: '', type: '' };
+                    adBooking.value = { name: '', company: '', phone: '', type: '' };
                     showAdBooking.value = false;
                     showBrandAlert('✅ تم إرسال طلب الحجز بنجاح\nسيتم التواصل معك قريباً');
                 }
