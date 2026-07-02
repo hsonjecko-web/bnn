@@ -242,7 +242,7 @@ input, textarea, select { font-family: 'Cairo', sans-serif; }
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 85px;
+    padding-bottom: 70px;
     -ms-overflow-style: none;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
@@ -345,8 +345,7 @@ input, textarea, select { font-family: 'Cairo', sans-serif; }
     display: flex;
     align-items: center;
     justify-content: space-around;
-    padding: 8px 4px;
-    padding-bottom: env(safe-area-inset-bottom, 8px);
+    padding: 6px 4px 10px;
     z-index: 100;
     max-width: 430px;
     margin: 0 auto;
