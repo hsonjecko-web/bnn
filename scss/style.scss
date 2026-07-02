@@ -1,6 +1,8 @@
 @charset "UTF-8";
 @use 'variables' as *;
 @use 'mixins';
+/* ===== إخفاء Vue لحين التحميل ===== */
+[v-cloak] { display: none !important; }
 /* ===== أنماط مشتركة - بنيان ===== */
 :root {
     --primary-dark: #0b1a2e;

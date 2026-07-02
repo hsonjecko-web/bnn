@@ -1,4 +1,7 @@
 @charset "UTF-8";
+/* ===== إخفاء Vue لحين التحميل (منع فلاش الكود الخام) ===== */
+[v-cloak] { display: none !important; }
+
 /* ===== أنماط مشتركة - بنيان ===== */
 :root {
   --primary-dark: #0b1a2e;
