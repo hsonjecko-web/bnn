@@ -997,16 +997,6 @@
 
                     // Store pending data for OTP verification
                     pendingPhone.value = regPhone.value.trim();
-                    var companyProfile = null;
-                    if (type === 'company') {
-                        companyProfile = {
-                            name: regCompanyName.value.trim(), about: '', specs: [], location: regGovernorate.value,
-                            phone: regPhone.value.trim(), email: '', logo: 'images/img3.jpg', cover: 'images/img16.jpg',
-                            workImages: ['images/img1.jpg','images/img2.jpg','images/img3.jpg'],
-                            years: 1, workers: 0, engineers: 0, done: 0,
-                            projects: [], ads: [], quotes: [], status: 'قيد المراجعة'
-                        };
-                    }
                     pendingRegData.value = {
                         type: type,
                         uid: uid,
@@ -1014,8 +1004,7 @@
                         name: type === 'company' ? regCompanyName.value.trim() : regFullName.value.trim(),
                         phone: regPhone.value.trim(),
                         governorate: regGovernorate.value,
-                        address: regAddress.value.trim(),
-                        companyProfile: companyProfile
+                        address: regAddress.value.trim()
                     };
 
                     // Show OTP verification
@@ -1043,11 +1032,6 @@
                     if (pd.type === 'company' && pd.ownerName) userData.ownerName = pd.ownerName;
                     localStorage.setItem('bunean-user-data', JSON.stringify(userData));
                     localStorage.setItem('bunean-user-auth', pd.uid);
-
-                    if (pd.type === 'company' && pd.companyProfile) {
-                        localStorage.setItem('bunean-company-profile', JSON.stringify(pd.companyProfile));
-                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: pd.companyProfile.name, status: pd.companyProfile.status }));
-                    }
 
                     window.location.href = 'home.html';
                 };

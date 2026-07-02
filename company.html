@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b1a2e">
-    <title>بنيان - مقاولون العرب</title>
+    <title>بنيان - ملف الشركة</title>
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -53,9 +53,9 @@
                 </div>
 
                 <!-- وصف مختصر -->
-                <div style="padding:0 16px 16px;">
-                    <p style="font-size:13px;color:var(--text-light);line-height:1.7;text-align:center;">{{ company.about.slice(0, 120) }}...</p>
-                </div>
+                    <div style="padding:0 16px 16px;">
+                        <p style="font-size:13px;color:var(--text-light);line-height:1.7;text-align:center;">{{ aboutPreview }}</p>
+                    </div>
 
                 <!-- الإحصائيات: صفين × 4 -->
                 <div style="padding:0 16px 16px;">
@@ -108,7 +108,7 @@
                     <div v-if="activeTab === 0">
                         <div class="order-info-card">
                             <p style="font-size:14px;color:var(--text-light);line-height:1.8;margin-bottom:16px;">
-                                {{ company.about }}
+                                {{ company.about || 'لا توجد نبذة متاحة' }}
                             </p>
                             <h3 style="font-size:15px;font-weight:700;color:var(--text-white);margin-bottom:12px;">معلومات التواصل</h3>
                             <div class="order-info-row">
@@ -220,28 +220,59 @@
             ]
         };
 
-        let profileData;
+        var params = new URLSearchParams(window.location.search);
+        var urlCompanyId = params.get('id') ? decodeURIComponent(params.get('id')) : null;
+
+        // Try to load the matching company profile
+        var profileData;
         try {
-            const stored = localStorage.getItem('bunean-company-profile');
+            var stored = localStorage.getItem('bunean-company-profile');
             if (stored) {
-                const parsed = JSON.parse(stored);
-                profileData = Object.assign({}, defaultProfile, parsed);
+                var parsed = JSON.parse(stored);
+                // If URL has an id, check if it matches the stored profile name
+                if (urlCompanyId && parsed.name !== urlCompanyId) {
+                    // Different company - use default with custom name
+                    profileData = Object.assign({}, defaultProfile, { name: urlCompanyId });
+                } else {
+                    profileData = Object.assign({}, defaultProfile, parsed);
+                }
+            } else if (urlCompanyId) {
+                profileData = Object.assign({}, defaultProfile, { name: urlCompanyId });
             } else {
                 profileData = defaultProfile;
             }
         } catch (e) {
-            profileData = defaultProfile;
+            profileData = urlCompanyId ? Object.assign({}, defaultProfile, { name: urlCompanyId }) : defaultProfile;
+        }
+
+        // Fix project field mapping (stored uses title/date, display uses name/year)
+        if (profileData.projects) {
+            profileData.projects = profileData.projects.map(function(p) {
+                return {
+                    name: p.title || p.name || 'مشروع',
+                    desc: p.desc || '',
+                    image: p.image || (p.images && p.images[0]) || 'images/img1.jpg',
+                    year: p.date ? p.date.split('-')[0] : (p.year || '2025'),
+                    category: p.category || ''
+                };
+            });
         }
 
         createApp({
             setup() {
                 initTheme();
-                const activeTab = ref(0);
+                var activeTab = ref(0);
                 watch(activeTab, function() { nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
-                const tabs = ref(['نبذة عنا', 'المشاريع', 'التقييمات']);
-                const company = ref(profileData);
+                var tabs = ref(['نبذة عنا', 'المشاريع', 'التقييمات']);
+                var company = ref(profileData);
 
-                return { activeTab, tabs, company };
+                // About preview (120 chars) and full
+                var aboutPreview = computed(function() {
+                    var a = company.value.about || '';
+                    return a.length > 120 ? a.slice(0, 120) + '...' : a;
+                });
+
+                return { activeTab, tabs, company, aboutPreview };
             }
         }).mount('#app');
     </script>

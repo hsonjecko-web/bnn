@@ -33,6 +33,30 @@
         .status-badge { display:inline-block; padding:3px 12px; border-radius:50px; font-size:11px; font-weight:600; }
         .img-preview { width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--bg-input); display:flex; align-items:center; justify-content:center; border:1px solid var(--border-light); }
         .img-preview img { width:100%; height:100%; object-fit:cover; }
+        .company-register-fab {
+            position: fixed;
+            bottom: calc(80px + env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--accent-gold);
+            border: none;
+            border-radius: 50px;
+            color: var(--primary-dark);
+            font-size: 15px;
+            font-weight: 800;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(201,162,67,0.4);
+            z-index: 50;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .company-register-fab:active { transform: translateX(-50%) scale(0.96); }
+        html.light-mode .company-register-fab { background: #3b82f6; color: #fff; box-shadow: 0 4px 20px rgba(59,130,246,0.4); }
         .mkt-detail-row { display:flex; align-items:center; justify-content:space-between; padding:6px 0; }
         .mkt-detail-label { color:var(--text-muted); font-size:12px; }
         .mkt-detail-value { color:var(--text-white); font-size:13px; word-break:break-word; line-height:1.6; }
@@ -536,13 +560,13 @@
                         </div>
                     </template>
 
-                    <!-- ===== تعديل ملف الشركة ===== -->
+                    <!-- ===== تعديل ملف الشركة / سجل شركتك ===== -->
                     <template v-if="activeUserSection === 'edit-company-profile'">
                         <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
                             <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
                                 <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
                             </button>
-                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">تعديل ملف الشركة</h2>
+                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">{{ hasCompanyProfile ? 'تعديل ملف الشركة' : 'سجل شركتك' }}</h2>
                         </div>
                         <div style="padding:8px 16px 20px;">
                             <div class="section-card">
@@ -584,16 +608,35 @@
                                             <input type="file" accept="image/*" ref="coverInput" style="display:none" @change="handleUpload($event,'cover')">
                                         </div>
                                     </div>
+                                    <div class="mkt-form-group">
+                                        <label>معرض صور الأعمال ({{ editProfile.workImages.length }}/5)</label>
+                                        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                                            <div v-for="(img, idx) in editProfile.workImages" :key="idx" style="width:64px;height:64px;border-radius:8px;overflow:hidden;position:relative;background:var(--bg-input);border:1px solid var(--border-light);">
+                                                <img :src="img" style="width:100%;height:100%;object-fit:cover;">
+                                                <div style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(231,76,60,0.9);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;" @click="removeWorkImage(idx)">×</div>
+                                            </div>
+                                        </div>
+                                        <button v-if="editProfile.workImages.length < 5" type="button" class="form-input" style="padding:10px;cursor:pointer;text-align:center;border:1px dashed var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:12px;font-family:Cairo,sans-serif;" @click="triggerUpload('work')">
+                                            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">add_photo_alternate</span> إضافة صور أعمال
+                                        </button>
+                                        <input type="file" accept="image/*" multiple ref="workInput" style="display:none" @change="handleWorkImages($event)">
+                                    </div>
                                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                                         <div class="mkt-form-group"><label>سنوات الخبرة</label><input class="form-input" type="number" v-model="editProfile.years"></div>
                                         <div class="mkt-form-group"><label>المشاريع المنفذة</label><input class="form-input" type="number" v-model="editProfile.done"></div>
                                         <div class="mkt-form-group"><label>عدد العمال</label><input class="form-input" type="number" v-model="editProfile.workers"></div>
                                         <div class="mkt-form-group"><label>عدد المهندسين</label><input class="form-input" type="number" v-model="editProfile.engineers"></div>
                                     </div>
-                                    <button class="mkt-confirm-btn" @click="saveProfileEdit">حفظ التعديلات</button>
+                                    <button class="mkt-confirm-btn" @click="saveProfileEdit">{{ hasCompanyProfile ? 'حفظ التعديلات' : 'تسجيل الشركة' }}</button>
                                 </div>
                                 <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
-                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الحفظ سيتم مراجعة الطلب من قبل الدعم الفني
+                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد {{ hasCompanyProfile ? 'الحفظ' : 'التسجيل' }} سيتم مراجعة الطلب من قبل الدعم الفني
+                                </div>
+                                <!-- Delete company profile -->
+                                <div v-if="hasCompanyProfile" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-light);">
+                                    <button @click="deleteCompanyProfile" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(231,76,60,0.3);background:transparent;color:#e74c3c;font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;">
+                                        <span class="material-symbols-outlined" style="font-size:18px;">delete_forever</span> حذف ملف الشركة
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -603,6 +646,12 @@
             </div>
 
             <div id="bottomNav"></div>
+
+            <!-- Floating "سجل شركتك" button -->
+            <div v-if="isCompany && !hasCompanyProfile && !activeUserSection" class="company-register-fab" @click="activeUserSection = 'edit-company-profile'">
+                <span class="material-symbols-outlined">add_business</span>
+                <span>سجل شركتك</span>
+            </div>
         </div>
     </div>
 
@@ -625,6 +674,10 @@
                 var myAuth = loadFromStorage('bunean-user-auth', null);
                 var myData = loadFromStorage('bunean-user-data', null);
                 var isCompany = ref(myData && myData.role === 'company');
+                var companyProfileExists = ref(!!localStorage.getItem('bunean-company-profile'));
+                var hasCompanyProfile = computed(function() {
+                    return isCompany.value && companyProfileExists.value;
+                });
 
                 var user = ref(myData ? {
                     name: myData.name,
@@ -650,7 +703,7 @@
 
                 var menuItems = computed(function() {
                     if (isCompany.value) {
-                        return [
+                        var items = [
                             { label: 'طلباتي', link: 'order-tracking.html',
                                 icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
                             { label: 'عروضي المقدمة', section: 'my-quotes',
@@ -659,17 +712,22 @@
                                 icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
                             { label: 'إعلاناتي', section: 'company-ads',
                                 icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
-                            { label: 'إضافة مشروع', section: 'add-project',
-                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
                             { label: 'الدعم الفني', section: 'support',
-                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
-                            { label: 'تعديل ملف الشركة', section: 'edit-company-profile',
-                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' },
+                                icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' }
+                        ];
+                        if (hasCompanyProfile.value) {
+                            items.push(
+                                { label: 'تعديل ملف الشركة', section: 'edit-company-profile',
+                                    icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' }
+                            );
+                        }
+                        items.push(
                             { label: 'الملف الشخصي', link: 'profile.html',
                                 icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
                             { label: 'الإشعارات', link: 'notifications.html',
                                 icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a243" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>' }
-                        ];
+                        );
+                        return items;
                     }
                     return [
                         { label: 'طلباتي', link: 'order-tracking.html',
@@ -720,23 +778,26 @@
                         ]));
                     }
                     var compProfile = loadFromStorage('bunean-company-profile', {});
-                    var changed = false;
-                    if (!compProfile.ads || compProfile.ads.length === 0) {
-                        compProfile.ads = [
-                            { title: 'تشطيبات فاخرة بأسعار منافسة', desc: 'نقدم أفضل خدمات التشطيب بكفاءة عالية', image: 'images/img2.jpg', status: 'قيد المراجعة' },
-                            { title: 'بناء فلل وقصور', desc: 'خبرة 15 عاماً في بناء الفلل', image: 'images/img1.jpg', status: 'قيد المراجعة' }
-                        ];
-                        changed = true;
+                    // Only seed ads/projects if the company profile was intentionally created (has a name)
+                    if (compProfile.name) {
+                        var changed = false;
+                        if (!compProfile.ads || compProfile.ads.length === 0) {
+                            compProfile.ads = [
+                                { title: 'تشطيبات فاخرة بأسعار منافسة', desc: 'نقدم أفضل خدمات التشطيب بكفاءة عالية', image: 'images/img2.jpg', status: 'قيد المراجعة' },
+                                { title: 'بناء فلل وقصور', desc: 'خبرة 15 عاماً في بناء الفلل', image: 'images/img1.jpg', status: 'قيد المراجعة' }
+                            ];
+                            changed = true;
+                        }
+                        if (!compProfile.projects || compProfile.projects.length === 0) {
+                            compProfile.projects = [
+                                { title: 'مجمع السكني النموذجي', desc: 'بناء مجمع سكني متكامل من 50 وحدة', category: 'بناء سكني', image: 'images/img3.jpg', date: '2026-05-15', status: 'مكتمل' },
+                                { title: 'مول بغداد الجديد', desc: 'تشطيب واجهات وأعمال داخلية', category: 'بناء تجاري', image: 'images/img4.jpg', date: '2026-03-20', status: 'مكتمل' },
+                                { title: 'جسر الزوار', desc: 'أعمال خرسانية وإنشائية', category: 'جسور وطرق', image: 'images/img5.jpg', date: '2026-01-10', status: 'قيد المراجعة' }
+                            ];
+                            changed = true;
+                        }
+                        if (changed) localStorage.setItem('bunean-company-profile', JSON.stringify(compProfile));
                     }
-                    if (!compProfile.projects || compProfile.projects.length === 0) {
-                        compProfile.projects = [
-                            { title: 'مجمع السكني النموذجي', desc: 'بناء مجمع سكني متكامل من 50 وحدة', category: 'بناء سكني', image: 'images/img3.jpg', date: '2026-05-15', status: 'مكتمل' },
-                            { title: 'مول بغداد الجديد', desc: 'تشطيب واجهات وأعمال داخلية', category: 'بناء تجاري', image: 'images/img4.jpg', date: '2026-03-20', status: 'مكتمل' },
-                            { title: 'جسر الزوار', desc: 'أعمال خرسانية وإنشائية', category: 'جسور وطرق', image: 'images/img5.jpg', date: '2026-01-10', status: 'قيد المراجعة' }
-                        ];
-                        changed = true;
-                    }
-                    if (changed) localStorage.setItem('bunean-company-profile', JSON.stringify(compProfile));
                 })();
 
                 // Quote requests
@@ -825,11 +886,13 @@
                 // Image upload helpers
                 var logoInput = ref(null);
                 var coverInput = ref(null);
+                var workInput = ref(null);
                 var projectInput = ref(null);
 
                 function triggerUpload(type) {
                     if (type === 'logo' && logoInput.value) logoInput.value.click();
                     else if (type === 'cover' && coverInput.value) coverInput.value.click();
+                    else if (type === 'work' && workInput.value) workInput.value.click();
                     else if (type === 'project' && projectInput.value) projectInput.value.click();
                 }
 
@@ -843,6 +906,25 @@
                     };
                     reader.readAsDataURL(file);
                     e.target.value = '';
+                }
+
+                function handleWorkImages(e) {
+                    var files = Array.from(e.target.files || []);
+                    var remaining = 5 - editProfile.value.workImages.length;
+                    if (files.length > remaining) files = files.slice(0, remaining);
+                    files.forEach(function(file) {
+                        if (!file) return;
+                        var reader = new FileReader();
+                        reader.onload = function(ev) {
+                            editProfile.value.workImages.push(ev.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                    e.target.value = '';
+                }
+
+                function removeWorkImage(idx) {
+                    editProfile.value.workImages.splice(idx, 1);
                 }
 
                 function handleProjectImages(e) {
@@ -973,6 +1055,7 @@
                     location: profile.value.location || '',
                     logo: profile.value.logo || 'images/img3.jpg',
                     cover: profile.value.cover || 'images/img16.jpg',
+                    workImages: (profile.value.workImages || []).slice(),
                     years: profile.value.years || '',
                     done: profile.value.done || '',
                     workers: profile.value.workers || '',
@@ -983,20 +1066,43 @@
                 function removeSpec(idx) { editProfile.value.specs.splice(idx, 1); }
 
                 var saveProfileEdit = function() {
+                    var isNew = !hasCompanyProfile.value;
                     var p = loadFromStorage('bunean-company-profile', {});
+                    var wasEmpty = Object.keys(p).length === 0;
                     p.name = editProfile.value.name;
                     p.about = editProfile.value.about;
                     p.specs = editProfile.value.specs.filter(function(s) { return s.trim(); });
                     p.location = editProfile.value.location;
                     p.logo = editProfile.value.logo || 'images/img3.jpg';
                     p.cover = editProfile.value.cover || 'images/img16.jpg';
+                    p.workImages = editProfile.value.workImages.slice();
                     p.years = parseInt(editProfile.value.years) || 0;
                     p.done = parseInt(editProfile.value.done) || 0;
                     p.workers = parseInt(editProfile.value.workers) || 0;
                     p.engineers = parseInt(editProfile.value.engineers) || 0;
                     p.status = 'قيد المراجعة';
+                    if (!p.projects) p.projects = [];
+                    if (!p.ads) p.ads = [];
                     localStorage.setItem('bunean-company-profile', JSON.stringify(p));
-                    showBrandAlert('✅ تم حفظ التعديلات\nسيتم مراجعة الطلب من قبل الدعم الفني');
+                    if (isNew || wasEmpty) {
+                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: p.name, status: p.status }));
+                    }
+                    companyProfileExists.value = true;
+                    showBrandAlert('✅ ' + (isNew ? 'تم تسجيل الشركة بنجاح' : 'تم حفظ التعديلات') + '\nسيتم مراجعة الطلب من قبل الدعم الفني');
+                    if (isNew) {
+                        activeUserSection.value = '';
+                    }
+                };
+
+                var deleteCompanyProfile = function() {
+                    showBrandConfirm('هل أنت متأكد من حذف ملف الشركة؟\nسيتم حذف جميع البيانات (المشاريع، الإعلانات، إلخ)', function() {
+                        localStorage.removeItem('bunean-company-profile');
+                        localStorage.removeItem('bunean-company-auth');
+                        companyProfileExists.value = false;
+                        editProfile.value = { name: '', about: '', specs: [], location: '', logo: 'images/img3.jpg', cover: 'images/img16.jpg', workImages: [], years: '', done: '', workers: '', engineers: '' };
+                        activeUserSection.value = '';
+                        showBrandAlert('✅ تم حذف ملف الشركة');
+                    });
                 };
 
                 var handleLogout = function() {
@@ -1086,7 +1192,7 @@
                 })();
 
                 return {
-                    user, menuItems, isCompany, isLightMode, themeIcon, handleToggleTheme,
+                    user, menuItems, isCompany, hasCompanyProfile, companyProfileExists, isLightMode, themeIcon, handleToggleTheme,
                     companyStatus,
                     quoteRequests, activeRequest, replyText, sendReply,
                     myQuotes, getStatusStyle,
@@ -1094,15 +1200,15 @@
                     myAds, showAdForm, newAd, submitAd,
                     myProjects, newProject, submitProject, categories,
                     projectTab,
-                    logoInput, coverInput, projectInput,
-                    triggerUpload, handleUpload, handleProjectImages, removeProjectImage,
+                    logoInput, coverInput, workInput, projectInput,
+                    triggerUpload, handleUpload, handleWorkImages, removeWorkImage, handleProjectImages, removeProjectImage,
                     previewData, previewImages, viewerImg,
                     previewProject,
                     editProjectData, editProjectInput,
                     editProject, closeEditProject, saveEditProject,
                     deleteProject,
                     handleEditProjectImages, removeEditImage,
-                    editProfile, addSpec, removeSpec, saveProfileEdit, handleLogout,
+                    editProfile, addSpec, removeSpec, saveProfileEdit, deleteCompanyProfile, handleLogout,
                     activeUserSection, userOffers, selectedOffer, viewOfferDetail, acceptOffer,
                     supportMessage, submitSupport
                 };
