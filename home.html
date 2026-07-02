@@ -310,8 +310,9 @@
                 const viewerIndex = ref(0);
                 const modalPullY = ref(0);
                 const modalClosing = ref(false);
-                const showAllWorks = ref(false);
+                const showAllWorks = ref(localStorage.getItem('bunean_showAllWorks') === 'true');
                 watch(showAllWorks, function(v) {
+                    localStorage.setItem('bunean_showAllWorks', v);
                     if (v) {
                         nextTick(function() {
                             var el = document.querySelector('.all-works-view');
