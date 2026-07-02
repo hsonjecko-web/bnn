@@ -199,12 +199,13 @@ function initFloatingCart() {
         indicator = document.createElement('div');
         indicator.id = 'ptr-indicator';
         indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none;';
-        indicator.innerHTML = '<div class="ptr-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0.35);opacity:0;transition:opacity 1.2s ease;"></div>'
-            + '<div class="ptr-inner" style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;transform:scale(0.3);transition:transform 1.5s cubic-bezier(0.34,1.56,0.64,1),opacity 1.2s;">'
+        indicator.innerHTML = '<div class="ptr-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0.45);opacity:0;transition:opacity 1.2s ease;"></div>'
+            + '<div class="ptr-inner" style="position:relative;z-index:1;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0.3);transition:transform 1.5s cubic-bezier(0.34,1.56,0.64,1),opacity 1.2s;">'
             + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:64px;height:64px;">'
-            + '<div style="width:80px;height:4px;background:rgba(201,162,67,0.12);border-radius:4px;overflow:hidden;" class="ptr-track">'
-            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:4px;"></div>'
-            + '</div></div>';
+            + '<svg class="ptr-ring" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);" width="100" height="100" viewBox="0 0 100 100">'
+            + '<circle cx="50" cy="50" r="44" fill="none" stroke="rgba(201,162,67,0.12)" stroke-width="4"/>'
+            + '<circle class="ptr-ring-bar" cx="50" cy="50" r="44" fill="none" stroke="var(--accent-gold,#c9a243)" stroke-width="4" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="276.46"/>'
+            + '</svg></div>';
         document.body.appendChild(indicator);
         innerEl = indicator.querySelector('.ptr-inner');
     }
@@ -223,9 +224,9 @@ function initFloatingCart() {
         var pct = Math.min((dist - 50) / 100, 1);
         innerEl.style.opacity = '' + Math.min(pct * 1.5, 1);
         innerEl.style.transform = 'scale(' + (0.3 + pct * 0.7) + ')';
-        if (backdrop) backdrop.style.opacity = '' + Math.min(pct * 1.2, 0.45);
-        var bar = indicator.querySelector('.ptr-bar');
-        if (bar) bar.style.width = (pct * 100) + '%';
+        if (backdrop) backdrop.style.opacity = '' + Math.min(pct * 1.2, 0.55);
+        var ring = indicator.querySelector('.ptr-ring-bar');
+        if (ring) ring.style.strokeDashoffset = '' + (276.46 * (1 - pct));
     }
 
     function hideIndicator() {
@@ -250,17 +251,18 @@ function initFloatingCart() {
         var backdrop = indicator.querySelector('.ptr-backdrop');
         if (backdrop) {
             backdrop.style.transition = 'none';
-            backdrop.style.opacity = '0.45';
+            backdrop.style.opacity = '0.55';
         }
-        var bar = indicator.querySelector('.ptr-bar');
-        // Reset bar to 0 then animate to 100
-        if (bar) {
-            bar.style.width = '0%';
-            void bar.offsetWidth;
-            bar.style.transition = 'width 1.5s cubic-bezier(0.34,1.56,0.64,1)';
-            bar.style.width = '100%';
+        var ring = indicator.querySelector('.ptr-ring-bar');
+        // Reset ring to empty then animate to full
+        if (ring) {
+            ring.style.transition = 'none';
+            ring.style.strokeDashoffset = '276.46';
+            void ring.offsetWidth;
+            ring.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(0.34,1.56,0.64,1)';
+            ring.style.strokeDashoffset = '0';
         }
-        // After bar completes, quick fade then reload
+        // After ring completes, quick fade then reload
         setTimeout(function() {
             if (indicator) {
                 var els = indicator.querySelectorAll('.ptr-inner, .ptr-backdrop');
