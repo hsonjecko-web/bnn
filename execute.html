@@ -32,10 +32,28 @@
         <div class="app-container">
             <div id="header"></div>
 
+            <!-- Exec-headers outside page-content, flush with header -->
+            <div v-if="activeCategory && !selectedCompany" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="activeCategory = null">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>{{ activeCategory.name }}</h2>
+                </div>
+            </div>
+            <div v-if="selectedCompany" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="selectedCompany = null">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>{{ selectedCompany.name }}</h2>
+                </div>
+            </div>
+
             <div class="page-content" style="padding-top:0;">
 
                 <!-- Hero Slider -->
-                <div v-if="!activeCategory && !selectedCompany" class="exec-slider" style="margin-top:16px;"
+                <div v-if="!activeCategory && !selectedCompany" class="exec-slider"
                      @touchstart.passive="execSwipe.onTouchStart"
                      @touchend="execSwipe.onTouchEnd">
                     <div class="exec-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (execSlide * 100) + '%)' }">
@@ -66,14 +84,6 @@
 
                 <!-- Companies Grid -->
                 <div v-if="activeCategory && !selectedCompany" class="exec-companies">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="activeCategory = null">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>{{ activeCategory.name }}</h2>
-                        </div>
-                    </div>
                     <div class="exec-company-grid">
                         <div v-for="(comp, i) in activeCategory.companies" :key="i" class="exec-company-card" @click="selectCompany(comp)">
                             <div class="exec-company-logo">
@@ -100,9 +110,6 @@
                 <div v-if="selectedCompany" class="exec-profile">
                     <!-- Cover Image with Overlay -->
                     <div class="exec-cover">
-                        <button class="exec-cover-back" @click="selectedCompany = null">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
                         <div class="exec-cover-img">
                             <img :src="selectedCompany.logo" alt="">
                         </div>

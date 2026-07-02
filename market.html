@@ -32,11 +32,83 @@
         <div class="app-container">
             <div id="header"></div>
 
-            <div class="page-content" style="padding-top:0;">
+            <!-- Exec-headers outside page-content, flush with header -->
+            <div v-if="showAllView && !cartView && !calculatorView && !checkoutView" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="showAllView = false">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>المنتجات الأكثر طلباً</h2>
+                    <p>{{ allTopProducts.length }} منتج</p>
+                </div>
+            </div>
+            <div v-if="showAllSuppliers" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="showAllSuppliers = false">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>جميع الموردين</h2>
+                    <p>{{ suppliers.length }} مورد</p>
+                </div>
+            </div>
+            <div v-if="showAllOffers && !cartView && !calculatorView && !checkoutView" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="showAllOffers = false">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>جميع العروض</h2>
+                    <p>{{ offers.length }} عرض</p>
+                </div>
+            </div>
+            <div v-if="activeCatView && !cartView && !calculatorView && !checkoutView" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="activeCatView = null">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>{{ categories[activeCatView].name }}</h2>
+                    <p>{{ catProducts.length }} منتج</p>
+                </div>
+            </div>
+            <div v-if="calculatorView && !checkoutView" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="calculatorView = false">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>حاسبة مواد البناء</h2>
+                    <p>أدخل أبعاد مشروعك</p>
+                </div>
+            </div>
+            <div v-if="cartView && !checkoutView" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="cartView = false">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>سلة المشتريات</h2>
+                    <p>{{ cart.length }} منتج</p>
+                </div>
+            </div>
+            <div v-if="checkoutView" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="checkoutView = false">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>تأكيد الطلب</h2>
+                </div>
+            </div>
+            <div v-if="productDetailView" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="closeProductDetail">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>تفاصيل المنتج</h2>
+                </div>
+            </div>
+
+            <div class="page-content">
                 <div v-if="!productDetailView">
 
                 <!-- ===== أقسام دائرية ===== -->
-                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers" class="mkt-cats-scroll" style="margin-top:16px;">
+                <div v-if="!activeCatView && !cartView && !calculatorView && !checkoutView && !showAllView && !showAllOffers && !showAllSuppliers" class="mkt-cats-scroll">
                     <div v-for="(cat, i) in categories" :key="i" class="mkt-cat" @click="selectCat(i)">
                         <div class="mkt-cat-circle">
                             <span class="material-symbols-outlined">{{ cat.icon }}</span>
@@ -119,15 +191,6 @@
 
                 <!-- ===== صفحة عرض كل المنتجات ===== -->
                 <div v-if="showAllView && !cartView && !calculatorView && !checkoutView" class="mkt-cat-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="showAllView = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>المنتجات الأكثر طلباً</h2>
-                             <p>{{ allTopProducts.length }} منتج</p>
-                        </div>
-                    </div>
                     <div class="mkt-cat-products-grid">
                         <div v-for="(p, i) in allTopProducts" :key="i" class="mkt-grid-prod" @click="openProduct(p)">
                              <div class="mkt-grid-prod-img">
@@ -173,15 +236,6 @@
 
                 <!-- ===== صفحة عرض كل الموردين ===== -->
                 <div v-if="showAllSuppliers" class="mkt-cat-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="showAllSuppliers = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>جميع الموردين</h2>
-                            <p>{{ suppliers.length }} مورد</p>
-                        </div>
-                    </div>
                     <div class="mkt-suppliers-all" style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                         <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card-all" @click="openSupplier(s)">
                             <div class="mkt-supplier-logo">
@@ -233,15 +287,6 @@
 
                 <!-- ===== صفحة عرض كل العروض ===== -->
                 <div v-if="showAllOffers && !cartView && !calculatorView && !checkoutView" class="mkt-cat-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="showAllOffers = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>جميع العروض</h2>
-                            <p>{{ offers.length }} عرض</p>
-                        </div>
-                    </div>
                     <div class="mkt-cat-products-grid">
                         <div v-for="(o, i) in offers" :key="i" class="mkt-grid-prod" @click="openProduct(o)">
                             <div class="mkt-grid-prod-img">
@@ -265,15 +310,6 @@
 
                 <!-- ===== عرض منتجات القسم ===== -->
                 <div v-if="activeCatView && !cartView && !calculatorView && !checkoutView" class="mkt-cat-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="activeCatView = null">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>{{ categories[activeCatView].name }}</h2>
-                            <p>{{ catProducts.length }} منتج</p>
-                        </div>
-                    </div>
 
                     <!-- أفقية -->
                     <div class="mkt-cat-products-scroll">
@@ -317,15 +353,6 @@
 
                 <!-- ===== صفحة الحاسبة ===== -->
                 <div v-if="calculatorView && !checkoutView" class="mkt-calc-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="calculatorView = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>حاسبة مواد البناء</h2>
-                            <p>أدخل أبعاد مشروعك</p>
-                        </div>
-                    </div>
 
                     <!-- إدخال الأبعاد -->
                     <div class="mkt-calc-inputs-card">
@@ -436,15 +463,6 @@
 
                 <!-- ===== صفحة السلة ===== -->
                 <div v-if="cartView && !checkoutView" class="mkt-cart-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="cartView = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>سلة المشتريات</h2>
-                            <p>{{ cart.length }} منتج</p>
-                        </div>
-                    </div>
 
                     <div v-if="cart.length === 0" class="mkt-cart-empty">
                         <span class="material-symbols-outlined" style="font-size:64px;color:var(--text-muted);">shopping_cart</span>
@@ -504,14 +522,6 @@
 
                 <!-- ===== صفحة تأكيد الطلب ===== -->
                 <div v-if="checkoutView" class="mkt-checkout-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="checkoutView = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>تأكيد الطلب</h2>
-                        </div>
-                    </div>
 
                     <div class="mkt-checkout-form">
                         <div class="mkt-form-row">
@@ -569,14 +579,6 @@
 
                 <!-- ===== صفحة تفاصيل المنتج ===== -->
                 <div v-if="productDetailView" class="prod-detail-page">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="closeProductDetail">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>تفاصيل المنتج</h2>
-                        </div>
-                    </div>
 
                     <!-- ===== الهيرو: معلومات (يمين) + صور (يسار) ===== -->
                     <div class="prod-hero">

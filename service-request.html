@@ -31,11 +31,23 @@
         <div class="app-container">
             <div id="header"></div>
 
+            <div class="exec-header" style="flex-shrink:0;">
+                <a href="javascript:history.back()" class="exec-back">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+                <div>
+                    <h2>طلب خدمة</h2>
+                </div>
+            </div>
+
             <div class="page-content" style="padding-left:16px;padding-right:16px;">
                 <!-- Banner -->
                 <div style="background:linear-gradient(135deg,rgba(201,162,67,0.15),rgba(201,162,67,0.05));border:1px solid rgba(201,162,67,0.2);border-radius:14px;padding:16px;margin-bottom:16px;text-align:center;">
                     <span class="material-symbols-outlined" style="font-size:32px;color:var(--accent-gold);display:block;margin-bottom:8px;">handyman</span>
-                    <h3 style="color:var(--text-white);font-size:15px;font-weight:700;margin:0 0 4px;">أخبرنا عن مشروعك</h3>
+                    <h3 style="color:var(--text-white);font-size:15px;font-weight:700;margin:0 0 4px;">
+                        <template v-if="company">طلب خدمة من {{ company }}</template>
+                        <template v-else>أخبرنا عن مشروعك</template>
+                    </h3>
                     <p style="color:var(--text-muted);font-size:12px;margin:0;">وسنتصل بك خلال 24 ساعة</p>
                 </div>
 
@@ -109,7 +121,7 @@
     <script src="js/nav.js"></script>
     <script>
         initTheme();
-        document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
+        document.getElementById('header').innerHTML = renderHeader({});
         document.getElementById('bottomNav').innerHTML = renderNav('execute');
 
         const { createApp, ref, computed } = Vue;
@@ -118,6 +130,8 @@
             setup() {
                 initTheme();
                 const isSubmitting = ref(false);
+                var params = new URLSearchParams(window.location.search);
+                var company = ref(params.get('company') ? decodeURIComponent(params.get('company')) : null);
 
                 const form = ref({
                     serviceType: '',
@@ -167,12 +181,13 @@
                     isSubmitting.value = true;
                     setTimeout(() => {
                         isSubmitting.value = false;
-                        showBrandAlert('تم إرسال طلب الخدمة بنجاح!');
+                        var msg = company.value ? 'تم إرسال طلب الخدمة إلى ' + company.value + ' بنجاح!' : 'تم إرسال طلب الخدمة بنجاح!';
+                        showBrandAlert(msg);
                         form.value = { serviceType: '', gov: '', address: '', area: '', budget: '', desc: '', images: [] };
                     }, 1500);
                 };
 
-                return { form, serviceTypes, governorates, isFormValid, isSubmitting, addImage, submitRequest };
+                return { form, serviceTypes, governorates, isFormValid, isSubmitting, addImage, submitRequest, company };
             }
         }).mount('#app');
 

@@ -170,7 +170,7 @@
 
                 <!-- أزرار الإجراءات -->
                 <div style="padding:16px;display:flex;gap:12px;padding-bottom:30px;">
-                    <a href="service-request.html" class="btn-primary" style="text-decoration:none;flex:1;text-align:center;">طلب خدمة</a>
+                    <a :href="'service-request.html?company=' + encodeURIComponent(company.name)" class="btn-primary" style="text-decoration:none;flex:1;text-align:center;">طلب خدمة</a>
                     <a href="quotes.html" class="btn-outline" style="text-decoration:none;flex:1;text-align:center;color:var(--accent-gold);">عرض الأسعار</a>
                 </div>
             </div>

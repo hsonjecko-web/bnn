@@ -32,6 +32,16 @@
         <div class="app-container">
             <div id="header"></div>
 
+            <div v-if="showAllWorks" class="exec-header" style="flex-shrink:0;">
+                <button class="exec-back" @click="showAllWorks = false">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <div>
+                    <h2>جميع الأعمال</h2>
+                    <p>{{ latestWorks.length }} مشروع</p>
+                </div>
+            </div>
+
             <div class="page-content">
                 <div v-if="!showAllWorks">
                 <!-- Hero Slider -->
@@ -115,16 +125,7 @@
                 <div style="height: 20px;"></div>
                 </div>
 
-                <div v-else class="all-works-view">
-                    <div class="exec-header">
-                        <button class="exec-back" @click="showAllWorks = false">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                        <div>
-                            <h2>جميع الأعمال</h2>
-                            <p>{{ latestWorks.length }} مشروع</p>
-                        </div>
-                    </div>
+                <div v-if="showAllWorks" class="all-works-view">
                     <div class="works-grid">
                         <div v-for="(work, i) in latestWorks" :key="i"
                              class="work-card" @click="openProject(work)">
@@ -176,18 +177,87 @@
                     </div>
                     <div class="modal-details">
                         <h2>{{ selectedProject.title }}</h2>
-                        <div class="modal-company">
+                        <div class="modal-company" style="margin-bottom:10px;">
                             <span class="material-symbols-outlined">business</span>
-                            <a :href="'execute.html?company=' + encodeURIComponent(selectedProject.company)" class="modal-company-link">
-                                <span>{{ selectedProject.company }}</span>
-                                <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
-                            </a>
+                            <span>{{ selectedProject.company }}</span>
                         </div>
                         <p class="modal-desc">{{ selectedProject.details }}</p>
                         <div v-if="selectedProject.meta" class="modal-meta">
                             <div v-for="(item, i) in selectedProject.meta" :key="i" class="modal-meta-item">
                                 <span class="material-symbols-outlined">{{ item.icon }}</span>
                                 <span>{{ item.label }}: {{ item.value }}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;margin-top:16px;">
+                            <button class="btn-primary" style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:10px 0;" @click="showProjectDetail(selectedProject)">
+                                <span class="material-symbols-outlined" style="font-size:18px;">description</span>
+                                تفاصيل
+                            </button>
+                            <a :href="selectedProject.companyLink || ('execute.html?company=' + encodeURIComponent(selectedProject.company))" class="btn-outline" style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:10px 0;text-decoration:none;color:var(--accent-gold);border-color:var(--accent-gold);">
+                                <span class="material-symbols-outlined" style="font-size:18px;">business</span>
+                                صفحة الشركة
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== مودال تفاصيل المشروع كاملة ===== -->
+            <div v-if="projectDetail" class="project-modal" @click.self="closeProjectDetail">
+                <div class="modal-content" style="max-height:95vh;">
+                    <div style="position:relative;">
+                        <button class="modal-close" @click="closeProjectDetail">
+                            <span class="material-symbols-outlined close-icon">close</span>
+                            <span class="material-symbols-outlined arrow-icon">arrow_back</span>
+                        </button>
+                        <div class="modal-slider">
+                            <div class="modal-slider-track" dir="ltr" :style="{ transform: `translateX(-${detailSlide * 100}%)` }">
+                                <div v-for="(img, i) in projectDetail.images" :key="i" class="modal-slide">
+                                    <div class="modal-slide-img">
+                                        <img :src="img" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="projectDetail.images.length > 1" class="modal-slider-dots">
+                                <span v-for="(img, i) in projectDetail.images" :key="i"
+                                      class="dot" :class="{ active: i === detailSlide }"
+                                      @click.stop="detailSlide = i"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-details" style="overflow-y:auto;padding-bottom:30px;">
+                        <h2>{{ projectDetail.title }}</h2>
+                        <div v-if="projectDetail.company" style="display:flex;align-items:center;gap:6px;margin:4px 0 10px;">
+                            <span class="material-symbols-outlined" style="font-size:18px;color:var(--accent-gold);">business</span>
+                            <span style="color:var(--text-light);font-size:14px;">{{ projectDetail.company }}</span>
+                        </div>
+                        <div v-if="projectDetail.cost" style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+                            <span class="material-symbols-outlined" style="font-size:18px;color:var(--accent-gold);">payments</span>
+                            <span style="color:#4caf50;font-size:16px;font-weight:700;">{{ projectDetail.cost }}</span>
+                        </div>
+                        <p class="modal-desc">{{ projectDetail.details }}</p>
+                        <div v-if="projectDetail.meta" class="modal-meta">
+                            <div v-for="(item, i) in projectDetail.meta" :key="i" class="modal-meta-item">
+                                <span class="material-symbols-outlined">{{ item.icon }}</span>
+                                <span>{{ item.label }}: {{ item.value }}</span>
+                            </div>
+                        </div>
+
+                        <!-- المواد المستخدمة -->
+                        <div v-if="projectDetail.materials" style="margin-top:20px;">
+                            <h3 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0 0 12px;">
+                                <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-left:4px;color:var(--accent-gold);">inventory_2</span>
+                                المواد المستخدمة
+                            </h3>
+                            <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;">
+                                <div v-for="(mat, i) in projectDetail.materials" :key="i" style="flex-shrink:0;width:120px;background:var(--card-bg);border-radius:12px;overflow:hidden;border:1px solid var(--border-light);">
+                                    <div style="width:120px;height:90px;overflow:hidden;">
+                                        <img :src="mat.image" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                    </div>
+                                    <div style="padding:6px 8px 10px;text-align:center;">
+                                        <span style="color:var(--text-white);font-size:12px;font-weight:600;">{{ mat.name }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -305,6 +375,8 @@
                 const currentSlide = ref(0);
                 const modalSlide = ref(0);
                 const selectedProject = ref(null);
+                const projectDetail = ref(null);
+                const detailSlide = ref(0);
                 const viewerOpen = ref(false);
                 const viewerImages = ref([]);
                 const viewerIndex = ref(0);
@@ -607,9 +679,16 @@
                             'images/img19.jpg'
                         ],
                         details: 'قصر فاخر بمساحة 1000 م² مع تصاميم داخلية مستوحاة من الطراز الأندلسي الحديث.',
+                        cost: '750,000,000 د.ع',
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'المنصور' },
                             { icon: 'straighten', label: 'المساحة', value: '1000 م²' }
+                        ],
+                        materials: [
+                            { name: 'رخام كارارا', image: 'images/img16.jpg' },
+                            { name: 'خشب زان', image: 'images/img17.jpg' },
+                            { name: 'زجاج سيكوريت', image: 'images/img18.jpg' },
+                            { name: 'سيراميك بورسلين', image: 'images/img19.jpg' }
                         ]
                     },
                     {
@@ -624,9 +703,16 @@
                             'images/img23.jpg'
                         ],
                         details: 'مستشفى بسعة 200 سرير مع أحدث التجهيزات الطبية والمعامل.',
+                        cost: '2,500,000,000 د.ع',
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'الرصافة' },
                             { icon: 'straighten', label: 'المساحة', value: '8000 م²' }
+                        ],
+                        materials: [
+                            { name: 'خرسانة مسلحة', image: 'images/img20.jpg' },
+                            { name: 'دهان مضاد للبكتيريا', image: 'images/img21.jpg' },
+                            { name: 'أرضيات إيبوكسي', image: 'images/img22.jpg' },
+                            { name: 'نوافذ ألمنيوم', image: 'images/img23.jpg' }
                         ]
                     },
                     {
@@ -641,9 +727,16 @@
                             'images/img27.jpg'
                         ],
                         details: 'برج إداري بارتفاع 20 طابقاً مع واجهة زجاجية عصرية.',
+                        cost: '5,000,000,000 د.ع',
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'شارع فلسطين' },
                             { icon: 'straighten', label: 'المساحة', value: '12000 م²' }
+                        ],
+                        materials: [
+                            { name: 'واجهة زجاجية', image: 'images/img24.jpg' },
+                            { name: 'صلب إنشائي', image: 'images/img25.jpg' },
+                            { name: 'جرانيت', image: 'images/img26.jpg' },
+                            { name: 'مصاعد أوتيس', image: 'images/img27.jpg' }
                         ]
                     },
                     {
@@ -658,9 +751,16 @@
                             'images/img31.jpg'
                         ],
                         details: 'مشروع سكني يضم 30 فيلا مستقلة بتصاميم عصرية وحدائق خاصة.',
+                        cost: '3,500,000,000 د.ع',
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'اليرموك' },
                             { icon: 'straighten', label: 'المساحة', value: '3000 م²' }
+                        ],
+                        materials: [
+                            { name: 'طوب عازل', image: 'images/img28.jpg' },
+                            { name: 'أسمنت', image: 'images/img29.jpg' },
+                            { name: 'بلاط إنترلوك', image: 'images/img30.jpg' },
+                            { name: 'دهان خارجي', image: 'images/img31.jpg' }
                         ]
                     },
                     {
@@ -675,9 +775,16 @@
                             'images/img4.jpg'
                         ],
                         details: 'مجمع تجاري متكامل يضم 50 محلاً تجارياً ومطاعم.',
+                        cost: '4,000,000,000 د.ع',
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'الكرادة' },
                             { icon: 'straighten', label: 'المساحة', value: '5000 م²' }
+                        ],
+                        materials: [
+                            { name: 'زجاج واجهات', image: 'images/img1.jpg' },
+                            { name: 'سيراميك أرضيات', image: 'images/img2.jpg' },
+                            { name: 'دهان ديكوري', image: 'images/img3.jpg' },
+                            { name: 'ألمنيوم', image: 'images/img4.jpg' }
                         ]
                     },
                     {
@@ -692,9 +799,16 @@
                             'images/img8.jpg'
                         ],
                         details: 'عمارة سكنية بمساحة 500 م² تحتوي على 12 شقة فاخرة.',
+                        cost: '850,000,000 د.ع',
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'الزهراء' },
                             { icon: 'straighten', label: 'المساحة', value: '500 م²' }
+                        ],
+                        materials: [
+                            { name: 'رخام أرضيات', image: 'images/img5.jpg' },
+                            { name: 'خشب أبواب', image: 'images/img6.jpg' },
+                            { name: 'دهان جدران', image: 'images/img7.jpg' },
+                            { name: 'نوافذ UPVC', image: 'images/img8.jpg' }
                         ]
                     },
                     {
@@ -709,9 +823,16 @@
                             'images/img12.jpg'
                         ],
                         details: 'فيلا دوبلكس بتصميم عصري مع حديقة خاصة وحوض سباحة.',
+                        cost: '600,000,000 د.ع',
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'المنصور' },
                             { icon: 'straighten', label: 'المساحة', value: '600 م²' }
+                        ],
+                        materials: [
+                            { name: 'بلاط حمامات', image: 'images/img9.jpg' },
+                            { name: 'أدوات صحية', image: 'images/img10.jpg' },
+                            { name: 'دهان مائي', image: 'images/img11.jpg' },
+                            { name: 'زجاج شفاف', image: 'images/img12.jpg' }
                         ]
                     },
                     {
@@ -726,9 +847,16 @@
                             'images/img16.jpg'
                         ],
                         details: 'مكتب إداري حديث بمساحة 200 م² مع تجهيزات متكاملة.',
+                        cost: '350,000,000 د.ع',
                         meta: [
                             { icon: 'location_on', label: 'الموقع', value: 'الرصافة' },
                             { icon: 'straighten', label: 'المساحة', value: '200 م²' }
+                        ],
+                        materials: [
+                            { name: 'قسم داخلي زجاجي', image: 'images/img13.jpg' },
+                            { name: 'سقف معلق', image: 'images/img14.jpg' },
+                            { name: 'أرضيات خشبية', image: 'images/img15.jpg' },
+                            { name: 'إضاءة LED', image: 'images/img16.jpg' }
                         ]
                     }
                 ]);
@@ -788,6 +916,20 @@
                     }, 350);
                 }
 
+                function showProjectDetail(project) {
+                    stopSlideTimer();
+                    detailSlide.value = 0;
+                    projectDetail.value = project;
+                    selectedProject.value = null;
+                    modalClosing.value = false;
+                    modalPullY.value = 0;
+                }
+
+                function closeProjectDetail() {
+                    projectDetail.value = null;
+                    startSlideTimer();
+                }
+
                 function openViewer(index) {
                     if (!selectedProject.value) return;
                     viewerImages.value = selectedProject.value.images;
@@ -828,6 +970,8 @@
                     searchQuery, currentSlide, slides, sections, ads, latestWorks,
                     selectedProject, modalSlide,
                     openProject, closeModal,
+                    projectDetail, detailSlide,
+                    showProjectDetail, closeProjectDetail,
                     viewerOpen, viewerImages, viewerIndex,
                     openViewer, closeViewer, nextViewer, prevViewer,
                     heroSwipe, adSwipe, modalTouch, viewerTouch,
