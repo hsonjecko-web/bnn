@@ -507,6 +507,22 @@ input, textarea, select {
   font-size: 24px;
 }
 
+/* Header title shimmer */
+.header-title {
+  position: relative;
+  background: linear-gradient(90deg, var(--accent-gold) 0%, #f0d68a 40%, var(--accent-gold) 60%, var(--accent-gold) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleShimmer 3s ease-in-out infinite;
+}
+@keyframes titleShimmer {
+  0% { background-position: 200% 0; }
+  60% { background-position: -50% 0; }
+  100% { background-position: -50% 0; }
+}
+
 /* ===== شريط البحث ===== */
 .search-bar {
   display: flex;
