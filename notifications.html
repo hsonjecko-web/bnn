@@ -30,8 +30,7 @@
         .notif-dot { width:8px; height:8px; border-radius:50%; min-width:8px; }
 .notif-tab { padding:6px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#c8d6e5; white-space:nowrap; font-family:Cairo,sans-serif; border:1px solid rgba(255,255,255,0.15); }
 html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; border-color:rgba(44,95,138,0.2); }
-button.notif-tab.active { background:#c9a243; color:#ffffff; border-color:#c9a243; font-weight:700; }
-html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; border-color:#c9a243; }
+
         .notif-card { background:var(--bg-card); border:1px solid var(--border-light); border-radius:14px; padding:14px; cursor:pointer; transition:all .2s; display:flex; gap:12px; align-items:flex-start; }
         .notif-card:active { opacity:.8; }
         .notif-card.read { opacity:.6; }
@@ -55,11 +54,11 @@ html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; bor
 
                 <!-- Tabs -->
                 <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
-                    <button class="notif-tab" :class="tabClass('all')" @click="activeTab='all'">الكل</button>
-                    <button class="notif-tab" :class="tabClass('support')" @click="activeTab='support'">الدعم الفني</button>
-                    <button class="notif-tab" :class="tabClass('offer')" @click="activeTab='offer'">العروض</button>
-                    <button class="notif-tab" :class="tabClass('service')" @click="activeTab='service'">طلبات الخدمة</button>
-                    <button v-if="isCompany" class="notif-tab" :class="tabClass('quote_request')" @click="activeTab='quote_request'">طلبات العروض</button>
+                    <button class="notif-tab" data-tab="all" @click="setTab('all')">الكل</button>
+                    <button class="notif-tab" data-tab="support" @click="setTab('support')">الدعم الفني</button>
+                    <button class="notif-tab" data-tab="offer" @click="setTab('offer')">العروض</button>
+                    <button class="notif-tab" data-tab="service" @click="setTab('service')">طلبات الخدمة</button>
+                    <button v-if="isCompany" class="notif-tab" data-tab="quote_request" @click="setTab('quote_request')">طلبات العروض</button>
                 </div>
 
                 <!-- Notifications List -->
@@ -96,13 +95,29 @@ html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; bor
         document.getElementById('header').innerHTML = renderHeader({});
         document.getElementById('bottomNav').innerHTML = renderNav('account');
 
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, computed, watch } = Vue;
 
         createApp({
             setup() {
                 initTheme();
 
                 var activeTab = ref('all');
+                var setTab = function(t) { activeTab.value = t; };
+                watch(activeTab, function(val) {
+                    document.querySelectorAll('.notif-tab').forEach(function(el) {
+                        if (el.dataset.tab === val) {
+                            el.style.background = '#c9a243';
+                            el.style.color = '#0a1628';
+                            el.style.borderColor = '#c9a243';
+                            el.style.fontWeight = '700';
+                        } else {
+                            el.style.background = '';
+                            el.style.color = '';
+                            el.style.borderColor = '';
+                            el.style.fontWeight = '';
+                        }
+                    });
+                }, { immediate: true });
                 var userData = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
                 var isCompany = userData.role === 'company';
 
@@ -163,7 +178,6 @@ html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; bor
                     }
                 ];
 
-                var tabClass = function(t) { return activeTab.value === t ? 'active' : ''; };
                 function loadQuoteRequestNotifs() {
                     var list = [];
                     if (!isCompany) return list;
@@ -356,7 +370,7 @@ html.light-mode button.notif-tab.active { background:#c9a243; color:#ffffff; bor
                     document.body.appendChild(overlay);
                 }
 
-                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif, tabClass };
+                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif, setTab };
             }
         }).mount('#app');
 
