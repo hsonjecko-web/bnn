@@ -198,23 +198,23 @@ function initFloatingCart() {
     function createIndicator() {
         indicator = document.createElement('div');
         indicator.id = 'ptr-indicator';
-        indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:0;overflow:hidden;transition:height 0.35s cubic-bezier(0.34,1.56,0.64,1);padding-bottom:8px;';
+        indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:0;overflow:hidden;transition:height 0.5s cubic-bezier(0.34,1.56,0.64,1);padding-bottom:8px;';
         indicator.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">'
-            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:44px;height:44px;opacity:0;transform:translateY(12px) scale(0.7);transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1),opacity 0.35s;">'
-            + '<div style="width:56px;height:3px;background:rgba(201,162,67,0.12);border-radius:3px;overflow:hidden;opacity:0;transition:opacity 0.35s;" class="ptr-track">'
-            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:3px;transition:width 0.1s linear;"></div>'
+            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:44px;height:44px;opacity:0;transform:translateY(12px) scale(0.7);transition:transform 0.6s cubic-bezier(0.34,1.56,0.64,1),opacity 0.5s;">'
+            + '<div style="width:56px;height:3px;background:rgba(201,162,67,0.12);border-radius:3px;overflow:hidden;opacity:0;transition:opacity 0.5s;" class="ptr-track">'
+            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:3px;transition:width 0.15s linear;"></div>'
             + '</div></div>';
         document.body.appendChild(indicator);
     }
 
     function showIndicator(dist) {
         if (!indicator) createIndicator();
-        if (dist < 25) {
+        if (dist < 50) {
             indicator.style.height = '0';
             return;
         }
-        var adjusted = dist - 25;
-        var maxAdj = 120 - 25;
+        var adjusted = dist - 50;
+        var maxAdj = 150 - 50;
         var pct = Math.min(adjusted / maxAdj, 1);
         var h = Math.min(adjusted * 0.7 + 10, 90);
         indicator.style.height = h + 'px';
@@ -238,11 +238,11 @@ function initFloatingCart() {
     function doRefresh() {
         released = true;
         if (indicator) {
-            indicator.style.transition = 'height 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+            indicator.style.transition = 'height 0.55s cubic-bezier(0.34,1.56,0.64,1)';
             indicator.style.height = '0';
             indicator.style.background = 'none';
         }
-        setTimeout(function() { location.reload(); }, 500);
+        setTimeout(function() { location.reload(); }, 700);
     }
 
     // Inject animations once
@@ -272,7 +272,7 @@ function initFloatingCart() {
         if (pulling && isAtTop() && !hasOverlay() && !released) {
             var diff = e.touches[0].clientY - startY;
             if (diff > 0) showIndicator(diff);
-            if (diff > 120) {
+            if (diff > 150) {
                 pulling = false;
                 doRefresh();
             }
