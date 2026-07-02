@@ -198,7 +198,7 @@ function initFloatingCart() {
     function createIndicator() {
         indicator = document.createElement('div');
         indicator.id = 'ptr-indicator';
-        indicator.style.cssText = 'position:fixed;top:56px;left:8px;right:8px;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;height:0;overflow:hidden;transition:height 0.6s cubic-bezier(0.34,1.56,0.64,1);background:var(--bg-card);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.25);';
+        indicator.style.cssText = 'position:fixed;top:56px;left:8px;right:8px;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;height:0;overflow:hidden;background:var(--bg-card);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.25);';
         indicator.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:10px;">'
             + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:52px;height:52px;opacity:0;transform:translateY(20px) scale(0.5);transition:transform 0.8s cubic-bezier(0.34,1.56,0.64,1),opacity 0.6s;">'
             + '<div style="width:72px;height:4px;background:rgba(201,162,67,0.12);border-radius:4px;overflow:hidden;opacity:0;transition:opacity 0.6s;" class="ptr-track">'
@@ -209,6 +209,7 @@ function initFloatingCart() {
 
     function showIndicator(dist) {
         if (!indicator) createIndicator();
+        indicator.style.transition = 'none';
         if (dist < 50) {
             indicator.style.height = '0';
             return;
@@ -230,7 +231,10 @@ function initFloatingCart() {
     }
 
     function hideIndicator() {
-        if (indicator) { indicator.style.height = '0'; }
+        if (indicator) {
+            indicator.style.transition = 'height 0.6s cubic-bezier(0.34,1.56,0.64,1)';
+            indicator.style.height = '0';
+        }
         released = false;
         pulling = false;
     }
