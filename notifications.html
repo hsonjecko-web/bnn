@@ -28,7 +28,8 @@
         body { -webkit-tap-highlight-color: transparent; }
         ::-webkit-scrollbar { display: none; }
         .notif-dot { width:8px; height:8px; border-radius:50%; min-width:8px; }
-.notif-tab { padding:6px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#c8d6e5; white-space:nowrap; font-family:Cairo,sans-serif; border:1px solid rgba(255,255,255,0.15); text-rendering:auto !important; -webkit-font-smoothing:auto !important; }
+.notif-tab { padding:6px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#c8d6e5; white-space:nowrap; font-family:Cairo,sans-serif; border:1px solid rgba(255,255,255,0.15); }
+.notif-tab.zactive { background:#c9a243; color:#0a1628; border-color:#c9a243; font-weight:700; }
 html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; border-color:rgba(44,95,138,0.2); }
 
         .notif-card { background:var(--bg-card); border:1px solid var(--border-light); border-radius:14px; padding:14px; cursor:pointer; transition:all .2s; display:flex; gap:12px; align-items:flex-start; }
@@ -41,6 +42,15 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
     </style>
 </head>
 <body>
+    <!-- Tabs outside Vue app -->
+    <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
+        <button class="notif-tab notif-tab-all" data-tab="all">الكل</button>
+        <button class="notif-tab" data-tab="support">الدعم الفني</button>
+        <button class="notif-tab" data-tab="offer">العروض</button>
+        <button class="notif-tab" data-tab="service">طلبات الخدمة</button>
+        <button class="notif-tab" data-tab="quote_request" id="tab-quote-request" style="display:none;">طلبات العروض</button>
+    </div>
+
     <div id="app">
         <div class="app-container">
             <div id="header"></div>
@@ -50,15 +60,6 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                 <div style="padding:16px 16px 8px;">
                     <h1 style="color:var(--text-white);font-size:20px;font-weight:700;margin:0;">الإشعارات</h1>
                     <p style="color:var(--text-muted);font-size:13px;margin:2px 0 0;">آخر التحديثات والردود</p>
-                </div>
-
-                <!-- Tabs -->
-                <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
-                    <button class="notif-tab" data-tab="all" @click="setTab('all')"><span style="font-family:sans-serif;">●</span> الكل</button>
-                    <button class="notif-tab" data-tab="support" @click="setTab('support')">الدعم الفني</button>
-                    <button class="notif-tab" data-tab="offer" @click="setTab('offer')">العروض</button>
-                    <button class="notif-tab" data-tab="service" @click="setTab('service')">طلبات الخدمة</button>
-                    <button v-if="isCompany" class="notif-tab" data-tab="quote_request" @click="setTab('quote_request')">طلبات العروض</button>
                 </div>
 
                 <!-- Notifications List -->
@@ -95,96 +96,49 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
         document.getElementById('header').innerHTML = renderHeader({});
         document.getElementById('bottomNav').innerHTML = renderNav('account');
 
-        const { createApp, ref, computed, onMounted, nextTick } = Vue;
+        // ===== Tab management (pure JS, outside Vue) =====
+        var activeTabRef = null;
+
+        function switchTab(t) {
+            document.querySelectorAll('.notif-tab').forEach(function(el) {
+                el.classList.remove('zactive');
+                if (el.dataset.tab === t) el.classList.add('zactive');
+            });
+            if (activeTabRef) activeTabRef.value = t;
+        }
+
+        // Initial tab state (activeTabRef will be set by Vue app)
+        document.querySelectorAll('.notif-tab').forEach(function(el) {
+            el.addEventListener('click', function() { switchTab(el.dataset.tab); });
+        });
+
+        // Company check
+        (function() {
+            var ud = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
+            if (ud.role === 'company') {
+                var qr = document.getElementById('tab-quote-request');
+                if (qr) qr.style.display = '';
+            }
+        })();
+
+        const { createApp, ref, computed } = Vue;
 
         createApp({
             setup() {
                 initTheme();
 
                 var activeTab = ref('all');
-                var applyTab = function(val) {
-                    document.querySelectorAll('.notif-tab').forEach(function(el) {
-                        if (el.dataset.tab === val) {
-                            el.style.setProperty('background', '#c9a243', 'important');
-                            el.style.setProperty('color', '#0a1628', 'important');
-                            el.style.setProperty('border-color', '#c9a243', 'important');
-                            el.style.fontWeight = '700';
-                            el.style.opacity = '1';
-                            el.style.visibility = 'visible';
-                            el.style.display = '';
-                        } else {
-                            el.style.background = '';
-                            el.style.color = '';
-                            el.style.borderColor = '';
-                            el.style.fontWeight = '';
-                            el.style.opacity = '';
-                            el.style.visibility = '';
-                        }
-                    });
-                };
-                var setTab = function(t) {
-                    activeTab.value = t;
-                    nextTick(function() { applyTab(t); });
-                };
-                onMounted(function() { applyTab(activeTab.value); });
+                activeTabRef = activeTab;
                 var userData = JSON.parse(localStorage.getItem('bunean-user-data') || '{}');
                 var isCompany = userData.role === 'company';
 
                 var staticNotifications = [
-                    {
-                        id: 1, type: 'support', read: false,
-                        title: 'تم الرد على استفسارك',
-                        preview: 'شكراً لتواصلك مع بنيان، تم حل مشكلتك وسيتم التواصل معك قريباً لمتابعة التفاصيل.',
-                        time: 'منذ 15 دقيقة',
-                        message: 'شكراً لتواصلك مع فريق الدعم الفني في بنيان.\n\nنؤكد لك أنه تم حل المشكلة التي أبلغت عنها وسيتم التواصل معك خلال 24 ساعة لمتابعة التفاصيل الكاملة.\n\nمع جزيل الشكر،\nفريق بنيان'
-                    },
-                    {
-                        id: 2, type: 'offer', read: false, offerId: 1,
-                        title: 'عرض من شركة المستقبل للمقاولات',
-                        preview: 'تقدم شركة المستقبل للمقاولات عرضاً لتنفيذ مشروعك بقيمة 75,000,000 دينار.',
-                        time: 'منذ 3 ساعات',
-                        company: 'شركة المستقبل للمقاولات',
-                        price: '75,000,000 د.ع',
-                        duration: '6 أشهر',
-                        details: 'يسر شركة المستقبل للمقاولات أن تتقدم إليكم بعرضها لتنفيذ المشروع المطلوب وفق المواصفات المرفقة. تتمتع الشركة بخبرة تزيد عن 15 عاماً في مجال المقاولات العامة وتنفيذ المشاريع السكنية والتجارية.',
-                        companyLink: 'company.html'
-                    },
-                    {
-                        id: 3, type: 'offer', read: false, offerId: 2,
-                        title: 'عرض من شركة البناء الذكي',
-                        preview: 'عرض تنافسي من شركة البناء الذكي لتنفيذ مشروعك بقيمة 82,500,000 دينار.',
-                        time: 'منذ 5 ساعات',
-                        company: 'شركة البناء الذكي',
-                        price: '82,500,000 د.ع',
-                        duration: '6 أشهر',
-                        details: 'تتشرف شركة البناء الذكي بتقديم عرضها لتنفيذ مشروعكم بأعلى معايير الجودة وباستخدام أحدث التقنيات في مجال البناء.',
-                        companyLink: 'company.html'
-                    },
-                    {
-                        id: 4, type: 'service', read: true,
-                        title: 'تم استلام طلب الخدمة',
-                        preview: 'تم إرسال طلب الخدمة الخاصة بك بنجاح، سيتم الرد عليك من قبل المختصين قريباً.',
-                        time: 'منذ يوم',
-                        message: 'تم استلام طلب الخدمة الذي أرسلته بنجاح. فريقنا المختص سيقوم بمراجعة طلبك والرد عليك في أقرب وقت ممكن.\n\nشكراً لثقتك ببنيان.'
-                    },
-                    {
-                        id: 5, type: 'support', read: true,
-                        title: 'تم تحديث تذكرتك الدعم',
-                        preview: 'تم تحديث حالة تذكرتك الدعم الفني رقم #BN-2505-88901',
-                        time: 'منذ يومين',
-                        message: 'تذكرة الدعم الفني الخاصة بك رقم #BN-2505-88901\nالحالة: قيد المعالجة\n\nسيتم إعلامك فور اكتمال المعالجة.'
-                    },
-                    {
-                        id: 6, type: 'offer', read: true, offerId: 3,
-                        title: 'عرض من شركة دار الإنجاز',
-                        preview: 'عرض جديد من شركة دار الإنجاز لتنفيذ مشروعك بقيمة 87,000,000 دينار.',
-                        time: 'منذ 3 أيام',
-                        company: 'شركة دار الإنجاز',
-                        price: '87,000,000 د.ع',
-                        duration: '7 أشهر',
-                        details: 'شركة دار الإنجاز للمقاولات تقدم لكم عرضها المتكامل لتنفيذ المشروع. الشركة متخصصة في المشاريع السكنية والتجارية مع سجل حافل من المشاريع الناجحة.',
-                        companyLink: 'company.html'
-                    }
+                    { id: 1, type: 'support', read: false, title: 'تم الرد على استفسارك', preview: 'شكراً لتواصلك مع بنيان، تم حل مشكلتك وسيتم التواصل معك قريباً لمتابعة التفاصيل.', time: 'منذ 15 دقيقة', message: 'شكراً لتواصلك مع فريق الدعم الفني في بنيان.\n\nنؤكد لك أنه تم حل المشكلة التي أبلغت عنها وسيتم التواصل معك خلال 24 ساعة لمتابعة التفاصيل الكاملة.\n\nمع جزيل الشكر،\nفريق بنيان' },
+                    { id: 2, type: 'offer', read: false, offerId: 1, title: 'عرض من شركة المستقبل للمقاولات', preview: 'تقدم شركة المستقبل للمقاولات عرضاً لتنفيذ مشروعك بقيمة 75,000,000 دينار.', time: 'منذ 3 ساعات', company: 'شركة المستقبل للمقاولات', price: '75,000,000 د.ع', duration: '6 أشهر', details: 'يسر شركة المستقبل للمقاولات أن تتقدم إليكم بعرضها لتنفيذ المشروع المطلوب وفق المواصفات المرفقة. تتمتع الشركة بخبرة تزيد عن 15 عاماً في مجال المقاولات العامة وتنفيذ المشاريع السكنية والتجارية.', companyLink: 'company.html' },
+                    { id: 3, type: 'offer', read: false, offerId: 2, title: 'عرض من شركة البناء الذكي', preview: 'عرض تنافسي من شركة البناء الذكي لتنفيذ مشروعك بقيمة 82,500,000 دينار.', time: 'منذ 5 ساعات', company: 'شركة البناء الذكي', price: '82,500,000 د.ع', duration: '6 أشهر', details: 'تتشرف شركة البناء الذكي بتقديم عرضها لتنفيذ مشروعكم بأعلى معايير الجودة وباستخدام أحدث التقنيات في مجال البناء.', companyLink: 'company.html' },
+                    { id: 4, type: 'service', read: true, title: 'تم استلام طلب الخدمة', preview: 'تم إرسال طلب الخدمة الخاصة بك بنجاح، سيتم الرد عليك من قبل المختصين قريباً.', time: 'منذ يوم', message: 'تم استلام طلب الخدمة الذي أرسلته بنجاح. فريقنا المختص سيقوم بمراجعة طلبك والرد عليك في أقرب وقت ممكن.\n\nشكراً لثقتك ببنيان.' },
+                    { id: 5, type: 'support', read: true, title: 'تم تحديث تذكرتك الدعم', preview: 'تم تحديث حالة تذكرتك الدعم الفني رقم #BN-2505-88901', time: 'منذ يومين', message: 'تذكرة الدعم الفني الخاصة بك رقم #BN-2505-88901\nالحالة: قيد المعالجة\n\nسيتم إعلامك فور اكتمال المعالجة.' },
+                    { id: 6, type: 'offer', read: true, offerId: 3, title: 'عرض من شركة دار الإنجاز', preview: 'عرض جديد من شركة دار الإنجاز لتنفيذ مشروعك بقيمة 87,000,000 دينار.', time: 'منذ 3 أيام', company: 'شركة دار الإنجاز', price: '87,000,000 د.ع', duration: '7 أشهر', details: 'شركة دار الإنجاز للمقاولات تقدم لكم عرضها المتكامل لتنفيذ المشروع. الشركة متخصصة في المشاريع السكنية والتجارية مع سجل حافل من المشاريع الناجحة.', companyLink: 'company.html' }
                 ];
 
                 function loadQuoteRequestNotifs() {
@@ -379,7 +333,12 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                     document.body.appendChild(overlay);
                 }
 
-                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif, setTab };
+                // Initial tab style
+                document.querySelectorAll('.notif-tab').forEach(function(el) {
+                    if (el.dataset.tab === activeTab.value) el.classList.add('zactive');
+                });
+
+                return { activeTab, isCompany, notifications, filtered, iconName, iconBg, openNotif };
             }
         }).mount('#app');
 
