@@ -296,7 +296,7 @@
         document.getElementById('header').innerHTML = renderHeader({ searchVModel: 'searchQuery', searchPlaceholder: 'ابحث عن مشاريع، مقاولين، منتجات...' });
         document.getElementById('bottomNav').innerHTML = renderNav('home');
 
-        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+        const { createApp, ref, computed, watch, nextTick, onMounted, onUnmounted } = Vue;
 
         createApp({
             setup() {
@@ -312,6 +312,9 @@
                 const modalPullY = ref(0);
                 const modalClosing = ref(false);
                 const showAllWorks = ref(false);
+                watch(showAllWorks, function(v) {
+                    if (v) nextTick(function() { window.scrollTo(0, 0); });
+                });
                 const adSlide = ref(0);
                 const showAdBooking = ref(false);
                 const adBooking = ref({ name: '', company: '', phone: '', type: '' });
