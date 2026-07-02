@@ -5871,15 +5871,7 @@ html.light-mode .mkt-modal-desc { color: #666; }
 .prod-detail-page {
   padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
 }
-.prod-detail-page > div {
-  background: var(--bg-card);
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  border-radius: 12px;
-  margin: 0 12px 12px;
-}
-.prod-detail-page .prod-hero {
-  margin-top: 0;
-/* --- الهيدر --- */
+/* الهيدر */
 .prod-detail-page .exec-header {
   padding: 4px 16px 4px;
   display: flex;
@@ -5889,6 +5881,13 @@ html.light-mode .mkt-modal-desc { color: #666; }
   z-index: 10;
   background: var(--primary-dark);
   border-bottom: 1px solid var(--border-light);
+}
+/* كروت المحتوى */
+.prod-detail-page > div:not(.exec-header) {
+  background: var(--bg-card);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 12px;
+  margin: 0 12px 12px;
 }
 /* --- الهيرو: صف بعمودين --- */
 .prod-hero {
