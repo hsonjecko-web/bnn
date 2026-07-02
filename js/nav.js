@@ -257,20 +257,11 @@ function initFloatingCart() {
             ring.style.transition = 'none';
             ring.style.strokeDashoffset = '276.46';
             void ring.offsetWidth;
-            ring.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(0.34,1.56,0.64,1)';
+            ring.style.transition = 'stroke-dashoffset 0.5s linear';
             ring.style.strokeDashoffset = '0';
         }
-        // After ring completes, quick fade then reload
-        setTimeout(function() {
-            if (indicator) {
-                var els = indicator.querySelectorAll('.ptr-inner, .ptr-backdrop');
-                els.forEach(function(el) {
-                    el.style.transition = 'opacity 0.2s ease';
-                    el.style.opacity = '0';
-                });
-            }
-            setTimeout(function() { location.reload(); }, 200);
-        }, 1550);
+        // Reload immediately after ring fills
+        setTimeout(function() { location.reload(); }, 500);
     }
 
     // Inject animations once
