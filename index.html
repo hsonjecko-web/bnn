@@ -242,36 +242,62 @@
             opacity: 0.8;
         }
 
-        /* ===== الفاصل - المتابعة كضيف ===== */
-        .divider {
+        /* ===== زر المتابعة كضيف ===== */
+        .guest-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0 0;
+            width: 100%;
+            padding: 12px 0;
+            border: 1.5px solid rgba(201, 162, 67, 0.35);
+            border-radius: 10px;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .guest-btn:hover {
+            background: rgba(201, 162, 67, 0.08);
+            border-color: #c9a243;
+        }
+
+        .guest-btn:active {
+            transform: scale(0.97);
+        }
+
+        .guest-btn-text {
+            color: #c9a243;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: color 0.3s ease;
+        }
+
+        .guest-btn-icon {
+            font-size: 18px;
+            margin-left: 6px;
+            color: #c9a243;
+        }
+
+        .guest-btn:hover .guest-btn-text,
+        .guest-btn:hover .guest-btn-icon {
+            color: #d4b454;
+        }
+
+        /* خطوط جانبية للفصل */
+        .guest-divider {
             display: flex;
             align-items: center;
             margin: 18px 0 0;
             gap: 12px;
-            cursor: pointer;
-            padding: 8px 0;
         }
 
-        .divider-line {
+        .guest-divider-line {
             flex: 1;
             height: 1px;
-            background: #c9a243;
-            transition: background 0.3s ease;
-        }
-
-        .divider-text {
-            color: #8a9bb0;
-            font-size: 13px;
-            white-space: nowrap;
-            transition: color 0.3s ease;
-        }
-
-        .divider:hover .divider-text {
-            color: #c9a243; /* تغيير اللون عند التمرير */
-        }
-
-        .divider:hover .divider-line {
-            background: rgba(201, 162, 67, 0.3);
+            background: rgba(201, 162, 67, 0.2);
         }
 
         /* ===== حاوية التسجيل - ليس لديك حساب ===== */
@@ -673,10 +699,12 @@
                         <span v-if="!isLoading">دخول</span>
                         <span v-else class="loading-dots"><span></span><span></span><span></span></span>
                     </button>
-                    <div class="divider" @click="handleGuest">
-                        <div class="divider-line"></div>
-                        <span class="divider-text">المتابعة كضيف</span>
-                        <div class="divider-line"></div>
+                    <button class="guest-btn" @click="handleGuest">
+                        <span class="material-symbols-outlined guest-btn-icon">person</span>
+                        <span class="guest-btn-text">متابعة كضيف</span>
+                    </button>
+                    <div class="guest-divider">
+                        <div class="guest-divider-line"></div>
                     </div>
                 </template>
 
