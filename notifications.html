@@ -55,12 +55,6 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                     <button class="notif-tab" data-tab="quote_request" id="tab-quote-request" style="display:none;" @click="switchTab('quote_request')">طلبات العروض</button>
                 </div>
 
-                <!-- Header Section -->
-                <div style="padding:0 16px 12px;">
-                    <h1 style="color:var(--text-white);font-size:20px;font-weight:700;margin:0;">الإشعارات</h1>
-                    <p style="color:var(--text-muted);font-size:13px;margin:2px 0 0;">آخر التحديثات والردود</p>
-                </div>
-
                 <!-- Notifications List -->
                 <div v-if="filtered.length" style="flex:1;padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;">
                     <div v-for="n in filtered" :key="n.id" class="notif-card" :class="{ read: n.read }" @click="openNotif(n)">
