@@ -4050,7 +4050,10 @@ html:not(.light-mode) .exec-cat-divider {
   display: flex;
   align-items: center;
   padding: 8px 16px 12px;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--primary-dark);
 }
 
 .exec-back {
@@ -5882,6 +5885,10 @@ html.light-mode .mkt-modal-desc { color: #666; }
   padding: 8px 16px 12px;
   display: flex;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--primary-dark);
 }
 /* --- الهيرو: صف بعمودين --- */
 .prod-hero {
