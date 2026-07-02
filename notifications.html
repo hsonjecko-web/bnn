@@ -30,6 +30,8 @@
         .notif-dot { width:8px; height:8px; border-radius:50%; min-width:8px; }
 .notif-tab { padding:6px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.12); color:#c8d6e5; white-space:nowrap; transition:all .2s; font-family:Cairo,sans-serif; border:1px solid rgba(255,255,255,0.15); }
 html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; border-color:rgba(44,95,138,0.2); }
+.notif-tab.active { background:#c9a243 !important; color:#0a1628 !important; border-color:#c9a243 !important; font-weight:700 !important; }
+html.light-mode .notif-tab.active { background:#c9a243 !important; color:#0a1628 !important; border-color:#c9a243 !important; }
         .notif-card { background:var(--bg-card); border:1px solid var(--border-light); border-radius:14px; padding:14px; cursor:pointer; transition:all .2s; display:flex; gap:12px; align-items:flex-start; }
         .notif-card:active { opacity:.8; }
         .notif-card.read { opacity:.6; }
@@ -53,11 +55,11 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
 
                 <!-- Tabs -->
                 <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
-                    <button class="notif-tab" :style="{ background: activeTab === 'all' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'all' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'all' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'all' ? 700 : 600 }" @click="activeTab='all'">الكل</button>
-                    <button class="notif-tab" :style="{ background: activeTab === 'support' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'support' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'support' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'support' ? 700 : 600 }" @click="activeTab='support'">الدعم الفني</button>
-                    <button class="notif-tab" :style="{ background: activeTab === 'offer' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'offer' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'offer' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'offer' ? 700 : 600 }" @click="activeTab='offer'">العروض</button>
-                    <button class="notif-tab" :style="{ background: activeTab === 'service' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'service' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'service' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'service' ? 700 : 600 }" @click="activeTab='service'">طلبات الخدمة</button>
-                    <button v-if="isCompany" class="notif-tab" :style="{ background: activeTab === 'quote_request' ? '#c9a243' : 'rgba(255,255,255,0.12)', color: activeTab === 'quote_request' ? '#0a1628' : '#c8d6e5', borderColor: activeTab === 'quote_request' ? '#c9a243' : 'rgba(255,255,255,0.15)', fontWeight: activeTab === 'quote_request' ? 700 : 600 }" @click="activeTab='quote_request'">طلبات العروض</button>
+                    <button class="notif-tab" :class="{ active: activeTab === 'all' }" @click="activeTab='all'">الكل</button>
+                    <button class="notif-tab" :class="{ active: activeTab === 'support' }" @click="activeTab='support'">الدعم الفني</button>
+                    <button class="notif-tab" :class="{ active: activeTab === 'offer' }" @click="activeTab='offer'">العروض</button>
+                    <button class="notif-tab" :class="{ active: activeTab === 'service' }" @click="activeTab='service'">طلبات الخدمة</button>
+                    <button v-if="isCompany" class="notif-tab" :class="{ active: activeTab === 'quote_request' }" @click="activeTab='quote_request'">طلبات العروض</button>
                 </div>
 
                 <!-- Notifications List -->
