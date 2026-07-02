@@ -42,15 +42,6 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
     </style>
 </head>
 <body>
-    <!-- Tabs outside Vue app -->
-    <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
-        <button class="notif-tab notif-tab-all" data-tab="all">الكل</button>
-        <button class="notif-tab" data-tab="support">الدعم الفني</button>
-        <button class="notif-tab" data-tab="offer">العروض</button>
-        <button class="notif-tab" data-tab="service">طلبات الخدمة</button>
-        <button class="notif-tab" data-tab="quote_request" id="tab-quote-request" style="display:none;">طلبات العروض</button>
-    </div>
-
     <div id="app">
         <div class="app-container">
             <div id="header"></div>
@@ -60,6 +51,15 @@ html.light-mode .notif-tab { background:rgba(44,95,138,0.08); color:#2c5f8a; bor
                 <div style="padding:16px 16px 8px;">
                     <h1 style="color:var(--text-white);font-size:20px;font-weight:700;margin:0;">الإشعارات</h1>
                     <p style="color:var(--text-muted);font-size:13px;margin:2px 0 0;">آخر التحديثات والردود</p>
+                </div>
+
+                <!-- Tabs (static HTML, no Vue bindings) -->
+                <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;">
+                    <button class="notif-tab" data-tab="all">الكل</button>
+                    <button class="notif-tab" data-tab="support">الدعم الفني</button>
+                    <button class="notif-tab" data-tab="offer">العروض</button>
+                    <button class="notif-tab" data-tab="service">طلبات الخدمة</button>
+                    <button class="notif-tab" data-tab="quote_request" id="tab-quote-request" style="display:none;">طلبات العروض</button>
                 </div>
 
                 <!-- Notifications List -->
