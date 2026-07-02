@@ -185,8 +185,8 @@
                             <p>{{ suppliers.length }} مورد</p>
                         </div>
                     </div>
-                    <div class="mkt-suppliers-scroll" style="padding:16px;flex-wrap:wrap;">
-                        <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card" @click="openSupplier(s)">
+                    <div class="mkt-suppliers-all" style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div v-for="(s, i) in suppliers" :key="i" class="mkt-supplier-card-all" @click="openSupplier(s)">
                             <div class="mkt-supplier-logo">
                                 <img :src="s.logo" alt="">
                             </div>
