@@ -198,11 +198,11 @@ function initFloatingCart() {
     function createIndicator() {
         indicator = document.createElement('div');
         indicator.id = 'ptr-indicator';
-        indicator.style.cssText = 'position:fixed;top:56px;left:8px;right:8px;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;height:0;overflow:hidden;background:var(--bg-card);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.25);';
-        indicator.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:10px;">'
-            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:52px;height:52px;opacity:0;transform:translateY(20px) scale(0.5);transition:transform 1.2s cubic-bezier(0.34,1.56,0.64,1),opacity 1s;">'
-            + '<div style="width:72px;height:4px;background:rgba(201,162,67,0.12);border-radius:4px;overflow:hidden;opacity:0;transition:opacity 1s;" class="ptr-track">'
-            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:4px;transition:width 0.3s linear;"></div>'
+        indicator.style.cssText = 'position:fixed;top:56px;left:0;right:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;height:0;overflow:hidden;';
+        indicator.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:12px;">'
+            + '<img src="logo-small-transparent.png" alt="بنيان" class="ptr-logo" style="width:64px;height:64px;opacity:0;transform:translateY(24px) scale(0.4);transition:transform 1.5s cubic-bezier(0.34,1.56,0.64,1),opacity 1.2s;">'
+            + '<div style="width:80px;height:4px;background:rgba(201,162,67,0.12);border-radius:4px;overflow:hidden;opacity:0;transition:opacity 1.2s;" class="ptr-track">'
+            + '<div class="ptr-bar" style="width:0%;height:100%;background:var(--accent-gold,#c9a243);border-radius:4px;transition:width 0.4s linear;"></div>'
             + '</div></div>';
         document.body.appendChild(indicator);
     }
@@ -217,14 +217,14 @@ function initFloatingCart() {
         var adjusted = dist - 50;
         var maxAdj = 150 - 50;
         var pct = Math.min(adjusted / maxAdj, 1);
-        var h = Math.min(adjusted * 1.4 + 10, 180);
+        var h = Math.min(adjusted * 1.4 + 10, 200);
         indicator.style.height = h + 'px';
         var logo = indicator.querySelector('.ptr-logo');
         var bar = indicator.querySelector('.ptr-bar');
         var track = indicator.querySelector('.ptr-track');
         if (logo) {
             logo.style.opacity = Math.min(pct * 1.5, 1);
-            logo.style.transform = 'translateY(' + (20 - pct * 20) + 'px) scale(' + (0.5 + pct * 0.5) + ')';
+            logo.style.transform = 'translateY(' + (24 - pct * 24) + 'px) scale(' + (0.4 + pct * 0.6) + ')';
         }
         if (track) track.style.opacity = Math.min(pct * 2, 1);
         if (bar) bar.style.width = (pct * 100) + '%';
@@ -232,7 +232,7 @@ function initFloatingCart() {
 
     function hideIndicator() {
         if (indicator) {
-            indicator.style.transition = 'height 1s cubic-bezier(0.34,1.56,0.64,1)';
+            indicator.style.transition = 'height 1.2s cubic-bezier(0.34,1.56,0.64,1)';
             indicator.style.height = '0';
         }
         released = false;
@@ -242,10 +242,10 @@ function initFloatingCart() {
     function doRefresh() {
         released = true;
         if (indicator) {
-            indicator.style.transition = 'height 1s cubic-bezier(0.34,1.56,0.64,1)';
+            indicator.style.transition = 'height 1.2s cubic-bezier(0.34,1.56,0.64,1)';
             indicator.style.height = '0';
         }
-        setTimeout(function() { location.reload(); }, 1200);
+        setTimeout(function() { location.reload(); }, 1500);
     }
 
     // Inject animations once
