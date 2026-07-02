@@ -49,9 +49,15 @@
                 <template v-if="!activeUserSection">
                     <!-- الملف الشخصي -->
                     <div class="profile-section">
-                        <div class="profile-avatar">{{ user.name.charAt(0) }}</div>
-                        <div class="profile-name">{{ user.name }}</div>
-                        <div v-if="isCompany" class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:11px;margin:4px auto 0;width:fit-content;">{{ companyStatus }}</div>
+                        <template v-if="isCompany">
+                            <div class="profile-avatar">{{ (user.ownerName || user.name).charAt(0) }}</div>
+                            <div class="profile-name">{{ user.name }}</div>
+                            <div style="font-size:13px;color:var(--text-muted);margin-top:2px;">{{ user.ownerName || 'صاحب الشركة' }}</div>
+                        </template>
+                        <template v-else>
+                            <div class="profile-avatar">{{ user.name.charAt(0) }}</div>
+                            <div class="profile-name">{{ user.name }}</div>
+                        </template>
                         <div class="profile-phone-row">
                             <a :href="'tel:' + user.phone" class="profile-phone">{{ user.phone }}</a>
                         </div>
@@ -96,7 +102,7 @@
                         </div>
 
                         <!-- Logout -->
-                        <a href="index.html" class="menu-item" style="border-top:1px solid var(--border-light);">
+                        <div class="menu-item" @click="handleLogout" style="border-top:1px solid var(--border-light);cursor:pointer;">
                             <div class="menu-item-left">
                                 <div class="menu-item-icon">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -104,7 +110,7 @@
                                 <span class="menu-item-label" style="color:#e74c3c;">تسجيل الخروج</span>
                             </div>
                             <svg class="menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </a>
+                        </div>
                     </div>
                 </template>
 
@@ -394,36 +400,138 @@
                             </button>
                             <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0;">إضافة مشروع</h2>
                         </div>
+                        <!-- Tabs -->
+                        <div style="display:flex;margin:8px 16px 0;gap:4px;">
+                            <button @click="projectTab='add'" style="flex:1;padding:10px;border-radius:10px 10px 0 0;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;transition:all .2s;"
+                                :style="projectTab==='add' ? 'background:var(--accent-gold);color:var(--primary-dark);' : 'background:var(--bg-card);color:var(--text-muted);'">
+                                <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">add_circle</span> إضافة مشروع
+                            </button>
+                            <button @click="projectTab='my-projects'" style="flex:1;padding:10px;border-radius:10px 10px 0 0;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;transition:all .2s;"
+                                :style="projectTab==='my-projects' ? 'background:var(--accent-gold);color:var(--primary-dark);' : 'background:var(--bg-card);color:var(--text-muted);'">
+                                <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">folder</span> ملف شركتي ({{ myProjects.length }})
+                            </button>
+                        </div>
                         <div style="padding:8px 16px 20px;">
-                            <div class="section-card">
-                                <div class="mkt-checkout-form">
-                                    <div class="mkt-form-group"><label>اسم المشروع</label><input class="form-input" v-model="newProject.title"></div>
-                                    <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="newProject.desc" rows="3"></textarea></div>
-                                    <div class="mkt-form-group"><label>التصنيف</label>
-                                        <select class="form-input" v-model="newProject.category">
-                                            <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
-                                        </select>
+                            <!-- Tab: Add Project -->
+                            <template v-if="projectTab === 'add'">
+                                <div class="section-card" style="border-radius:0 0 14px 14px;">
+                                    <div class="mkt-checkout-form">
+                                        <div class="mkt-form-group"><label>اسم المشروع</label><input class="form-input" v-model="newProject.title"></div>
+                                        <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="newProject.desc" rows="3"></textarea></div>
+                                        <div class="mkt-form-group"><label>التصنيف</label>
+                                            <select class="form-input" v-model="newProject.category">
+                                                <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+                                            </select>
+                                        </div>
+                                        <div class="mkt-form-group">
+                                            <label>صور المشروع (حد أقصى 5)</label>
+                                            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                                                <div v-for="(img, idx) in newProject.images" :key="idx" style="width:60px;height:60px;border-radius:8px;overflow:hidden;position:relative;background:var(--bg-input);border:1px solid var(--border-light);">
+                                                    <img :src="img" style="width:100%;height:100%;object-fit:cover;">
+                                                    <div style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(231,76,60,0.9);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;" @click="removeProjectImage(idx)">×</div>
+                                                </div>
+                                            </div>
+                                            <button v-if="newProject.images.length < 5" type="button" class="form-input" style="padding:10px;cursor:pointer;text-align:center;border:1px dashed var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:12px;font-family:Cairo,sans-serif;" @click="triggerUpload('project')">
+                                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">add_photo_alternate</span> اختر صور
+                                            </button>
+                                            <input type="file" accept="image/*" multiple ref="projectInput" style="display:none" @change="handleProjectImages($event)">
+                                        </div>
+                                        <div class="mkt-form-group"><label>تاريخ الإنجاز</label><input class="form-input" type="date" v-model="newProject.date"></div>
+                                        <button class="mkt-confirm-btn" @click="submitProject">إضافة المشروع</button>
                                     </div>
-                                    <div class="mkt-form-group"><label>رابط الصورة</label><input class="form-input" v-model="newProject.image"></div>
-                                    <div class="mkt-form-group"><label>تاريخ الإنجاز</label><input class="form-input" type="date" v-model="newProject.date"></div>
-                                    <button class="mkt-confirm-btn" @click="submitProject">إضافة المشروع</button>
+                                    <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
+                                        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الإضافة سيتم مراجعة المشروع من قبل الدعم الفني
+                                    </div>
                                 </div>
-                                <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
-                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الإضافة سيتم مراجعة المشروع من قبل الدعم الفني
-                                </div>
-                            </div>
-                            <div style="margin-top:16px;">
-                                <div style="color:var(--accent-gold);font-size:13px;font-weight:700;margin-bottom:8px;">المشاريع المضافة ({{ myProjects.length }})</div>
-                                <div v-for="(p, i) in myProjects" :key="i" class="section-card">
-                                    <div style="display:flex;gap:10px;">
+                            </template>
+                            <!-- Tab: My Projects -->
+                            <template v-if="projectTab === 'my-projects'">
+                                <div v-if="myProjects.length === 0" style="text-align:center;padding:30px 16px;color:var(--text-muted);font-size:13px;">لا توجد مشاريع مضافة بعد</div>
+                                <div v-for="(p, i) in myProjects" :key="i" class="section-card" style="position:relative;">
+                                    <div style="display:flex;gap:10px;cursor:pointer;" @click="previewProject(p)">
                                         <div class="img-preview"><img :src="p.image" alt=""></div>
-                                        <div style="flex:1;">
+                                        <div style="flex:1;min-width:0;">
                                             <div style="color:var(--text-white);font-size:14px;font-weight:600;">{{ p.title }}</div>
                                             <div style="color:var(--text-muted);font-size:11px;">{{ p.category }} • {{ p.date }}</div>
+                                            <div style="color:var(--text-muted);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ p.desc || '—' }}</div>
                                             <div class="status-badge" style="background:rgba(255,136,0,0.1);color:#FF8800;border:1px solid rgba(255,136,0,0.2);font-size:10px;margin-top:4px;">قيد المراجعة</div>
                                         </div>
                                     </div>
+                                    <div style="display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);">
+                                        <button @click="editProject(i)" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:11px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;">
+                                            <span class="material-symbols-outlined" style="font-size:14px;">edit</span> تعديل
+                                        </button>
+                                        <button @click="deleteProject(i)" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(231,76,60,0.3);background:transparent;color:#e74c3c;font-size:11px;font-weight:600;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;">
+                                            <span class="material-symbols-outlined" style="font-size:14px;">delete</span> حذف
+                                        </button>
+                                    </div>
                                 </div>
+                            </template>
+                        </div>
+
+                        <!-- Preview Modal -->
+                        <div v-if="previewData" class="project-modal" @click.self="previewData=null">
+                            <div class="modal-content" style="padding-bottom:calc(24px + env(safe-area-inset-bottom));">
+                                <div class="modal-pull-bar"><span></span></div>
+                                <button class="modal-close" @click="previewData=null"><span class="material-symbols-outlined close-icon">close</span><span class="material-symbols-outlined arrow-icon">arrow_back</span></button>
+                                <div style="padding:16px 0;">
+                                    <!-- Image gallery -->
+                                    <div v-if="previewImages.length" style="display:flex;gap:8px;overflow-x:auto;padding:0 16px 8px;scroll-snap-type:x mandatory;">
+                                        <div v-for="(img, idx) in previewImages" :key="idx" style="flex:0 0 auto;width:200px;height:140px;border-radius:10px;overflow:hidden;scroll-snap-align:start;background:var(--bg-input);border:1px solid var(--border-light);">
+                                            <img :src="img" style="width:100%;height:100%;object-fit:cover;cursor:pointer;" @click="viewerImg=img">
+                                        </div>
+                                    </div>
+                                    <div style="padding:0 16px;">
+                                        <div style="color:var(--text-white);font-size:16px;font-weight:700;margin-bottom:4px;">{{ previewData.title }}</div>
+                                        <div style="color:var(--text-muted);font-size:12px;">{{ previewData.category }} • {{ previewData.date }}</div>
+                                        <div v-if="previewData.desc" style="color:var(--text-light);font-size:13px;margin-top:8px;line-height:1.7;">{{ previewData.desc }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Project Modal -->
+                        <div v-if="editProjectData" class="project-modal" @click.self="closeEditProject">
+                            <div class="modal-content" style="padding-bottom:calc(24px + env(safe-area-inset-bottom));">
+                                <div class="modal-pull-bar"><span></span></div>
+                                <button class="modal-close" @click="closeEditProject"><span class="material-symbols-outlined close-icon">close</span><span class="material-symbols-outlined arrow-icon">arrow_back</span></button>
+                                <div style="padding:16px 0;">
+                                    <h3 style="color:var(--text-white);font-size:16px;margin:0 16px 12px;">تعديل المشروع</h3>
+                                    <div class="mkt-checkout-form" style="padding:0 16px;">
+                                        <div class="mkt-form-group"><label>اسم المشروع</label><input class="form-input" v-model="editProjectData.title"></div>
+                                        <div class="mkt-form-group"><label>الوصف</label><textarea class="form-input" v-model="editProjectData.desc" rows="2"></textarea></div>
+                                        <div class="mkt-form-group"><label>التصنيف</label>
+                                            <select class="form-input" v-model="editProjectData.category">
+                                                <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+                                            </select>
+                                        </div>
+                                        <div class="mkt-form-group"><label>تاريخ الإنجاز</label><input class="form-input" type="date" v-model="editProjectData.date"></div>
+                                        <div class="mkt-form-group">
+                                            <label>الصور ({{ editProjectData.images.length }}/5)</label>
+                                            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                                                <div v-for="(img, idx) in editProjectData.images" :key="idx" style="width:60px;height:60px;border-radius:8px;overflow:hidden;position:relative;background:var(--bg-input);border:1px solid var(--border-light);">
+                                                    <img :src="img" style="width:100%;height:100%;object-fit:cover;">
+                                                    <div style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(231,76,60,0.9);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;" @click="removeEditImage(idx)">×</div>
+                                                </div>
+                                            </div>
+                                            <button v-if="editProjectData.images.length < 5" type="button" class="form-input" style="padding:10px;cursor:pointer;text-align:center;border:1px dashed var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:12px;font-family:Cairo,sans-serif;" @click="triggerUpload('editProject')">
+                                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">add_photo_alternate</span> إضافة صور
+                                            </button>
+                                            <input type="file" accept="image/*" multiple ref="editProjectInput" style="display:none" @change="handleEditProjectImages($event)">
+                                        </div>
+                                        <button class="mkt-confirm-btn" @click="saveEditProject">حفظ التعديلات</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Viewer (full screen) -->
+                        <div v-if="viewerImg" class="project-modal" style="background:rgba(0,0,0,0.95);z-index:200;" @click.self="viewerImg=null">
+                            <div style="position:absolute;top:16px;left:16px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer;" @click="viewerImg=null">
+                                <span class="material-symbols-outlined" style="color:#fff;font-size:22px;">close</span>
+                            </div>
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:40px;">
+                                <img :src="viewerImg" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;">
                             </div>
                         </div>
                     </template>
@@ -441,20 +549,51 @@
                                 <div class="mkt-checkout-form">
                                     <div class="mkt-form-group"><label>اسم الشركة</label><input class="form-input" v-model="editProfile.name"></div>
                                     <div class="mkt-form-group"><label>نبذة عن الشركة</label><textarea class="form-input" v-model="editProfile.about" rows="3"></textarea></div>
-                                    <div class="mkt-form-group"><label>التخصصات (كل تخصص بسطر)</label><textarea class="form-input" v-model="editProfile.specsStr" rows="3"></textarea></div>
+                                    <div class="mkt-form-group">
+                                        <label>التخصصات</label>
+                                        <div v-for="(spec, idx) in editProfile.specs" :key="idx" style="display:flex;gap:6px;margin-bottom:6px;">
+                                            <input class="form-input" v-model="editProfile.specs[idx]" placeholder="تخصص" style="flex:1;">
+                                            <button type="button" style="width:36px;height:36px;border-radius:8px;border:1px solid rgba(231,76,60,0.3);background:transparent;color:#e74c3c;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;" @click="removeSpec(idx)">×</button>
+                                        </div>
+                                        <button type="button" class="form-input" style="padding:8px;cursor:pointer;text-align:center;border:1px dashed var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:12px;font-family:Cairo,sans-serif;" @click="addSpec">
+                                            <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">add</span> إضافة تخصص
+                                        </button>
+                                    </div>
                                     <div class="mkt-form-group"><label>الموقع</label><input class="form-input" v-model="editProfile.location"></div>
-                                    <div class="mkt-form-group"><label>رقم الهاتف</label><input class="form-input" v-model="editProfile.phone"></div>
-                                    <div class="mkt-form-group"><label>البريد الإلكتروني</label><input class="form-input" v-model="editProfile.email"></div>
-                                    <div class="mkt-form-group"><label>رابط الشعار</label><input class="form-input" v-model="editProfile.logo"></div>
-                                    <div class="mkt-form-group"><label>رابط الغلاف</label><input class="form-input" v-model="editProfile.cover"></div>
-                                    <div class="mkt-form-group"><label>سنوات الخبرة</label><input class="form-input" type="number" v-model="editProfile.years"></div>
-                                    <div class="mkt-form-group"><label>عدد العمال</label><input class="form-input" type="number" v-model="editProfile.workers"></div>
-                                    <div class="mkt-form-group"><label>عدد المهندسين</label><input class="form-input" type="number" v-model="editProfile.engineers"></div>
-                                    <div class="mkt-form-group"><label>المشاريع المنفذة</label><input class="form-input" type="number" v-model="editProfile.done"></div>
+                                    <div class="mkt-form-group">
+                                        <label>صورة الملف الشخصي</label>
+                                        <div style="display:flex;align-items:center;gap:10px;">
+                                            <div v-if="editProfile.logo" style="width:50px;height:50px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--bg-input);border:1px solid var(--border-light);">
+                                                <img :src="editProfile.logo" style="width:100%;height:100%;object-fit:cover;">
+                                            </div>
+                                            <button type="button" class="form-input" style="padding:10px;cursor:pointer;text-align:center;border:1px dashed var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:12px;font-family:Cairo,sans-serif;" @click="triggerUpload('logo')">
+                                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">add_photo_alternate</span> اختيار صورة
+                                            </button>
+                                            <input type="file" accept="image/*" ref="logoInput" style="display:none" @change="handleUpload($event,'logo')">
+                                        </div>
+                                    </div>
+                                    <div class="mkt-form-group">
+                                        <label>صورة الغلاف</label>
+                                        <div style="display:flex;align-items:center;gap:10px;">
+                                            <div v-if="editProfile.cover" style="width:80px;height:45px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--bg-input);border:1px solid var(--border-light);">
+                                                <img :src="editProfile.cover" style="width:100%;height:100%;object-fit:cover;">
+                                            </div>
+                                            <button type="button" class="form-input" style="padding:10px;cursor:pointer;text-align:center;border:1px dashed var(--accent-gold);background:transparent;color:var(--accent-gold);font-size:12px;font-family:Cairo,sans-serif;" @click="triggerUpload('cover')">
+                                                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">add_photo_alternate</span> اختيار صورة
+                                            </button>
+                                            <input type="file" accept="image/*" ref="coverInput" style="display:none" @change="handleUpload($event,'cover')">
+                                        </div>
+                                    </div>
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                                        <div class="mkt-form-group"><label>سنوات الخبرة</label><input class="form-input" type="number" v-model="editProfile.years"></div>
+                                        <div class="mkt-form-group"><label>المشاريع المنفذة</label><input class="form-input" type="number" v-model="editProfile.done"></div>
+                                        <div class="mkt-form-group"><label>عدد العمال</label><input class="form-input" type="number" v-model="editProfile.workers"></div>
+                                        <div class="mkt-form-group"><label>عدد المهندسين</label><input class="form-input" type="number" v-model="editProfile.engineers"></div>
+                                    </div>
                                     <button class="mkt-confirm-btn" @click="saveProfileEdit">حفظ التعديلات</button>
                                 </div>
                                 <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,136,0,0.08);text-align:center;color:#FF8800;font-size:12px;">
-                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الحفظ سيتم مراجعة التعديلات من قبل الدعم الفني
+                                    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span> بعد الحفظ سيتم مراجعة الطلب من قبل الدعم الفني
                                 </div>
                             </div>
                         </div>
@@ -489,12 +628,14 @@
 
                 var user = ref(myData ? {
                     name: myData.name,
+                    ownerName: myData.ownerName || '',
                     phone: myData.phone || '+964 770 123 4567',
                     governorate: myData.governorate || '',
                     address: myData.address || '',
                     role: myData.role || 'user'
                 } : {
-                    name: 'أحمد محمد علي',
+                    name: 'ضيف عراق تكنو',
+                    ownerName: '',
                     phone: '+964 770 123 4567',
                     governorate: '',
                     address: ''
@@ -677,65 +818,195 @@
 
                 // Projects
                 var myProjects = ref(profile.value.projects || []);
-                var newProject = ref({ title: '', desc: '', category: '', image: '', date: '' });
+                var newProject = ref({ title: '', desc: '', category: '', images: [], date: '' });
                 var categories = ['بناء سكني', 'بناء تجاري', 'جسور وطرق', 'تشطيبات', 'خرسانة', 'أعمال صحية', 'أعمال كهربائية', 'دهانات', 'أرضيات', 'واجهات', 'حدائق', 'أخرى'];
+                var projectTab = ref('add');
+
+                // Image upload helpers
+                var logoInput = ref(null);
+                var coverInput = ref(null);
+                var projectInput = ref(null);
+
+                function triggerUpload(type) {
+                    if (type === 'logo' && logoInput.value) logoInput.value.click();
+                    else if (type === 'cover' && coverInput.value) coverInput.value.click();
+                    else if (type === 'project' && projectInput.value) projectInput.value.click();
+                }
+
+                function handleUpload(e, type) {
+                    var file = e.target.files && e.target.files[0];
+                    if (!file) return;
+                    var reader = new FileReader();
+                    reader.onload = function(ev) {
+                        if (type === 'logo') editProfile.value.logo = ev.target.result;
+                        else if (type === 'cover') editProfile.value.cover = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    e.target.value = '';
+                }
+
+                function handleProjectImages(e) {
+                    var files = Array.from(e.target.files || []);
+                    var remaining = 5 - newProject.value.images.length;
+                    if (files.length > remaining) files = files.slice(0, remaining);
+                    files.forEach(function(file) {
+                        if (!file) return;
+                        var reader = new FileReader();
+                        reader.onload = function(ev) {
+                            newProject.value.images.push(ev.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                    e.target.value = '';
+                }
+
+                function removeProjectImage(idx) {
+                    newProject.value.images.splice(idx, 1);
+                }
 
                 var submitProject = function() {
                     if (!newProject.value.title.trim()) { showBrandAlert('أدخل اسم المشروع'); return; }
+                    var imgs = newProject.value.images.length ? newProject.value.images : ['images/img1.jpg'];
                     myProjects.value.push({
                         title: newProject.value.title,
                         desc: newProject.value.desc,
                         category: newProject.value.category,
-                        image: newProject.value.image || 'images/img1.jpg',
+                        images: imgs,
+                        image: imgs[0],
                         date: newProject.value.date || new Date().toISOString().split('T')[0],
                         status: 'قيد المراجعة'
                     });
                     var p = loadFromStorage('bunean-company-profile', {});
                     p.projects = myProjects.value;
                     localStorage.setItem('bunean-company-profile', JSON.stringify(p));
-                    newProject.value = { title: '', desc: '', category: '', image: '', date: '' };
-                    showBrandAlert('✅ تم إضافة المشروع\nقيد المراجعة من قبل الدعم الفني');
+                    newProject.value = { title: '', desc: '', category: '', images: [], date: '' };
+                    showBrandAlert('✅ تم إضافة المشروع\nسيتم مراجعة الطلب من قبل الدعم الفني');
                 };
+
+                // My Projects management
+                var previewData = ref(null);
+                var previewImages = computed(function() {
+                    return previewData.value ? (previewData.value.images || [previewData.value.image]) : [];
+                });
+                var viewerImg = ref(null);
+                var editProjectData = ref(null);
+                var editProjectIndex = ref(-1);
+                var editProjectInput = ref(null);
+                var editProjectNewImages = ref([]);
+
+                function previewProject(p) {
+                    previewData.value = p;
+                }
+
+                function editProject(idx) {
+                    var p = myProjects.value[idx];
+                    editProjectIndex.value = idx;
+                    editProjectData.value = {
+                        title: p.title,
+                        desc: p.desc || '',
+                        category: p.category || '',
+                        date: p.date || '',
+                        images: (p.images || [p.image]).slice()
+                    };
+                    editProjectNewImages.value = [];
+                }
+
+                function closeEditProject() {
+                    editProjectData.value = null;
+                    editProjectIndex.value = -1;
+                    editProjectNewImages.value = [];
+                }
+
+                function saveEditProject() {
+                    var ed = editProjectData.value;
+                    if (!ed.title.trim()) { showBrandAlert('أدخل اسم المشروع'); return; }
+                    var idx = editProjectIndex.value;
+                    if (idx === -1) return;
+                    var p = myProjects.value[idx];
+                    p.title = ed.title.trim();
+                    p.desc = ed.desc.trim();
+                    p.category = ed.category;
+                    p.date = ed.date;
+                    p.images = ed.images.slice();
+                    p.image = p.images[0] || 'images/img1.jpg';
+                    var profileData = loadFromStorage('bunean-company-profile', {});
+                    profileData.projects = myProjects.value;
+                    localStorage.setItem('bunean-company-profile', JSON.stringify(profileData));
+                    closeEditProject();
+                    showBrandAlert('✅ تم حفظ التعديلات');
+                }
+
+                function deleteProject(idx) {
+                    showBrandConfirm('حذف المشروع؟', function() {
+                        myProjects.value.splice(idx, 1);
+                        var profileData = loadFromStorage('bunean-company-profile', {});
+                        profileData.projects = myProjects.value;
+                        localStorage.setItem('bunean-company-profile', JSON.stringify(profileData));
+                        showBrandAlert('✅ تم حذف المشروع');
+                    });
+                }
+
+                function handleEditProjectImages(e) {
+                    var files = Array.from(e.target.files || []);
+                    var remaining = 5 - editProjectData.value.images.length;
+                    if (files.length > remaining) files = files.slice(0, remaining);
+                    files.forEach(function(file) {
+                        if (!file) return;
+                        var reader = new FileReader();
+                        reader.onload = function(ev) {
+                            editProjectData.value.images.push(ev.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                    e.target.value = '';
+                }
+
+                function removeEditImage(idx) {
+                    editProjectData.value.images.splice(idx, 1);
+                }
 
                 // Edit profile
                 var editProfile = ref({
                     name: profile.value.name || '',
                     about: profile.value.about || '',
-                    specsStr: (profile.value.specs || []).join('\n'),
+                    specs: (profile.value.specs || []).slice(),
                     location: profile.value.location || '',
-                    phone: profile.value.phone || '',
-                    email: profile.value.email || '',
-                    logo: profile.value.logo || '',
-                    cover: profile.value.cover || '',
+                    logo: profile.value.logo || 'images/img3.jpg',
+                    cover: profile.value.cover || 'images/img16.jpg',
                     years: profile.value.years || '',
+                    done: profile.value.done || '',
                     workers: profile.value.workers || '',
-                    engineers: profile.value.engineers || '',
-                    done: profile.value.done || ''
+                    engineers: profile.value.engineers || ''
                 });
+
+                function addSpec() { editProfile.value.specs.push(''); }
+                function removeSpec(idx) { editProfile.value.specs.splice(idx, 1); }
 
                 var saveProfileEdit = function() {
                     var p = loadFromStorage('bunean-company-profile', {});
                     p.name = editProfile.value.name;
                     p.about = editProfile.value.about;
-                    p.specs = editProfile.value.specsStr.split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
+                    p.specs = editProfile.value.specs.filter(function(s) { return s.trim(); });
                     p.location = editProfile.value.location;
-                    p.phone = editProfile.value.phone;
-                    p.email = editProfile.value.email;
-                    p.logo = editProfile.value.logo;
-                    p.cover = editProfile.value.cover;
+                    p.logo = editProfile.value.logo || 'images/img3.jpg';
+                    p.cover = editProfile.value.cover || 'images/img16.jpg';
                     p.years = parseInt(editProfile.value.years) || 0;
+                    p.done = parseInt(editProfile.value.done) || 0;
                     p.workers = parseInt(editProfile.value.workers) || 0;
                     p.engineers = parseInt(editProfile.value.engineers) || 0;
-                    p.done = parseInt(editProfile.value.done) || 0;
                     p.status = 'قيد المراجعة';
                     localStorage.setItem('bunean-company-profile', JSON.stringify(p));
-                    showBrandAlert('✅ تم حفظ التعديلات\nقيد المراجعة من قبل الدعم الفني');
+                    showBrandAlert('✅ تم حفظ التعديلات\nسيتم مراجعة الطلب من قبل الدعم الفني');
                 };
 
                 var handleLogout = function() {
                     showBrandConfirm('تسجيل الخروج؟', function() {
                         localStorage.removeItem('bunean-user-auth');
                         localStorage.removeItem('bunean-user-data');
+                        localStorage.removeItem('bunean-company-auth');
+                        localStorage.removeItem('bunean-company-profile');
+                        localStorage.removeItem('bunean-remember-me');
+                        localStorage.removeItem('bunean-user');
                         window.location.href = 'index.html';
                     });
                 };
@@ -822,7 +1093,16 @@
                     selectedMyQuote, myQuoteEdit, editMyQuote, saveMyQuote,
                     myAds, showAdForm, newAd, submitAd,
                     myProjects, newProject, submitProject, categories,
-                    editProfile, saveProfileEdit, handleLogout,
+                    projectTab,
+                    logoInput, coverInput, projectInput,
+                    triggerUpload, handleUpload, handleProjectImages, removeProjectImage,
+                    previewData, previewImages, viewerImg,
+                    previewProject,
+                    editProjectData, editProjectInput,
+                    editProject, closeEditProject, saveEditProject,
+                    deleteProject,
+                    handleEditProjectImages, removeEditImage,
+                    editProfile, addSpec, removeSpec, saveProfileEdit, handleLogout,
                     activeUserSection, userOffers, selectedOffer, viewOfferDetail, acceptOffer,
                     supportMessage, submitSupport
                 };

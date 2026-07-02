@@ -660,7 +660,13 @@
                             <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </div>
                     </div>
-                    <div class="forgot-password"><a href="#" @click.prevent="showForgotModal = true">هل نسيت كلمة المرور؟</a></div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                        <div class="forgot-password" style="margin-bottom:0;"><a href="#" @click.prevent="showForgotModal = true">هل نسيت كلمة المرور؟</a></div>
+                        <label style="display:flex;align-items:center;gap:6px;color:#b0c4d9;font-size:13px;cursor:pointer;">
+                            <input type="checkbox" v-model="rememberMe" style="accent-color:#c9a243;width:16px;height:16px;cursor:pointer;">
+                            تذكرني
+                        </label>
+                    </div>
                     <button class="login-btn" :class="{ loading: isLoading }" @click="handleLogin" :disabled="isLoading">
                         <span v-if="!isLoading">دخول</span>
                         <span v-else class="loading-dots"><span></span><span></span><span></span></span>
@@ -709,7 +715,21 @@
                     </div>
                 </template>
 
-
+                <!-- ======= OTP VERIFY VIEW ======= -->
+                <template v-if="view === 'otp-verify'">
+                    <div class="register-section">
+                        <div style="text-align:center;margin-bottom:4px;">
+                            <span class="material-symbols-outlined" style="font-size:48px;color:#c9a243;">mail_lock</span>
+                        </div>
+                        <div style="text-align:center;font-size:16px;font-weight:700;color:#fff;">تأكيد الحساب</div>
+                        <div style="text-align:center;font-size:13px;color:#b0c4d9;margin-bottom:4px;">أدخل رمز التحقق المرسل إلى {{ pendingPhone }}</div>
+                        <div v-if="otpError" style="text-align:center;color:#ff6b6b;font-size:12px;margin-bottom:4px;">{{ otpError }}</div>
+                        <input type="text" class="reg-input reg-otp-input" placeholder="______" maxlength="6" v-model="otpCode" @keyup.enter="verifyOtp">
+                        <div style="text-align:center;font-size:11px;color:#8a9bb0;margin-bottom:8px;">رمز التحقق هو 123456</div>
+                        <button class="reg-submit" @click="verifyOtp">تأكيد <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span></button>
+                        <div style="text-align:center;font-size:12px;color:#b0c4d9;cursor:pointer;margin-top:6px;" @click="view='login'">الرجوع</div>
+                    </div>
+                </template>
 
             </div>
 
@@ -727,30 +747,74 @@
         </div>
 
         <!-- Forgot Password Modal -->
-        <div v-if="showForgotModal" class="modal-overlay" @click.self="showForgotModal = false">
+        <div v-if="showForgotModal" class="modal-overlay" @click.self="closeForgot">
             <div class="modal-content">
-                <div class="modal-title">استعادة كلمة المرور</div>
-                <input
-                    type="email"
-                    class="modal-input"
-                    placeholder="أدخل بريدك الإلكتروني"
-                    v-model="resetEmail"
-                >
-                <button class="modal-btn" @click="handleResetPassword">إرسال</button>
-                <button class="modal-close" @click="showForgotModal = false">إلغاء</button>
+
+                <!-- Step 1: Enter Phone -->
+                <template v-if="forgotStep === 'phone'">
+                    <div class="modal-title" style="display:flex;align-items:center;gap:8px;">
+                        <span class="material-symbols-outlined" style="font-size:22px;cursor:pointer;" @click="closeForgot">arrow_forward</span>
+                        <span>استعادة كلمة المرور</span>
+                    </div>
+                    <div style="color:var(--text-muted);font-size:12px;text-align:center;margin-bottom:12px;">أدخل رقم الهاتف المرتبط بحسابك</div>
+                    <input type="tel" class="modal-input" placeholder="رقم الهاتف" v-model="resetPhone" @keyup.enter="handleResetPhone">
+                    <div v-if="forgotError" style="color:#ff6b6b;font-size:12px;text-align:center;margin-bottom:8px;">{{ forgotError }}</div>
+                    <button class="modal-btn" @click="handleResetPhone">التالي</button>
+                    <button class="modal-close" @click="closeForgot">إلغاء</button>
+                </template>
+
+                <!-- Step 2: OTP Verify -->
+                <template v-if="forgotStep === 'otp'">
+                    <div class="modal-title" style="display:flex;align-items:center;gap:8px;">
+                        <span class="material-symbols-outlined" style="font-size:22px;cursor:pointer;" @click="forgotStep='phone';forgotError='';">arrow_forward</span>
+                        <span>تأكيد الرمز</span>
+                    </div>
+                    <div style="text-align:center;margin-bottom:4px;">
+                        <span class="material-symbols-outlined" style="font-size:36px;color:#c9a243;">mail_lock</span>
+                    </div>
+                    <div style="color:var(--text-muted);font-size:12px;text-align:center;margin-bottom:4px;">أدخل رمز التحقق المرسل إلى {{ resetPhone }}</div>
+                    <input type="text" class="modal-input" style="text-align:center;font-size:20px;letter-spacing:6px;font-weight:700;" placeholder="______" maxlength="6" v-model="resetOtp" @keyup.enter="handleResetOtp">
+                    <div style="color:#8a9bb0;font-size:11px;text-align:center;margin-bottom:4px;">رمز التحقق هو 123456</div>
+                    <div v-if="forgotError" style="color:#ff6b6b;font-size:12px;text-align:center;margin-bottom:8px;">{{ forgotError }}</div>
+                    <button class="modal-btn" @click="handleResetOtp">تأكيد</button>
+                </template>
+
+                <!-- Step 3: New Password -->
+                <template v-if="forgotStep === 'reset'">
+                    <div class="modal-title" style="display:flex;align-items:center;gap:8px;">
+                        <span class="material-symbols-outlined" style="font-size:22px;cursor:pointer;" @click="forgotStep='otp';forgotError='';">arrow_forward</span>
+                        <span>كلمة مرور جديدة</span>
+                    </div>
+                    <div style="color:var(--text-muted);font-size:12px;text-align:center;margin-bottom:12px;">أدخل كلمة المرور الجديدة</div>
+                    <div style="position:relative;margin-bottom:8px;">
+                        <input :type="resetShowPwd ? 'text' : 'password'" class="modal-input" placeholder="كلمة المرور الجديدة" v-model="resetNewPassword" style="padding-left:40px;">
+                        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#fff;cursor:pointer;" @click="resetShowPwd = !resetShowPwd"><span class="material-symbols-outlined" style="font-size:20px;">{{ resetShowPwd ? 'visibility' : 'visibility_off' }}</span></span>
+                    </div>
+                    <div style="position:relative;margin-bottom:8px;">
+                        <input :type="resetShowConfirmPwd ? 'text' : 'password'" class="modal-input" placeholder="تأكيد كلمة المرور" v-model="resetConfirmPassword" style="padding-left:40px;" @keyup.enter="handleResetSave">
+                        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#fff;cursor:pointer;" @click="resetShowConfirmPwd = !resetShowConfirmPwd"><span class="material-symbols-outlined" style="font-size:20px;">{{ resetShowConfirmPwd ? 'visibility' : 'visibility_off' }}</span></span>
+                    </div>
+                    <div v-if="forgotError" style="color:#ff6b6b;font-size:12px;text-align:center;margin-bottom:8px;">{{ forgotError }}</div>
+                    <button class="modal-btn" @click="handleResetSave">حفظ</button>
+                </template>
+
             </div>
         </div>
     </div>
 
     <script>
-        // Hide splash screen
+        // Hide splash screen + auto-redirect if Remember Me
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('splash').classList.add('hidden');
-                setTimeout(() => {
-                    document.getElementById('splash').remove();
-                }, 500);
-            }, 1500);
+            var _auth = localStorage.getItem('bunean-user-auth');
+            var _rem = localStorage.getItem('bunean-remember-me');
+            if (_auth && _rem === 'true') {
+                setTimeout(function() { window.location.href = 'home.html'; }, 1500);
+            } else {
+                setTimeout(function() {
+                    document.getElementById('splash').classList.add('hidden');
+                    setTimeout(function() { document.getElementById('splash').remove(); }, 500);
+                }, 1500);
+            }
         });
 
         // Register Service Worker for PWA
@@ -762,6 +826,17 @@
 
         const { createApp, ref } = Vue;
 
+        // Inline showBrandAlert since nav.js is not loaded here
+        function showBrandAlert(m) {
+            var o=document.querySelector('.brand-alert-overlay');if(o)o.remove();
+            var l=document.createElement('div');l.className='brand-alert-overlay';l.setAttribute('onclick','this.remove()');
+            var d=document.createElement('div');d.className='brand-alert-modal';d.setAttribute('onclick','event.stopPropagation()');
+            var i=document.createElement('div');i.className='brand-alert-icon-wrap';i.innerHTML='<span class="material-symbols-outlined brand-alert-icon">info</span>';
+            var t=document.createElement('p');t.className='brand-alert-text';t.textContent=m;
+            var b=document.createElement('button');b.className='brand-alert-btn';b.textContent='حسناً';b.setAttribute('onclick','this.closest(\'.brand-alert-overlay\').remove()');
+            d.appendChild(i);d.appendChild(t);d.appendChild(b);l.appendChild(d);document.body.appendChild(l);
+        }
+
         createApp({
             setup() {
                 // Login
@@ -772,12 +847,29 @@
                 const errorMsg = ref('');
                 const successMsg = ref('');
                 const showForgotModal = ref(false);
-                const resetEmail = ref('');
+                const forgotStep = ref('phone');
+                const resetPhone = ref('');
+                const resetOtp = ref('');
+                const resetNewPassword = ref('');
+                const resetConfirmPassword = ref('');
+                const resetShowPwd = ref(false);
+                const resetShowConfirmPwd = ref(false);
+                const forgotError = ref('');
+                const resetUserId = ref('');
                 const usernameInput = ref(null);
                 const passwordInput = ref(null);
 
                 // View: login | user-register | company-register | otp-verify
                 const view = ref('login');
+
+                // Remember Me
+                const rememberMe = ref(false);
+
+                // OTP
+                const otpCode = ref('');
+                const pendingPhone = ref('');
+                const pendingRegData = ref(null);
+                const otpError = ref('');
 
                 // Registration
                 const regFullName = ref('');
@@ -819,7 +911,9 @@
                         var acct = null;
 
                         if (uname === 'admin1' && pwd === '123456') {
-                            acct = { role: 'company', name: 'شركة البناء الحديث' };
+                            acct = { role: 'company', name: 'عراق تكنو', ownerName: 'صاحب الشركة' };
+                        } else if (uname === 'admin' && pwd === '123456') {
+                            acct = { role: 'user', name: 'عراق تكنو' };
                         } else {
                             acct = accounts[uname];
                             if (acct && acct.password !== pwd) acct = null;
@@ -827,17 +921,18 @@
 
                         if (acct) {
                             successMsg.value = 'تم تسجيل الدخول بنجاح!';
+                            localStorage.setItem('bunean-remember-me', rememberMe.value ? 'true' : 'false');
                             setTimeout(() => {
                                 var userData = { name: acct.name, phone: acct.phone || '', governorate: acct.governorate || '', address: acct.address || '', role: acct.role || 'user' };
+                                if (acct.ownerName) userData.ownerName = acct.ownerName;
                                 localStorage.setItem('bunean-user-data', JSON.stringify(userData));
                                 localStorage.setItem('bunean-user-auth', uname);
-                                // إذا كان شركة، تأكد من وجود bunean-company-auth
                                 if (acct.role === 'company') {
                                     var saved = JSON.parse(localStorage.getItem('bunean-company-profile'));
                                     if (saved) {
                                         localStorage.setItem('bunean-company-auth', JSON.stringify({ name: saved.name, status: saved.status }));
                                     } else {
-                                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: acct.name || 'شركة البناء الحديث', status: 'قيد المراجعة' }));
+                                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: acct.name || 'عراق تكنو', status: 'قيد المراجعة' }));
                                     }
                                 }
                                 window.location.href = 'home.html';
@@ -850,6 +945,7 @@
                 };
 
                 const handleGuest = () => {
+                    localStorage.setItem('bunean-user', 'ضيف عراق تكنو');
                     window.location.href = 'home.html';
                 };
 
@@ -899,31 +995,102 @@
                     accounts[uid] = entry;
                     localStorage.setItem('bunean-accounts', JSON.stringify(accounts));
 
-                    var userData = { name: type === 'company' ? regCompanyName.value.trim() : regFullName.value.trim(), phone: regPhone.value.trim(), governorate: regGovernorate.value, address: regAddress.value.trim(), role: type };
-                    localStorage.setItem('bunean-user-data', JSON.stringify(userData));
-                    localStorage.setItem('bunean-user-auth', uid);
+                    // Store pending data for OTP verification
+                    pendingPhone.value = regPhone.value.trim();
+                    var companyProfile = null;
                     if (type === 'company') {
-                        var profile = {
+                        companyProfile = {
                             name: regCompanyName.value.trim(), about: '', specs: [], location: regGovernorate.value,
                             phone: regPhone.value.trim(), email: '', logo: 'images/img3.jpg', cover: 'images/img16.jpg',
                             workImages: ['images/img1.jpg','images/img2.jpg','images/img3.jpg'],
                             years: 1, workers: 0, engineers: 0, done: 0,
                             projects: [], ads: [], quotes: [], status: 'قيد المراجعة'
                         };
-                        localStorage.setItem('bunean-company-profile', JSON.stringify(profile));
-                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: profile.name, status: profile.status }));
                     }
+                    pendingRegData.value = {
+                        type: type,
+                        uid: uid,
+                        ownerName: type === 'company' ? regFullName.value.trim() : '',
+                        name: type === 'company' ? regCompanyName.value.trim() : regFullName.value.trim(),
+                        phone: regPhone.value.trim(),
+                        governorate: regGovernorate.value,
+                        address: regAddress.value.trim(),
+                        companyProfile: companyProfile
+                    };
+
+                    // Show OTP verification
+                    otpCode.value = '';
+                    otpError.value = '';
+                    view.value = 'otp-verify';
+                };
+
+                const verifyOtp = () => {
+                    otpError.value = '';
+                    if (otpCode.value !== '123456') {
+                        otpError.value = 'رمز التحقق غير صحيح';
+                        return;
+                    }
+                    var pd = pendingRegData.value;
+                    if (!pd) { showBrandAlert('خطأ في بيانات التسجيل'); return; }
+
+                    var userData = {
+                        name: pd.name,
+                        phone: pd.phone,
+                        governorate: pd.governorate,
+                        address: pd.address,
+                        role: pd.type
+                    };
+                    if (pd.type === 'company' && pd.ownerName) userData.ownerName = pd.ownerName;
+                    localStorage.setItem('bunean-user-data', JSON.stringify(userData));
+                    localStorage.setItem('bunean-user-auth', pd.uid);
+
+                    if (pd.type === 'company' && pd.companyProfile) {
+                        localStorage.setItem('bunean-company-profile', JSON.stringify(pd.companyProfile));
+                        localStorage.setItem('bunean-company-auth', JSON.stringify({ name: pd.companyProfile.name, status: pd.companyProfile.status }));
+                    }
+
                     window.location.href = 'home.html';
                 };
 
-                const handleResetPassword = () => {
-                    if (!resetEmail.value.trim()) {
-                        showBrandAlert('أدخل بريدك الإلكتروني');
+                const closeForgot = () => {
+                    showForgotModal.value = false;
+                    forgotStep.value = 'phone';
+                    resetPhone.value = '';
+                    resetOtp.value = '';
+                    resetNewPassword.value = '';
+                    resetConfirmPassword.value = '';
+                    forgotError.value = '';
+                    resetUserId.value = '';
+                };
+
+                const handleResetPhone = () => {
+                    forgotError.value = '';
+                    var phone = resetPhone.value.trim();
+                    if (!phone) { forgotError.value = 'أدخل رقم الهاتف'; return; }
+                    resetUserId.value = phone;
+                    forgotStep.value = 'otp';
+                };
+
+                const handleResetOtp = () => {
+                    forgotError.value = '';
+                    if (resetOtp.value !== '123456') {
+                        forgotError.value = 'رمز التحقق غير صحيح';
                         return;
                     }
-                    showBrandAlert('تم إرسال رابط استعادة كلمة المرور');
-                    showForgotModal.value = false;
-                    resetEmail.value = '';
+                    forgotStep.value = 'reset';
+                };
+
+                const handleResetSave = () => {
+                    forgotError.value = '';
+                    var pwd = resetNewPassword.value.trim() || '123456';
+                    var uid = resetUserId.value;
+                    var accounts = JSON.parse(localStorage.getItem('bunean-accounts') || '{}');
+                    if (accounts[uid]) {
+                        accounts[uid].password = pwd;
+                        localStorage.setItem('bunean-accounts', JSON.stringify(accounts));
+                    }
+                    showBrandAlert('✅ تم تغيير كلمة المرور بنجاح');
+                    closeForgot();
                 };
 
                 const governorates = ['بغداد','البصرة','نينوى','أربيل','السليمانية','كركوك','الأنبار','بابل','ذي قار','القادسية','واسط','المثنى','ميسان','دهوك','صلاح الدين','ديالى','كربلاء','النجف'];
@@ -931,14 +1098,18 @@
                 return {
                     username, password, showPassword, isLoading,
                     errorMsg, successMsg,
-                    showForgotModal, resetEmail,
+                    showForgotModal,
+                    forgotStep, resetPhone, resetOtp, resetNewPassword, resetConfirmPassword,
+                    resetShowPwd, resetShowConfirmPwd, forgotError,
+                    handleResetPhone, handleResetOtp, handleResetSave, closeForgot,
                     usernameInput, passwordInput,
                     focusPassword,
-                    handleLogin, handleGuest, handleResetPassword,
+                    handleLogin, handleGuest,
                     view, openUserRegister, openCompanyRegister,
                     regFullName, regCompanyName, regGovernorate, regAddress, regPhone, regPassword, regConfirmPassword,
                     regShowPwd, regShowConfirmPwd, regLoading, submitRegistration,
-                    governorates
+                    governorates,
+                    rememberMe, otpCode, otpError, pendingPhone, verifyOtp
                 };
             }
         }).mount('#app');

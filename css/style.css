@@ -5160,6 +5160,29 @@ html.light-mode .mkt-calc-item-pill.active span:last-child { color: #3a6a95; }
 .mkt-add-cart:hover { transform: scale(1.1); }
 .mkt-add-cart .material-symbols-outlined { font-size: 16px; }
 
+.mkt-card-actions {
+  display: flex;
+  gap: 3px;
+  padding: 0 6px 6px;
+}
+.mkt-card-btn {
+  flex: 1;
+  padding: 3px 2px;
+  font-size: 8px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.mkt-card-detail {
+  background: var(--accent-gold);
+  color: var(--primary-dark);
+}
+html.light-mode .mkt-card-detail { background: #3b82f6; color:#fff; }
+
 /* --- موردون --- */
 .mkt-suppliers-scroll {
   display: flex;
