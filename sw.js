@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bunnan-v5';
+const CACHE_NAME = 'bunnan-v6';
 const urlsToCache = [
     '/bnn/',
     '/bnn/index.html',
@@ -16,6 +16,7 @@ const urlsToCache = [
     '/bnn/icon-192.png',
     '/bnn/icon-512.png',
     '/bnn/js/nav.js',
+    '/bnn/js/router.js',
     '/bnn/js/header.js',
     '/bnn/js/bottom-nav.js',
     '/bnn/images/img1.jpg',
