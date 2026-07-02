@@ -12,7 +12,8 @@ function renderNav(activePage) {
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
         var activeClass = activePage === item.page ? ' active' : '';
-        html += '<a href="' + item.href + '" class="nav-item' + activeClass + '">'
+        var extraAttr = item.page === 'home' ? ' onclick="localStorage.removeItem(\'bunean_showAllWorks\')"' : '';
+        html += '<a href="' + item.href + '" class="nav-item' + activeClass + '"' + extraAttr + '>'
             + '<span class="material-symbols-outlined">' + item.icon + '</span>'
             + '<span>' + item.label + '</span>'
             + '</a>';
