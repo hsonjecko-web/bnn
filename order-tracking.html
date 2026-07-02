@@ -124,6 +124,7 @@
 
         .toast-message { position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--primary-blue); border:1px solid var(--border-light); border-radius:14px; padding:14px 20px; color:var(--text-white); font-size:13px; font-weight:500; z-index:200; opacity:0; transition:all .4s ease; pointer-events:none; box-shadow:0 8px 30px rgba(0,0,0,0.3); text-align:center; max-width:320px; }
         .toast-message.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .tr-status-card { background:var(--primary-blue); border-bottom:1px solid var(--border-light); padding:8px 16px 8px; }
     </style>
 </head>
 <body>
@@ -131,16 +132,18 @@
         <div class="app-container">
             <div id="header"></div>
 
-            <div class="page-content" style="padding-bottom:65px;">
-
-                <!-- Status Header -->
-                <div class="tr-status">
-                    <div>
+                <!-- Status Header (outside page-content, flush with header) -->
+                <div class="tr-status tr-status-card">
+                    <div style="display:flex;align-items:center;gap:4px;">
+                        <a href="javascript:history.back()" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;color:var(--text-white);text-decoration:none;flex-shrink:0;background:rgba(255,255,255,0.06);">
+                            <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                        </a>
                         <span class="tr-status-icon"><span class="material-symbols-outlined">check</span></span>
                         <h2 class="tr-status-title">تم استلام طلبك بنجاح</h2>
                     </div>
-                    <p class="tr-status-sub">رقم الطلب: {{ order.id }}</p>
                 </div>
+
+            <div class="page-content" style="padding-bottom:65px;">
 
                 <!-- Order Stepper -->
                 <div class="tr-stepper">

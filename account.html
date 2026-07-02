@@ -67,6 +67,19 @@
         <div class="app-container">
             <div id="header"></div>
 
+            <!-- Card for user-offers (outside page-content, flush with header) -->
+            <template v-if="activeUserSection === 'user-offers'">
+                <div style="background:var(--primary-blue);border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:4px;padding:8px 16px 8px;flex-shrink:0;">
+                    <button @click="activeUserSection = ''" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;color:var(--text-white);cursor:pointer;background:rgba(255,255,255,0.06);border:none;flex-shrink:0;">
+                        <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
+                    </button>
+                    <div style="flex:1;">
+                        <h2 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0;">عروض الأسعار</h2>
+                    </div>
+                    <div style="color:var(--accent-gold);font-size:12px;font-weight:600;">{{ userOffers.length }} عروض</div>
+                </div>
+            </template>
+
             <div class="page-content">
 
                 <!-- ===== الملف الشخصي + القائمة (تختفي عند فتح قسم) ===== -->
@@ -140,16 +153,6 @@
 
                 <!-- ===== عروض الأسعار ===== -->
                 <template v-if="activeUserSection === 'user-offers'">
-                    <!-- (same offers template - left unchanged) -->
-                    <div style="display:flex;align-items:center;gap:10px;padding:16px 16px 4px;">
-                        <button @click="activeUserSection = ''" style="background:none;border:none;color:var(--text-white);cursor:pointer;padding:4px;">
-                            <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
-                        </button>
-                        <div style="flex:1;">
-                            <h2 style="color:var(--text-white);font-size:18px;font-weight:700;margin:0 0 2px;">عروض الأسعار</h2>
-                            <div style="color:var(--accent-gold);font-size:13px;font-weight:600;">{{ userOffers.length }} عروض متاحة</div>
-                        </div>
-                    </div>
                     <div style="padding:8px 16px 20px;display:flex;flex-direction:column;gap:12px;">
                         <div v-for="(off, i) in userOffers" :key="i" :id="'offer-' + off.id" style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid var(--border-light);transition:all .2s;"
                             :style="off.accepted ? { borderColor:'var(--accent-gold)', background:'rgba(201,162,67,0.06)' } : {}">
