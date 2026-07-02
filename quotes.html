@@ -30,10 +30,11 @@
         <div class="app-container">
             <div id="header"></div>
 
-            <div style="display:flex;align-items:center;padding:8px 16px 0;gap:10px;">
+            <div style="display:flex;align-items:center;padding:8px 16px 0;gap:6px;">
                 <a href="javascript:history.back()" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;color:var(--text-white);text-decoration:none;">
                     <span class="material-symbols-outlined" style="font-size:24px;">arrow_forward</span>
                 </a>
+                <span style="color:var(--text-muted);font-size:12px;">اكتب تفاصيل مشروعك أو ما تريد استشارة المختصين فيه</span>
             </div>
 
             <div class="page-content">
@@ -117,7 +118,6 @@
                             <span class="material-symbols-outlined" style="font-size:20px;color:#4fc3f7;">psychology</span>
                             طلب استشارة جديد
                         </div>
-                        <p style="color:var(--text-muted);font-size:12px;margin:0 0 14px;line-height:1.5;">اكتب تفاصيل مشروعك أو ما تريد استشارة المختصين فيه</p>
                         <div class="mkt-form-group">
                             <label style="color:var(--text-white);font-size:12px;font-weight:600;display:block;margin-bottom:4px;"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">person</span> الاسم</label>
                             <input type="text" class="form-input" v-model="newConsult.name" placeholder="الاسم" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-white);font-size:13px;">
