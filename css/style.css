@@ -1836,8 +1836,8 @@ html.light-mode .brand-alert-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 14px;
+  gap: 2px;
+  padding: 8px 6px;
   background: var(--bg-card-light);
   border-radius: 14px;
   flex: 1;
@@ -1846,13 +1846,13 @@ html.light-mode .brand-alert-btn {
 }
 
 .stat-number {
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--accent-gold);
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-light);
   font-weight: 500;
 }

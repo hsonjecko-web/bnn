@@ -26,6 +26,7 @@
     <script src="js/header.js"></script>
     <script src="js/bottom-nav.js"></script>
     <script src="js/router.js"></script>
+    <script src="js/companies.js"></script>
 </head>
 <body>
     <div id="app" v-cloak>
@@ -45,133 +46,173 @@
                 <div class="company-info">
                     <div class="company-name">
                         {{ company.name }}
-                        <svg class="verified" viewBox="0 0 24 24" fill="currentColor">
+                        <svg v-if="company.verified" class="verified" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                         </svg>
                     </div>
                     <div class="company-type">مقاولات عامة - {{ company.location }}</div>
                 </div>
 
-                <!-- وصف مختصر -->
-                    <div style="padding:0 16px 16px;">
-                        <p style="font-size:13px;color:var(--text-light);line-height:1.7;text-align:center;">{{ aboutPreview }}</p>
+                <!-- نبذة + تخصصات -->
+                <div style="padding:0 16px 16px;display:flex;gap:12px;">
+                    <div style="flex:1;background:var(--bg-card-light);border-radius:12px;padding:12px;border:1px solid var(--border-light);">
+                        <h3 style="font-size:12px;font-weight:700;color:var(--accent-gold);margin:0 0 8px;display:flex;align-items:center;gap:4px;">
+                            <span class="material-symbols-outlined" style="font-size:16px;">info</span>
+                            نبذة عنا
+                        </h3>
+                        <p style="font-size:12px;color:var(--text-light);line-height:1.7;margin:0;">{{ aboutPreview }}</p>
                     </div>
+                    <div style="flex:1;background:var(--bg-card-light);border-radius:12px;padding:12px;border:1px solid var(--border-light);">
+                        <h3 style="font-size:12px;font-weight:700;color:var(--accent-gold);margin:0 0 8px;display:flex;align-items:center;gap:4px;">
+                            <span class="material-symbols-outlined" style="font-size:16px;">sell</span>
+                            التخصصات
+                        </h3>
+                        <div style="display:flex;flex-direction:column;gap:6px;">
+                            <div v-for="(spec, i) in company.specs" :key="i" style="display:flex;align-items:center;gap:4px;">
+                                <span class="material-symbols-outlined" style="font-size:14px;color:#4caf50;">check_circle</span>
+                                <span style="font-size:12px;color:var(--text-light);">{{ spec }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- الإحصائيات: صفين × 4 -->
+                <!-- الإحصائيات -->
+                <div style="padding:0 16px 16px;display:flex;gap:8px;">
+                    <div class="stat-box">
+                        <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);margin-bottom:2px;">checklist</span>
+                        <div class="stat-number">{{ company.done }}</div>
+                        <div class="stat-label">مشروع منجز</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);margin-bottom:2px;">calendar_month</span>
+                        <div class="stat-number">{{ company.years }}</div>
+                        <div class="stat-label">سنة خبرة</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);margin-bottom:2px;">engineering</span>
+                        <div class="stat-number">{{ company.engineers }}</div>
+                        <div class="stat-label">مهندس</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-gold);margin-bottom:2px;">groups</span>
+                        <div class="stat-number">{{ company.workers }}</div>
+                        <div class="stat-label">عامل</div>
+                    </div>
+                </div>
+
+                <!-- أعمال الشركة -->
+                <div v-if="company.workImages && company.workImages.length" style="padding:0 16px 16px;">
+                    <h3 style="font-size:14px;font-weight:700;color:var(--text-white);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;color:var(--accent-gold);">image</span>
+                        أعمال الشركة
+                    </h3>
+                    <div class="exec-slider" style="border-radius:12px;overflow:hidden;"
+                         @touchstart.passive="workSwipe.onTouchStart"
+                         @touchend="workSwipe.onTouchEnd">
+                        <div class="exec-slider-track" dir="ltr" :style="{ transform: 'translateX(-' + (workSlide * 100) + '%)' }">
+                            <div v-for="(imgSrc, i) in company.workImages" :key="i" class="exec-slider-slide">
+                                <img :src="imgSrc" alt="" style="width:100%;height:100%;object-fit:cover;">
+                            </div>
+                        </div>
+                        <div v-if="company.workImages.length > 1" class="exec-slider-dots">
+                            <span v-for="(imgSrc, i) in company.workImages" :key="i" class="dot" :class="{ active: i === workSlide }" @click.stop="workSlide = i; resetWorkTimer()"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- معرض المشاريع -->
                 <div style="padding:0 16px 16px;">
-                    <div style="display:flex;gap:10px;margin-bottom:10px;">
-                        <div class="stat-box">
-                            <div class="stat-number">{{ company.done }}</div>
-                            <div class="stat-label">مشروع منجز</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-number">{{ company.years }}</div>
-                            <div class="stat-label">سنة خبرة</div>
-                        </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px;">
+                        <h3 style="font-size:14px;font-weight:700;color:var(--accent-gold);display:flex;align-items:center;gap:6px;margin:0;">
+                            <span class="material-symbols-outlined" style="font-size:18px;">gallery_thumbnail</span>
+                            معرض المشاريع
+                        </h3>
+                        <button v-if="company.projects.length > 4" @click="showAllProjects = !showAllProjects"
+                                style="background:none;border:none;color:var(--accent-gold);font-size:12px;font-weight:600;cursor:pointer;padding:4px 0;">
+                            {{ showAllProjects ? 'عرض أقل' : 'عرض الكل' }} ({{ company.projects.length }})
+                        </button>
                     </div>
-                    <div style="display:flex;gap:10px;">
-                        <div class="stat-box">
-                            <div class="stat-number">{{ company.engineers }}</div>
-                            <div class="stat-label">مهندس</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-number">{{ company.workers }}</div>
-                            <div class="stat-label">عامل</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- التخصصات -->
-                <div style="padding:0 16px 16px;">
-                    <h3 style="font-size:14px;font-weight:700;color:var(--text-white);margin-bottom:10px;">التخصصات</h3>
-                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                        <span v-for="(spec, i) in company.specs" :key="i"
-                              style="padding:6px 14px;background:rgba(201,162,67,0.1);border:1px solid rgba(201,162,67,0.2);border-radius:50px;font-size:12px;color:#c9a243;cursor:pointer;">
-                            {{ spec }}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- التبويبات -->
-                <div class="company-tabs">
-                    <button v-for="(tab, index) in tabs" :key="index"
-                            class="company-tab"
-                            :class="{ active: activeTab === index }"
-                            @click="activeTab = index">
-                        {{ tab }}
-                    </button>
-                </div>
-
-                <!-- محتوى التبويبات -->
-                <div style="padding:16px;">
-                    <!-- نبذة عنا -->
-                    <div v-if="activeTab === 0">
-                        <div class="order-info-card">
-                            <p style="font-size:14px;color:var(--text-light);line-height:1.8;margin-bottom:16px;">
-                                {{ company.about || 'لا توجد نبذة متاحة' }}
-                            </p>
-                            <h3 style="font-size:15px;font-weight:700;color:var(--text-white);margin-bottom:12px;">معلومات التواصل</h3>
-                            <div class="order-info-row">
-                                <span class="order-info-label">الهاتف</span>
-                                <span class="order-info-value" style="direction:ltr;">{{ company.phone }}</span>
+                    <div class="projects-grid" style="padding:0;">
+                        <div v-for="(project, i) in visibleProjects" :key="i" class="project-card" @click="selectedProject = project; detailSlide = 0;">
+                            <div class="card-image">
+                                <img :src="project.images ? project.images[0] : project.image" alt="" style="width:100%;height:100%;object-fit:cover;">
                             </div>
-                            <div class="order-info-row">
-                                <span class="order-info-label">البريد الإلكتروني</span>
-                                <span class="order-info-value">{{ company.email }}</span>
-                            </div>
-                            <div class="order-info-row">
-                                <span class="order-info-label">العنوان</span>
-                                <span class="order-info-value">{{ company.location }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- المشاريع -->
-                    <div v-if="activeTab === 1">
-                        <div class="projects-grid" style="padding:0;">
-                            <div v-for="(project, i) in company.projects" :key="i" class="project-card">
-                                <div class="card-image">
-                                    <img :src="project.image" alt="" style="width:100%;height:100%;object-fit:cover;">
-                                </div>
-                                <div class="card-body">
-                                    <div class="card-title">{{ project.name }}</div>
-                                    <div class="card-author">{{ project.desc.slice(0, 40) }}{{ project.desc.length > 40 ? '...' : '' }}</div>
-                                    <div style="font-size:11px;color:var(--accent-gold);font-weight:600;">{{ project.year }}</div>
+                            <div class="card-body">
+                                <div class="card-title">{{ project.title || project.name }}</div>
+                                <div class="card-author">{{ (project.desc || '').slice(0, 40) }}{{ (project.desc || '').length > 40 ? '...' : '' }}</div>
+                                <div style="display:flex;justify-content:space-between;margin-top:4px;">
+                                    <span style="font-size:11px;color:var(--accent-gold);font-weight:600;">{{ project.year || '' }}</span>
+                                    <span v-if="project.cost" style="font-size:11px;color:#4caf50;font-weight:600;">{{ project.cost }}</span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- التقييمات -->
-                    <div v-if="activeTab === 2">
-                        <div v-for="(review, i) in company.reviews" :key="i"
-                             style="background:rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:12px;">
-                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                                <div style="display:flex;align-items:center;gap:8px;">
-                                    <div style="width:36px;height:36px;background:#1e4068;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#c9a243;font-size:14px;font-weight:700;">
-                                        {{ review.name.charAt(0) }}
-                                    </div>
-                                    <div>
-                                        <div style="font-size:14px;font-weight:600;color:var(--text-white);">{{ review.name }}</div>
-                                        <div style="font-size:11px;color:var(--text-muted);">{{ review.time }}</div>
-                                    </div>
-                                </div>
-                                <div style="display:flex;gap:2px;">
-                                    <svg v-for="s in 5" :key="s" width="14" height="14" viewBox="0 0 24 24"
-                                         :fill="s <= review.rating ? '#c9a243' : 'rgba(255,255,255,0.15)'">
-                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <p style="font-size:13px;color:var(--text-light);line-height:1.6;">{{ review.text }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- أزرار الإجراءات -->
-                <div style="padding:16px;display:flex;gap:12px;padding-bottom:30px;">
-                    <a :href="'service-request.html?company=' + encodeURIComponent(company.name)" class="btn-primary" style="text-decoration:none;flex:1;text-align:center;">طلب خدمة</a>
-                    <a href="quotes.html" class="btn-outline" style="text-decoration:none;flex:1;text-align:center;color:var(--accent-gold);">عرض الأسعار</a>
+                <div style="padding:20px 16px 30px;">
+                    <a :href="'service-request.html?company=' + encodeURIComponent(company.name)" class="btn-outline" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;">
+                        <span class="material-symbols-outlined" style="font-size:20px;">handyman</span>
+                        طلب خدمة
+                    </a>
+                </div>
+            </div>
+
+            <!-- مودال تفاصيل المشروع -->
+            <div v-if="selectedProject" class="project-modal" @click.self="selectedProject = null">
+                <div class="modal-content" style="max-height:95vh;">
+                    <div style="position:relative;">
+                        <button class="modal-close" @click="selectedProject = null">
+                            <span class="material-symbols-outlined close-icon">close</span>
+                            <span class="material-symbols-outlined arrow-icon">arrow_back</span>
+                        </button>
+                        <div class="modal-slider">
+                            <div class="modal-slider-track" dir="ltr" :style="{ transform: `translateX(-${detailSlide * 100}%)` }">
+                                <div v-for="(img, i) in (selectedProject.images || [selectedProject.image])" :key="i" class="modal-slide">
+                                    <div class="modal-slide-img">
+                                        <img :src="img" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="(selectedProject.images || []).length > 1" class="modal-slider-dots">
+                                <span v-for="(img, i) in selectedProject.images" :key="i"
+                                      class="dot" :class="{ active: i === detailSlide }"
+                                      @click.stop="detailSlide = i"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-details" style="overflow-y:auto;padding-bottom:30px;">
+                        <h2>{{ selectedProject.title || selectedProject.name }}</h2>
+                        <div v-if="selectedProject.cost" style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+                            <span class="material-symbols-outlined" style="font-size:18px;color:var(--accent-gold);">payments</span>
+                            <span style="color:#4caf50;font-size:16px;font-weight:700;">{{ selectedProject.cost }}</span>
+                        </div>
+                        <p class="modal-desc">{{ selectedProject.desc }}</p>
+                        <div v-if="selectedProject.meta" class="modal-meta">
+                            <div v-for="(item, i) in selectedProject.meta" :key="i" class="modal-meta-item">
+                                <span class="material-symbols-outlined">{{ item.icon }}</span>
+                                <span>{{ item.label }}: {{ item.value }}</span>
+                            </div>
+                        </div>
+
+                        <!-- المواد المستخدمة -->
+                        <div v-if="selectedProject.materials" style="margin-top:20px;">
+                            <h3 style="color:var(--text-white);font-size:16px;font-weight:700;margin:0 0 12px;">
+                                <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-left:4px;color:var(--accent-gold);">inventory_2</span>
+                                المواد المستخدمة
+                            </h3>
+                            <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;">
+                                <div v-for="(mat, i) in selectedProject.materials" :key="i" style="flex-shrink:0;width:120px;background:var(--card-bg);border-radius:12px;overflow:hidden;border:1px solid var(--border-light);">
+                                    <div style="width:120px;height:90px;overflow:hidden;">
+                                        <img :src="mat.image" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                    </div>
+                                    <div style="padding:6px 8px 10px;text-align:center;">
+                                        <span style="color:var(--text-white);font-size:12px;font-weight:600;">{{ mat.name }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -184,95 +225,106 @@
         document.getElementById('header').innerHTML = renderHeader({ showBack: true, backLink: 'home.html' });
         document.getElementById('bottomNav').innerHTML = renderNav('execute');
 
-        const { createApp, ref, computed, watch, nextTick } = Vue;
-
-        const defaultProfile = {
-            name: 'مقاولون العرب',
-            about: 'شركة مقاولات رائدة في العراق، نقدم خدمات البناء والتشييد بأعلى معايير الجودة والإتقان. تأسست شركتنا منذ 15 عاماً، وخلال هذه المسيرة الطويلة استطعنا بناء سمعة مرموقة في السوق العراقي بفضل التزامنا بالمواعيد ودقة التنفيذ واستخدام أفضل المواد. نمتلك فريقاً متكاملاً من المهندسين والكوادر الفنية ذات الخبرة العالية في جميع مجالات البناء والتشييد. نؤمن بأن النجاح الحقيقي يكمن في رضا عملائنا، لذلك نضع احتياجاتهم في المقام الأول ونسعى دائماً لتجاوز توقعاتهم. نفتخر بأننا ساهمنا في بناء أكثر من 200 مشروع متنوع بين الفلل السكنية والمباني التجارية والمجمعات السكنية الكبرى. نعدكم بالجودة والإتقان والالتزام بكل ما يضمن راحتكم ويحقق طموحاتكم.',
-            specs: ['بناء فلل', 'مباني تجارية', 'تشطيبات', 'ديكور داخلي', 'خرسانة', 'أعمال صحية', 'واجهات زجاجية', 'أعمال حديد'],
-            location: 'بغداد - الكرادة',
-            phone: '+964 770 123 4567',
-            email: 'info@arabcontractors.com',
-            logo: 'images/img1.jpg',
-            cover: 'images/img2.jpg',
-            years: 15,
-            workers: 120,
-            engineers: 25,
-            done: 200,
-            projects: [
-                { name: 'فيلا النخيل الفاخرة', desc: 'فيلا سكنية فاخرة بمساحة 500 متر مربع مع حديقة ومسبح', image: 'images/img1.jpg', year: '2024' },
-                { name: 'مبنى الكرادة التجاري', desc: 'مبنى تجاري متكامل من 7 طوابق في قلب بغداد', image: 'images/img2.jpg', year: '2023' },
-                { name: 'مجمع الزهور السكني', desc: 'مجمع سكني يضم 40 وحدة سكنية بمواصفات عالية', image: 'construction_small.jpg', year: '2023' },
-                { name: 'فيلا الأندلس', desc: 'قصر سكني على الطراز الأندلسي بمساحة 800 متر', image: '1.jpg', year: '2022' },
-                { name: 'مستشفى السلام', desc: 'مستشفى بسعة 100 سرير مع أحدث التجهيزات الطبية', image: 'images/img1.jpg', year: '2022' },
-                { name: 'قصر بابل للأفراح', desc: 'قاعة أفراح فاخرة تستوعب 1000 ضيف', image: 'images/img2.jpg', year: '2021' }
-            ],
-            reviews: [
-                { name: 'أحمد محمد', rating: 5, text: 'شركة ممتازة ومحترفة. أنجزوا مشروعي في الوقت المحدد وبجودة عالية جداً. أنصح بالتعامل معهم.', time: 'قبل أسبوع' },
-                { name: 'سارة جاسم', rating: 5, text: 'فريق عمل رائع ومبدع. التصاميم الداخلية كانت أجمل مما توقعت. شكراً لكم.', time: 'قبل أسبوعين' },
-                { name: 'خالد العلي', rating: 4, text: 'عمل جيد بشكل عام. الالتزام بالمواعيد كان جيداً والتشطيب ممتاز. أنصح بالتعامل.', time: 'قبل شهر' },
-                { name: 'نور الهدى', rating: 5, text: 'أفضل شركة مقاولات تعاملت معها. احترافية في العمل ودقة في التنفيذ. تجربة رائعة.', time: 'قبل شهرين' },
-                { name: 'عمران عبد', rating: 4, text: 'جودة البناء ممتازة والأسعار منافسة. فريق العمل متعاون ومتفهم.', time: 'قبل 3 أشهر' }
-            ],
-            ads: [
-                { title: 'عرض خاص على التشطيبات', desc: 'خصم 20% على جميع أعمال التشطيب والديكور', image: 'images/img1.jpg' },
-                { title: 'بناء الفلل الفاخرة', desc: 'تصاميم عصرية بأسعار تنافسية مع ضمان 10 سنوات', image: 'images/img2.jpg' }
-            ]
-        };
+        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
 
         var params = new URLSearchParams(window.location.search);
         var urlCompanyId = params.get('id') ? decodeURIComponent(params.get('id')) : null;
 
-        // Try to load the matching company profile
-        var profileData;
-        try {
-            var stored = localStorage.getItem('bunean-company-profile');
-            if (stored) {
-                var parsed = JSON.parse(stored);
-                // If URL has an id, check if it matches the stored profile name
-                if (urlCompanyId && parsed.name !== urlCompanyId) {
-                    // Different company - use default with custom name
-                    profileData = Object.assign({}, defaultProfile, { name: urlCompanyId });
-                } else {
-                    profileData = Object.assign({}, defaultProfile, parsed);
+        // Load company from shared data or localStorage fallback
+        var profileData = urlCompanyId ? getCompanyByName(urlCompanyId) : null;
+        if (!profileData) {
+            try {
+                var stored = localStorage.getItem('bunean-company-profile');
+                if (stored) {
+                    var parsed = JSON.parse(stored);
+                    if (!urlCompanyId || parsed.name === urlCompanyId) {
+                        profileData = {
+                            name: parsed.name || 'الشركة',
+                            about: parsed.about || '',
+                            specs: parsed.specs || [],
+                            location: parsed.location || '',
+                            phone: parsed.phone || '',
+                            email: parsed.email || '',
+                            logo: parsed.logo || 'images/img1.jpg',
+                            cover: parsed.cover || 'images/img2.jpg',
+                            years: parsed.years || 1,
+                            workers: parsed.workers || 0,
+                            engineers: parsed.engineers || 0,
+                            done: parsed.done || 0,
+                            rating: parsed.rating || 0,
+                            verified: true,
+                            workImages: parsed.workImages || [],
+                            projects: (parsed.projects || []).map(function(p) {
+                                return {
+                                    title: p.title || p.name || 'مشروع',
+                                    desc: p.desc || '',
+                                    images: p.images || (p.image ? [p.image] : ['images/img1.jpg']),
+                                    cost: p.cost || '',
+                                    area: p.area || '',
+                                    year: p.date ? p.date.split('-')[0] : (p.year || '2025'),
+                                    materials: p.materials || [],
+                                    meta: p.meta || []
+                                };
+                            }),
+                            reviews: parsed.reviews || []
+                        };
+                    }
                 }
-            } else if (urlCompanyId) {
-                profileData = Object.assign({}, defaultProfile, { name: urlCompanyId });
-            } else {
-                profileData = defaultProfile;
-            }
-        } catch (e) {
-            profileData = urlCompanyId ? Object.assign({}, defaultProfile, { name: urlCompanyId }) : defaultProfile;
+            } catch (e) {}
         }
-
-        // Fix project field mapping (stored uses title/date, display uses name/year)
-        if (profileData.projects) {
-            profileData.projects = profileData.projects.map(function(p) {
-                return {
-                    name: p.title || p.name || 'مشروع',
-                    desc: p.desc || '',
-                    image: p.image || (p.images && p.images[0]) || 'images/img1.jpg',
-                    year: p.date ? p.date.split('-')[0] : (p.year || '2025'),
-                    category: p.category || ''
-                };
-            });
+        if (!profileData) {
+            profileData = { name: urlCompanyId || 'الشركة', about: '', specs: [], location: '', phone: '', email: '', logo: 'images/img1.jpg', cover: 'images/img2.jpg', years: 0, workers: 0, engineers: 0, done: 0, rating: 0, verified: false, workImages: [], projects: [], reviews: [] };
         }
 
         createApp({
             setup() {
                 initTheme();
-                var activeTab = ref(0);
-                watch(activeTab, function() { nextTick(function() { var e = document.querySelector('.page-content'); if (e) e.scrollTop = 0; }); });
-                var tabs = ref(['نبذة عنا', 'المشاريع', 'التقييمات']);
                 var company = ref(profileData);
+                var selectedProject = ref(null);
+                var detailSlide = ref(0);
+                var workSlide = ref(0);
+                var workTimer = null;
+                var showAllProjects = ref(false);
 
-                // About preview (120 chars) and full
+                var visibleProjects = computed(function() {
+                    var all = company.value.projects || [];
+                    if (showAllProjects.value) return all;
+                    return all.slice(0, 4);
+                });
+
                 var aboutPreview = computed(function() {
                     var a = company.value.about || '';
                     return a.length > 120 ? a.slice(0, 120) + '...' : a;
                 });
 
-                return { activeTab, tabs, company, aboutPreview };
+                function resetWorkTimer() {
+                    if (workTimer) clearInterval(workTimer);
+                    var imgs = company.value.workImages || [];
+                    if (imgs.length < 2) return;
+                    workTimer = setInterval(function() {
+                        workSlide.value = (workSlide.value + 1) % imgs.length;
+                    }, 2000);
+                }
+
+                var workSwipe = (function() {
+                    var sx = 0;
+                    return {
+                        onTouchStart: function(e) { sx = e.touches[0].clientX; },
+                        onTouchEnd: function(e) {
+                            var dx = e.changedTouches[0].clientX - sx;
+                            var imgs = company.value.workImages || [];
+                            if (Math.abs(dx) > 40 && imgs.length > 1) {
+                                var next = workSlide.value + (dx < 0 ? 1 : -1);
+                                if (next >= 0 && next < imgs.length) { workSlide.value = next; resetWorkTimer(); }
+                            }
+                        }
+                    };
+                })();
+
+                onMounted(function() { resetWorkTimer(); });
+                onUnmounted(function() { if (workTimer) clearInterval(workTimer); });
+
+                return { company, aboutPreview, selectedProject, detailSlide, workSlide, workSwipe, resetWorkTimer, showAllProjects, visibleProjects };
             }
         }).mount('#app');
     </script>
